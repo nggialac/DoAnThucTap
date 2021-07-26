@@ -5,7 +5,10 @@
 
 export type RootStackParamList = {
   Root: undefined;
-  Admin: undefined;
+  Login: {};
+  Admin: {
+    // username: string,
+  };
   Client: undefined;
   NotFound: undefined;
 };
@@ -27,6 +30,13 @@ export type TabTwoParamList = {
 export type TabThreeParamList = {
   TabThreeScreen: undefined;
 };
+
+//LOGIN
+export type LoginParamList = {
+  SignInScreen: undefined;
+  SignOutScreen: undefined;
+  SignUpScreen: undefined;
+}
 
 //ADMIN
 export type BottomTabAdminParamList = {

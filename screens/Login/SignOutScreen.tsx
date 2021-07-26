@@ -1,17 +1,13 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
-import EditScreenInfo from '../../components/EditScreenInfo';
 import { Text, View } from '../../components/Themed';
 
-export default function AdminProfileScreen() {
-
-
+export default function SignOutScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Admin Profile Screen</Text>
+      <Text style={styles.title}>SignOut Screen</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" />
     </View>
   );
 }

@@ -14,6 +14,8 @@ import AdminBottomTabNavigator from './Admin/AdminBootTabNavigator';
 import BottomTabNavigator from './BottomTabNavigator';
 import ClientBottomTabNavigator from './Client/ClientBottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
+import LoginNavigator from './Login/LoginNavigator';
+import { AuthContext } from '../components/ContextLogin';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -31,11 +33,14 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
+    <AuthContext.Provider value={AuthContext}>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* <Stack.Screen name="Root" component={BottomTabNavigator} /> */}
-      {/* <Stack.Screen name="Admin" component={AdminBottomTabNavigator} /> */}
-      <Stack.Screen name="Client" component={ClientBottomTabNavigator} />
+      <Stack.Screen name="Login" component={LoginNavigator} />
+      <Stack.Screen name="Admin" component={AdminBottomTabNavigator} />
+      {/* <Stack.Screen name="Client" component={ClientBottomTabNavigator} /> */}
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
+    </AuthContext.Provider>
   );
 }

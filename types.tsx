@@ -32,7 +32,8 @@ export type TabThreeParamList = {
 };
 
 //LOGIN
-export type LoginParamList = {
+export type LoginStackParamList = {
+  SplashScreen: undefined
   SignInScreen: undefined;
   SignOutScreen: undefined;
   SignUpScreen: undefined;
@@ -60,6 +61,7 @@ export type TabAdminCommentsParamList = {
 
 export type TabAdminProfileParamList = {
   TabAdminProfileScreen: undefined;
+  EditProfileScreen: undefined; 
 }
 
 //CLIENT

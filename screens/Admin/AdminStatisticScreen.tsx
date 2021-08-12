@@ -1,15 +1,20 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { VictoryBar, VictoryChart, VictoryTheme } from "victory-native";
 
-import EditScreenInfo from '../../components/EditScreenInfo';
-import { Text, View } from '../../components/Themed';
+const data = [
+  { quarter: 1, earnings: 13000 },
+  { quarter: 2, earnings: 16500 },
+  { quarter: 3, earnings: 14250 },
+  { quarter: 4, earnings: 19000 },
+];
 
 export default function AdminStatisticScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Admin statistic Screen</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabOneScreen.tsx" />
+      <VictoryChart width={350} theme={VictoryTheme.material}>
+        <VictoryBar data={data} x="quarter" y="earnings" />
+      </VictoryChart>
     </View>
   );
 }
@@ -17,16 +22,8 @@ export default function AdminStatisticScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f5fcff",
   },
 });

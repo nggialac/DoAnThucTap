@@ -29,6 +29,15 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "sdsd",
+          "enableGooglePay": false
+        }
+      ]
+    ]
   }
 }

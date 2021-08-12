@@ -8,10 +8,17 @@ import useColorScheme from "../../hooks/useColorScheme";
 // import TabTwoScreen from "../../screens/TabTwoScreen";
 // import TabThreeScreen from "../../screens/TabThreeScreen";
 import TabAdminHomeScreen from "../../screens/Admin/AdminHomeScreen";
+import TabAdminHomeOrder from "../../screens/Admin/order/OrderScreen";
+import TabAdminHomeStaff from "../../screens/Admin/staff/StaffScreen";
+import TabAdminHomeProduct from "../../screens/Admin/medicine/MedicineScreen";
+import TabAdminHomeProductList from "../../screens/Admin/medicine/MedicineListScreen";
+import TabAdminHomeProductDetail from "../../screens/Admin/medicine/DetailMedicineScreen";
+
 import TabAdminStatisticScreen from "../../screens/Admin/AdminStatisticScreen";
 import TabAdminCommentsScreen from "../../screens/Admin/AdminCommentsScreen";
 import TabAdminProfileScreen from "../../screens/Admin/AdminProfileScreen";
 import EditProfileScreen from "../../screens/Admin/profile/EditProfileScreen";
+import PaymentScreen from "../../screens/Admin/profile/PaymentScreen";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import {
   BottomTabAdminParamList,
@@ -45,7 +52,6 @@ export default function AdminBottomTabNavigator() {
             <TabBarIcon name="ios-home" color={color} />
           ),
         }}
-        
       />
       <BottomTab.Screen
         name="Statistic"
@@ -95,6 +101,35 @@ function AdminTabHomeNavigator() {
         component={TabAdminHomeScreen}
         options={{ headerTitle: "Tab Admin Home Title" }}
       />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeOrder"
+        component={TabAdminHomeOrder}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeStaff"
+        component={TabAdminHomeStaff}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeProduct"
+        component={TabAdminHomeProduct}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeProductList"
+        component={TabAdminHomeProductList}
+        options={({ route }) => ({
+          title: route.params.title,
+          headerBackTitleVisible: false,
+          // headerShown: false,
+        })}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeProductDetail"
+        component={TabAdminHomeProductDetail}
+        options={({ route }) => ({
+          itemData: route.params.itemData,
+          headerBackTitleVisible: false,
+        })}
+      />
     </TabAdminHomeStack.Navigator>
   );
 }
@@ -130,17 +165,17 @@ function AdminTabCommentsNavigator() {
 
 const TabAdminProfileStack = createStackNavigator<TabAdminProfileParamList>();
 
-function AdminTabProfileNavigator({navigation}) {
-  const {colors} = useTheme();
+function AdminTabProfileNavigator({ navigation }) {
+  const { colors } = useTheme();
   return (
     <TabAdminProfileStack.Navigator
       screenOptions={{
-        headerStyle:{
+        headerStyle: {
           backgroundColor: colors.background,
           shadowColor: colors.background, //IOS
-          elevation: 0 //ANDROID
+          elevation: 0, //ANDROID
         },
-        headerTintColor:'#000',
+        headerTintColor: "#000",
       }}
     >
       <TabAdminProfileStack.Screen
@@ -152,8 +187,8 @@ function AdminTabProfileNavigator({navigation}) {
             <MaterialCommunityIcons.Button
               name="account-edit"
               size={25}
-              backgroundColor= {colors.background}
-              color= {colors.text}
+              backgroundColor={colors.background}
+              color={colors.text}
               onPress={() => navigation.navigate("EditProfileScreen")}
             />
           ),
@@ -165,6 +200,13 @@ function AdminTabProfileNavigator({navigation}) {
         options={{
           title: "Edit Profile",
         }}
+      />
+      <TabAdminProfileStack.Screen
+        name="TabAdminProfilePaymentScreen"
+        component={PaymentScreen}
+        options={({ route }) => ({
+          headerBackTitleVisible: false,
+        })}
       />
     </TabAdminProfileStack.Navigator>
   );

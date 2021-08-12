@@ -188,6 +188,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
   return (
+    // <Stack.Group></Stack.Group>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {/* <Stack.Screen name="Root" component={BottomTabNavigator} /> */}
       {/* <Stack.Screen name="Login" component={LoginNavigator} /> */}

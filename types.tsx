@@ -33,7 +33,7 @@ export type TabThreeParamList = {
 
 //LOGIN
 export type LoginStackParamList = {
-  SplashScreen: undefined
+  SplashScreen: undefined;
   SignInScreen: undefined;
   SignOutScreen: undefined;
   SignUpScreen: undefined;
@@ -49,6 +49,15 @@ export type BottomTabAdminParamList = {
 
 export type TabAdminHomeParamList = {
   TabAdminHomeScreen: undefined;
+  TabAdminHomeOrder: undefined;
+  TabAdminHomeStaff: undefined;
+  TabAdminHomeProduct: undefined;
+  TabAdminHomeProductList: {
+    title: string
+  };
+  TabAdminHomeProductDetail: {
+    itemData: object
+  };
 }
 
 export type TabAdminStatisticParamList = {
@@ -62,6 +71,7 @@ export type TabAdminCommentsParamList = {
 export type TabAdminProfileParamList = {
   TabAdminProfileScreen: undefined;
   EditProfileScreen: undefined; 
+  TabAdminProfilePaymentScreen: undefined;
 }
 
 //CLIENT
@@ -73,6 +83,8 @@ export type BottomTabClientParamList = {
 
 export type TabClientHomeParamList = {
   TabClientHomeScreen: undefined;
+  DetailProductScreen: undefined;
+  CartScreen: undefined;
 }
 
 export type TabClientCategoriesParamList = {
@@ -80,5 +92,6 @@ export type TabClientCategoriesParamList = {
 }
 
 export type TabClientProfileParamList = {
-  TabClientProfileScreen: undefined;
+  ClientProfileScreen: undefined;
+  ClientEditProfileScreen: undefined;
 }

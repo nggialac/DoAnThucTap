@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import {
   Avatar,
   Caption,
@@ -10,10 +10,11 @@ import {
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 // import files from '../assets/filesBase64';
 import Share from 'react-native-share';
+import { AuthContext } from "../../components/ContextLogin";
 
-export default function AdminProfileScreen() {
+export default function AdminProfileScreen({navigation}) {
 
-  const myCustomShare = async() => {
+  // const myCustomShare = async() => {
     // const shareOptions = {
     //   message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
     //   url: files.appLogo,
@@ -26,10 +27,17 @@ export default function AdminProfileScreen() {
     // } catch(error) {
     //   console.log('Error => ', error);
     // }
-  };
+  // };
+
+  const { signOut } = React.useContext(AuthContext);
+
+  const logoutHandle = () => {
+    signOut();
+  }
 
   return (
     <SafeAreaView style={styles.container}>
+      <ScrollView>
       <View style={styles.userInfoSection}>
         <View style={{flexDirection: 'row', marginTop: 15}}>
           <Avatar.Image
@@ -81,32 +89,32 @@ export default function AdminProfileScreen() {
             <Text style={styles.menuItemText}>Your Favorites</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple onPress={()=>navigation.navigate('TabAdminProfilePaymentScreen')}>
           <View style={styles.menuItem}>
             <Icon name="credit-card" color="#FF6347" size={25}/>
             <Text style={styles.menuItemText}>Payment</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={myCustomShare}>
+        {/* <TouchableRipple onPress={myCustomShare}>
           <View style={styles.menuItem}>
             <Icon name="share-outline" color="#FF6347" size={25}/>
-            <Text style={styles.menuItemText}>Tell Your Friends</Text>
+            <Text style={styles.menuItemText}>Share your friends</Text>
           </View>
-        </TouchableRipple>
+        </TouchableRipple> */}
         <TouchableRipple onPress={() => {}}>
           <View style={styles.menuItem}>
             <Icon name="account-check-outline" color="#FF6347" size={25}/>
             <Text style={styles.menuItemText}>Support</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple onPress={logoutHandle}>
           <View style={styles.menuItem}>
             <Icon name="file-settings-outline" color="#FF6347" size={25}/>
-            <Text style={styles.menuItemText}>Settings</Text>
+            <Text style={styles.menuItemText}>Sign Out</Text>
           </View>
         </TouchableRipple>
       </View>
-
+      </ScrollView>
     </SafeAreaView>
   );
 }

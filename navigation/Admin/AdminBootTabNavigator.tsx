@@ -13,6 +13,8 @@ import TabAdminHomeStaff from "../../screens/Admin/staff/StaffScreen";
 import TabAdminHomeProduct from "../../screens/Admin/medicine/MedicineScreen";
 import TabAdminHomeProductList from "../../screens/Admin/medicine/MedicineListScreen";
 import TabAdminHomeProductDetail from "../../screens/Admin/medicine/DetailMedicineScreen";
+import TabAdminHomeEditProduct from "../../screens/Admin/medicine/EditMedicineScreen";
+import TabAdminHomeAddProduct from "../../screens/Admin/medicine/AddMedicineScreen";
 
 import TabAdminStatisticScreen from "../../screens/Admin/AdminStatisticScreen";
 import TabAdminCommentsScreen from "../../screens/Admin/AdminCommentsScreen";
@@ -29,6 +31,7 @@ import {
 } from "../../types";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
+import { View } from "react-native";
 
 // const BottomTab = createBottomTabNavigator<BottomTabAdminParamList>();
 const BottomTab = createMaterialBottomTabNavigator<BottomTabAdminParamList>();
@@ -93,7 +96,9 @@ function TabBarIcon(props: {
 
 const TabAdminHomeStack = createStackNavigator<TabAdminHomeParamList>();
 
-function AdminTabHomeNavigator() {
+function AdminTabHomeNavigator({ navigation }) {
+  const { colors } = useTheme();
+
   return (
     <TabAdminHomeStack.Navigator>
       <TabAdminHomeStack.Screen
@@ -117,9 +122,18 @@ function AdminTabHomeNavigator() {
         name="TabAdminHomeProductList"
         component={TabAdminHomeProductList}
         options={({ route }) => ({
-          title: route.params.title,
+          title: route.params.madm,
           headerBackTitleVisible: false,
           // headerShown: false,
+          headerRight: () => (
+            <MaterialCommunityIcons.Button
+                name="plus-box-multiple-outline"
+                size={25}
+                backgroundColor={colors.surface}
+                color={colors.text}
+                onPress={() => navigation.navigate("TabAdminHomeAddProduct")}
+              />
+          )
         })}
       />
       <TabAdminHomeStack.Screen
@@ -128,6 +142,41 @@ function AdminTabHomeNavigator() {
         options={({ route }) => ({
           itemData: route.params.itemData,
           headerBackTitleVisible: false,
+          headerRight: () => (
+            <View>
+              {/* <MaterialCommunityIcons.Button
+              name="account-edit"
+              size={25}
+              backgroundColor={colors.background}
+              color={colors.text}
+              onPress={() => navigation.navigate("EditProfileScreen")}
+            /> */}
+              <MaterialCommunityIcons.Button
+                name="file-edit-outline"
+                size={25}
+                backgroundColor={colors.surface}
+                color={colors.text}
+                onPress={() => navigation.navigate("TabAdminHomeEditProduct", {itemData: route.params.itemData})}
+              />
+            </View>
+          ),
+        })}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeEditProduct"
+        component={TabAdminHomeEditProduct}
+        options={({ route }) => ({
+          itemData: route.params.itemData,
+          headerBackTitleVisible: false,
+          // headerShown: false,
+        })}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeAddProduct"
+        component={TabAdminHomeAddProduct}
+        options={() => ({
+          headerBackTitleVisible: false,
+          // headerShown: false,
         })}
       />
     </TabAdminHomeStack.Navigator>

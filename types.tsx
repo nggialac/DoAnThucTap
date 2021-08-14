@@ -55,7 +55,11 @@ export type TabAdminHomeParamList = {
   TabAdminHomeProductList: {
     title: string
   };
+  TabAdminHomeAddProduct: undefined;
   TabAdminHomeProductDetail: {
+    itemData: object
+  };
+  TabAdminHomeEditProduct: {
     itemData: object
   };
 }

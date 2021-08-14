@@ -1,13 +1,29 @@
 import React from 'react';
-import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
-import {data} from '../../../navigation/Models/MedicineData';
+import { View, Text, Button, FlatList, StyleSheet, Alert } from 'react-native';
+// import {data} from '../../../navigation/Models/MedicineData';
 import Card from './Card';
+import { getMedicineByCategory } from '../../../api/MedicineApis';
+import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 
-const MedicineListScreen = ({navigation}) => {
+const MedicineListScreen = ({navigation, route}) => {
+  const madm = route.params.madm;
+  const [listData, setListData] = React.useState([]);
+
+  React.useEffect(() => {
+    getMedicineByCategory(madm)
+    .then(res=>{
+      console.log(res.data);
+      setListData(res.data);
+    })
+    .catch(e=>{
+      Alert.alert('Fail!', 'Not found Data', [{text: 'ok'}])
+    })
+  }, [])
 
     const renderItem = ({item}) => {
         return (
             <Card 
+                key={item.masp}
                 itemData={item}
                 onPress={()=> navigation.navigate('TabAdminHomeProductDetail', {itemData: item})}
             />
@@ -17,9 +33,10 @@ const MedicineListScreen = ({navigation}) => {
     return (
       <View style={styles.container}>
         <FlatList 
-            data={data}
+            // key={item=>item.masp}
+            data={listData}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.masp}
         />
       </View>
     );

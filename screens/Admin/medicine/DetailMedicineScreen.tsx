@@ -22,7 +22,7 @@ const DetailMedicineScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      {console.log(navTitleView)}
+      {/* {console.log(navTitleView)} */}
       <StatusBar barStyle="light-content" />
       <ImageHeaderScrollView
         maxHeight={MAX_HEIGHT}
@@ -30,16 +30,16 @@ const DetailMedicineScreen = ({ route }) => {
         maxOverlayOpacity={0.6}
         minOverlayOpacity={0.3}
         renderHeader={() => (
-          <Image source={itemData.image} style={styles.image} />
+          <Image source={{uri: itemData.photo}} style={styles.image} />
         )}
         renderForeground={() => (
           <View style={styles.titleContainer}>
-            <Text style={styles.imageTitle}>{itemData.title}</Text>
+            {/* <Text style={styles.imageTitle}>{itemData.mota_ngan}</Text> */}
           </View>
         )}
         renderFixedForeground={() => (
           <Animatable.View style={styles.navTitleView} ref={navTitleView}>
-            <Text style={styles.navTitle}>{itemData.title}</Text>
+            <Text style={styles.navTitle}>{itemData.mota_ngan}</Text>
           </Animatable.View>
         )}
       >
@@ -51,19 +51,19 @@ const DetailMedicineScreen = ({ route }) => {
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            <Text style={styles.title}>Overview</Text>
+            <Text style={styles.mota_ngan}>Overview</Text>
             <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
               <FontAwesome name="star" size={16} color="#FF6347" />
-              <Text style={{ marginHorizontal: 2 }}>{itemData.rating}</Text>
-              <Text>({itemData.reviews})</Text>
+              {/* <Text style={{ marginHorizontal: 2 }}>{itemData.rating}</Text>
+              <Text>({itemData.reviews})</Text> */}
             </View>
           </View>
         </TriggeringView>
         <View style={[styles.section, styles.sectionLarge]}>
-          <Text style={styles.sectionContent}>{itemData.description}</Text>
+          <Text style={styles.sectionContent}>{itemData.mota_chitiet}</Text>
         </View>
 
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <View style={styles.categories}>
             {itemData.categories.map((category, index) => (
               <View style={styles.categoryContainer} key={index}>
@@ -72,9 +72,9 @@ const DetailMedicineScreen = ({ route }) => {
               </View>
             ))}
           </View>
-        </View>
+        </View> */}
 
-        <View style={[styles.section, { height: 250 }]}></View>
+        {/* <View style={[styles.section, { height: 250 }]}></View> */}
       </ImageHeaderScrollView>
     </View>
   );

@@ -7,15 +7,16 @@ const Card = ({ itemData, onPress }) => {
       <View style={styles.card}>
         <View style={styles.cardImgWrapper}>
           <Image
-            source={itemData.image}
+            source={{uri: itemData.photo}}
             resizeMode="cover"
             style={styles.cardImg}
           />
         </View>
         <View style={styles.cardInfo}>
-          <Text style={styles.cardTitle}>{itemData.title}</Text>
+          <Text style={styles.cardTitle}>{itemData.tensp}</Text>
+          <Text style={styles.cardTitle}>Số lượng: {itemData.soluong}</Text>
           <Text numberOfLines={2} style={styles.cardDetails}>
-            {itemData.description}
+            {itemData.mota_ngan}
           </Text>
         </View>
       </View>
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cardDetails: {
+    marginTop: 10,
     fontSize: 12,
     color: "#444",
   },

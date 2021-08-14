@@ -41,6 +41,7 @@ export default function Navigation({
   const initialLoginState = {
     isLoading: true,
     userName: null,
+    role: null,
     userToken: null,
   };
 
@@ -73,6 +74,8 @@ export default function Navigation({
       case "RETRIEVE_TOKEN":
         return {
           ...prevState,
+          userName: action.id,
+          role: action.quyen,
           userToken: action.token,
           isLoading: false,
         };
@@ -80,6 +83,7 @@ export default function Navigation({
         return {
           ...prevState,
           userName: action.id,
+          role: action.quyen,
           userToken: action.token,
           isLoading: false,
         };
@@ -87,6 +91,7 @@ export default function Navigation({
         return {
           ...prevState,
           userName: null,
+          role: null,
           userToken: null,
           isLoading: false,
         };
@@ -94,6 +99,7 @@ export default function Navigation({
         return {
           ...prevState,
           userName: action.id,
+          role: action.quyen,
           userToken: action.token,
           isLoading: false,
         };
@@ -113,20 +119,25 @@ export default function Navigation({
         // setUserToken("lacnguyen");
         // setIsLoading(false);
         const userToken = String(foundUser[0].userToken);
+        const role = String(foundUser[0].quyen.maquyen)
         const userName = foundUser[0].userName;
         try {
           await AsyncStorage.setItem("userToken", userToken);
+          // await AsyncStorage.setItem("userName", userName);
+          // await AsyncStorage.setItem("role", role);
         } catch (e) {
           console.log(e);
         }
 
-        dispatch({ type: "LOGIN", id: userName, token: userToken });
+        dispatch({ type: "LOGIN", id: userName, quyen: role, token: userToken });
       },
       signOut: async () => {
         // setUserToken(null);
         // setIsLoading(false);
         try {
           await AsyncStorage.removeItem("userToken");
+          // await AsyncStorage.removeItem("userName");
+          // await AsyncStorage.removeItem("role");
         } catch (e) {
           console.log(e);
         }
@@ -146,10 +157,14 @@ export default function Navigation({
   React.useEffect(() => {
     setTimeout(async () => {
       // setIsLoading(false);
-      let userToken;
-      userToken = null;
+      let userToken = null;
+      // let userName = null;
+      // let role = null;
+      // userToken = null;
       try {
         userToken = await AsyncStorage.getItem("userToken");
+        // userName = await AsyncStorage.getItem("userName");
+        // role = await AsyncStorage.getItem("role");
       } catch (e) {
         console.log(e);
       }
@@ -174,7 +189,9 @@ export default function Navigation({
           theme={theme}
         >
           {loginState.userToken !== null ? (
-            <RootNavigator />
+            // <RootNavigator role={loginState.role}/>
+            //  (loginState.role === '1' ? <AdminBottomTabNavigator/> : <ClientBottomTabNavigator/>)
+            <AdminBottomTabNavigator/>
           ) : (
             <LoginStackNavigator />
           )}
@@ -184,20 +201,23 @@ export default function Navigation({
   }
 }
 
-const Stack = createStackNavigator<RootStackParamList>();
+// const Stack = createStackNavigator<RootStackParamList>();
 
-function RootNavigator() {
-  return (
-    // <Stack.Group></Stack.Group>
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* <Stack.Screen name="Root" component={BottomTabNavigator} /> */}
-      {/* <Stack.Screen name="Login" component={LoginNavigator} /> */}
-      <Stack.Screen name="Admin" component={AdminBottomTabNavigator} />
-      {/* <Stack.Screen name="Client" component={ClientBottomTabNavigator} /> */}
-      {/* <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} /> */}
-    </Stack.Navigator>
-  );
-}
+
+// function RootNavigator(props) {
+//   return (
+//     // <Stack.Group></Stack.Group>
+//     <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       {/* <Stack.Screen name="Root" component={BottomTabNavigator} /> */}
+//       {/* <Stack.Screen name="Login" component={LoginNavigator} /> */}
+//       {console.log(props.role)}
+//       { props.role === 1 ? <Stack.Screen name="Admin" component={AdminBottomTabNavigator} /> : <Stack.Screen name="Client" component={ClientBottomTabNavigator} />}
+//       {/* <Stack.Screen name="Admin" component={AdminBottomTabNavigator} /> */}
+//       {/* <Stack.Screen name="Client" component={ClientBottomTabNavigator} /> */}
+//       {/* <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} /> */}
+//     </Stack.Navigator>
+//   );
+// }
 
 const LoginStack = createStackNavigator<LoginStackParamList>();
 

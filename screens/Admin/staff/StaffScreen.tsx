@@ -10,6 +10,7 @@ import {
   Alert,
   RefreshControl,
   ScrollView,
+  SafeAreaView
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 // import Orders from "../../../navigation/Models/ListOrder";
@@ -291,6 +292,7 @@ function StaffScreen({ navigation }) {
         />
       {/* </ScrollView> */}
     </View>
+
   );
 }
 

@@ -14,21 +14,6 @@ import { AuthContext } from "../../components/ContextLogin";
 
 export default function AdminProfileScreen({navigation}) {
 
-  // const myCustomShare = async() => {
-    // const shareOptions = {
-    //   message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
-    //   url: files.appLogo,
-    //   // urls: [files.image1, files.image2]
-    // }
-
-    // try {
-    //   const ShareResponse = await Share.open(shareOptions);
-    //   console.log(JSON.stringify(ShareResponse));
-    // } catch(error) {
-    //   console.log('Error => ', error);
-    // }
-  // };
-
   const { signOut } = React.useContext(AuthContext);
 
   const logoutHandle = () => {
@@ -68,48 +53,10 @@ export default function AdminProfileScreen({navigation}) {
         </View>
       </View>
 
-      <View style={styles.infoBoxWrapper}>
-          <View style={[styles.infoBox, {
-            borderRightColor: '#dddddd',
-            borderRightWidth: 1
-          }]}>
-            <Title>₹140.50</Title>
-            <Caption>Wallet</Caption>
-          </View>
-          <View style={styles.infoBox}>
-            <Title>12</Title>
-            <Caption>Orders</Caption>
-          </View>
-      </View>
-
       <View style={styles.menuWrapper}>
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <Icon name="heart-outline" color="#FF6347" size={25}/>
-            <Text style={styles.menuItemText}>Your Favorites</Text>
-          </View>
-        </TouchableRipple>
-        <TouchableRipple onPress={()=>navigation.navigate('TabAdminProfilePaymentScreen')}>
-          <View style={styles.menuItem}>
-            <Icon name="credit-card" color="#FF6347" size={25}/>
-            <Text style={styles.menuItemText}>Payment</Text>
-          </View>
-        </TouchableRipple>
-        {/* <TouchableRipple onPress={myCustomShare}>
-          <View style={styles.menuItem}>
-            <Icon name="share-outline" color="#FF6347" size={25}/>
-            <Text style={styles.menuItemText}>Share your friends</Text>
-          </View>
-        </TouchableRipple> */}
-        <TouchableRipple onPress={() => {}}>
-          <View style={styles.menuItem}>
-            <Icon name="account-check-outline" color="#FF6347" size={25}/>
-            <Text style={styles.menuItemText}>Support</Text>
-          </View>
-        </TouchableRipple>
         <TouchableRipple onPress={logoutHandle}>
           <View style={styles.menuItem}>
-            <Icon name="file-settings-outline" color="#FF6347" size={25}/>
+            <Icon name="file-settings-outline" color="#694fad" size={25}/>
             <Text style={styles.menuItemText}>Sign Out</Text>
           </View>
         </TouchableRipple>

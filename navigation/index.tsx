@@ -19,7 +19,7 @@ import BottomTabNavigator from "./BottomTabNavigator";
 import ClientBottomTabNavigator from "./Client/ClientBottomTabNavigator";
 import LinkingConfiguration from "./LinkingConfiguration";
 
-import LoginNavigator from "./Login/LoginNavigator";
+// import LoginNavigator from "./Login/LoginNavigator";
 import SplashScreen from "../screens/Login/SplashScreen";
 import SignInScreen from "../screens/Login/SignInScreen";
 import SignOutScreen from "../screens/Login/SignOutScreen";
@@ -126,12 +126,13 @@ export default function Navigation({
         // setUserToken("lacnguyen");
         // setIsLoading(false);
         const userToken = String(foundUser[0].userToken);
+        // console.log(userToken);
         const role = String(foundUser[0].quyen.maquyen)
-        const userName = foundUser[0].userName;
+        const userName = foundUser[0].username;
         try {
           await AsyncStorage.setItem("userToken", userToken);
-          // await AsyncStorage.setItem("userName", userName);
-          // await AsyncStorage.setItem("role", role);
+          await AsyncStorage.setItem("userName", userName);
+          await AsyncStorage.setItem("role", role);
         } catch (e) {
           console.log(e);
         }
@@ -143,8 +144,8 @@ export default function Navigation({
         // setIsLoading(false);
         try {
           await AsyncStorage.removeItem("userToken");
-          // await AsyncStorage.removeItem("userName");
-          // await AsyncStorage.removeItem("role");
+          await AsyncStorage.removeItem("userName");
+          await AsyncStorage.removeItem("role");
         } catch (e) {
           console.log(e);
         }
@@ -165,17 +166,16 @@ export default function Navigation({
     setTimeout(async () => {
       // setIsLoading(false);
       let userToken = null;
-      // let userName = null;
-      // let role = null;
-      // userToken = null;
+      let userName = null;
+      let role = null;
       try {
         userToken = await AsyncStorage.getItem("userToken");
-        // userName = await AsyncStorage.getItem("userName");
-        // role = await AsyncStorage.getItem("role");
+        userName = await AsyncStorage.getItem("userName");
+        role = await AsyncStorage.getItem("role");
       } catch (e) {
         console.log(e);
       }
-      dispatch({ type: "RETRIEVE_TOKEN", token: userToken });
+      dispatch({ type: "RETRIEVE_TOKEN", token: userToken, id: userName, quyen: role });
       // dispatch({ type: "RETRIEVE_TOKEN", id: "user", token: "lacnguyen" });
     }, 1000);
   }, []);
@@ -195,10 +195,13 @@ export default function Navigation({
           // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
           theme={theme}
         >
-          {loginState.userToken !== null ? (
+          {console.log(loginState.userName)}
+          {console.log(loginState.userToken)}
+          {console.log(loginState.role)}
+          {loginState.userName !== null ? (
             // <RootNavigator role={loginState.role}/>
-            //  (loginState.role === '1' ? <AdminBottomTabNavigator/> : <ClientBottomTabNavigator/>)
-            <AdminBottomTabNavigator/>
+              (loginState.role === '1' ? <AdminBottomTabNavigator/> : <ClientBottomTabNavigator/>)
+            // <AdminBottomTabNavigator/>
           ) : (
             <LoginStackNavigator />
           )}

@@ -174,7 +174,7 @@ function AdminTabHomeNavigator({ navigation }) {
         name="TabAdminHomeProductList"
         component={TabAdminHomeProductList}
         options={({ route }) => ({
-          title: route.params.madm,
+          title: route.params.danhmuc.tendm,
           headerBackTitleVisible: false,
           // headerShown: false,
           headerRight: () => (
@@ -183,7 +183,7 @@ function AdminTabHomeNavigator({ navigation }) {
               size={25}
               backgroundColor={colors.surface}
               color={colors.text}
-              onPress={() => navigation.navigate("TabAdminHomeAddProduct")}
+              onPress={() => navigation.navigate("TabAdminHomeAddProduct", {danhmuc: route.params.danhmuc})}
             />
           ),
         })}

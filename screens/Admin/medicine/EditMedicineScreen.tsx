@@ -343,7 +343,7 @@ const EditMedicineScreen = ({ route }) => {
             </View>
             <TouchableOpacity
               style={styles.commandButton}
-              // onPress={handleSubmit}
+              onPress={()=>handleSubmit}
             >
               <Text style={styles.panelButtonTitle}>Commit Change</Text>
             </TouchableOpacity>
@@ -353,7 +353,7 @@ const EditMedicineScreen = ({ route }) => {
       <View>
         <TouchableOpacity
           style={styles.commandButton}
-          onPress={handleDelete(itemData.masp)}
+          onPress={()=>handleDelete(itemData.masp)}
         >
           <Text style={styles.panelButtonTitle}>Delete Medicine</Text>
         </TouchableOpacity>
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   commandButton: {
     padding: 15,
     borderRadius: 10,
-    backgroundColor: "#FF6347",
+    backgroundColor: "#3e2465",
     alignItems: "center",
     marginTop: 10,
   },

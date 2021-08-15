@@ -34,22 +34,23 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const AddMedicineScreen = () => {
-  const [dm, setDm] = useState([]);
+const AddMedicineScreen = ({route}) => {
+  // console.log(route.params);
+  // const [dm, setDm] = useState([route.params]);
   const [image, setImage] = useState();
-  const [selectedDm, setSelectedDm] = useState();
+  const danhmuc = route.params.danhmuc;
   const { colors } = useTheme();
 
-  React.useEffect(() => {
-    getListCategoryMedicine()
-      .then((res) => {
-        // console.log(res.data);
-        setDm(res.data);
-      })
-      .catch((e) => {
-        Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
-      });
-  }, []);
+  // React.useEffect(() => {
+  //   getListCategoryMedicine()
+  //     .then((res) => {
+  //       // console.log(res.data);
+  //       setDm(res.data);
+  //     })
+  //     .catch((e) => {
+  //       Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
+  //     });
+  // }, []);
 
   const pickImage = async () => {
     (async () => {
@@ -157,7 +158,9 @@ const AddMedicineScreen = () => {
             !values.mota_chitiet ||
             !values.mota_ngan ||
             !values.soluong ||
-            !values.tensp
+            !values.tensp ||
+            !image
+            // danhmuc
           ) {
             errors.masp = "Required";
             errors.dongia = "Required";
@@ -182,16 +185,14 @@ const AddMedicineScreen = () => {
                 Alert.alert("Submit Failed", e, [{ text: "ok" }]);
               });
             // //
-            let danhmucthuoc = dm.find(x=>x.madm===selectedDm);
-
-            // Alert.alert("Submit Info", selectedDm, [{ text: "ok" }]);
-            // Alert.alert("Submit Info", values.dongia, [{ text: "ok" }]);
+            // let danhmucthuoc = dm.find(x=>x.madm===selectedDm);
 
             addMedicine({
-              danhmuc: {
-                madm: danhmucthuoc.madm,
-                tendm: danhmucthuoc.tendm
-              },
+              danhmuc: danhmuc, 
+              // {
+              //   madm: danhmucthuoc.madm,
+              //   tendm: danhmucthuoc.tendm
+              // },
               dongia: parseFloat(values.dongia),
               khuyenmai: parseFloat(values.khuyenmai),
               masp: values.masp,
@@ -206,24 +207,22 @@ const AddMedicineScreen = () => {
       >
         {({ handleChange, handleSubmit, values }) => (
           <View>
-            <View style={styles.picker}>
-              <Picker 
-                // ref={pickerRef}
-                style={{height: 40}}
-                numberOfLines={5}
-                selectedValue={selectedDm}
-                onValueChange={(itemValue, itemIndex) =>
-                  setSelectedDm(itemValue)
-                }
-              >
-                {dm ? dm.map((item) => {
-                  return(
-                    <Picker.Item label={item.tendm} value={item.madm} />
-                  )
-                }):null}
-                {/* <Picker.Item label="Java" value="java" />
-                <Picker.Item label="JavaScript" value="js" /> */}
-              </Picker>
+            <View style={styles.action}>
+              {/* <FontAwesome name="user-o" color={colors.text} size={20} /> */}
+              <TextInput
+                placeholder="Mã danh mục"
+                placeholderTextColor="#666666"
+                autoCorrect={false}
+                style={[
+                  styles.textInput,
+                  {
+                    color: colors.text,
+                  },
+                ]}
+                // onChangeText={handleChange("masp")}
+                value={danhmuc.tendm}
+                editable={false}
+              />
             </View>
             <View style={styles.action}>
               {/* <FontAwesome name="user-o" color={colors.text} size={20} /> */}
@@ -344,7 +343,7 @@ const AddMedicineScreen = () => {
               style={styles.commandButton}
               onPress={handleSubmit}
             >
-              <Text style={styles.panelButtonTitle}>Submit</Text>
+              <Text style={styles.panelButtonTitle}>Save</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -362,7 +361,7 @@ const styles = StyleSheet.create({
   commandButton: {
     padding: 15,
     borderRadius: 10,
-    backgroundColor: "#FF6347",
+    backgroundColor: "#694fad",
     alignItems: "center",
     marginTop: 10,
   },

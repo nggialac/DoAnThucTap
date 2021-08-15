@@ -15,7 +15,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import { postRegisterNT } from "../../api/LoginApis";
 
 export default function ClientSignUpScreen({ navigation }) {
@@ -64,7 +63,7 @@ export default function ClientSignUpScreen({ navigation }) {
       .catch((e) => {
         // Alert.alert("Submit Info", e+"", [{ text: "ok" }]);
         // console.log(params);
-        Alert.alert("Submit Info", "Cannot Sign up!", [{ text: "ok" }]);
+        Alert.alert("Submit Info", "Cannot Sign up!" + e, [{ text: "ok" }]);
       });
   };
 

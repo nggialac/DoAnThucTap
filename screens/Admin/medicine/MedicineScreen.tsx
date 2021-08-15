@@ -68,7 +68,7 @@ const MedicineScreen = ({ navigation }) => {
               <TouchableOpacity
                 key={item.madm}
                 style={styles.item}
-                onPress={() => navigation.navigate("TabAdminHomeProductList", {madm: item.madm})}
+                onPress={() => navigation.navigate("TabAdminHomeProductList", {danhmuc: item})}
                 onLongPress={()=>{}}
               >
                 <View style={styles.itemLeft}>

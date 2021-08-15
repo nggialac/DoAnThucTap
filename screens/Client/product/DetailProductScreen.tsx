@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   SafeAreaView,
@@ -7,13 +7,28 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import Icon from "@expo/vector-icons/MaterialIcons";
 import COLORS from "../../../assets/colors/Colors";
 import { CommentCard } from "./CommentCard";
+import { postCart } from "../../../api/CartApis";
 
 const DetailProductScreen = ({ navigation, route }) => {
-  const plant = route.params;
+  const medicine = route.params;
+  const [count, setCount] = useState(1);
+
+  const addCart = (manhathuoc: string, masp: string, soluong: number) => {
+    postCart(manhathuoc, masp, soluong)
+    .then(res=> {
+      Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
+    })
+    .catch(e=> {
+      console.log(e);
+      Alert.alert("Submit Info", "Fail!" + e, [{ text: "ok" }]);
+    })
+  }
 
   const commentsData = [
     {
@@ -49,8 +64,8 @@ const DetailProductScreen = ({ navigation, route }) => {
         </View>
         <View style={style.imageContainer}>
           <Image
-            source={plant.image}
-            style={{ resizeMode: "contain", flex: 1 }}
+            source={{ uri: medicine.photo }}
+            style={{ resizeMode: "cover", flex: 1 }}
           />
         </View>
         <View style={style.detailsContainer}>
@@ -61,7 +76,7 @@ const DetailProductScreen = ({ navigation, route }) => {
               alignItems: "flex-end",
             }}
           >
-            <View style={style.line} />
+            {/* <View style={style.line} /> */}
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>
               Best choice
             </Text>
@@ -76,7 +91,7 @@ const DetailProductScreen = ({ navigation, route }) => {
             }}
           >
             <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-              {plant.name}
+              {medicine.tensp}
             </Text>
             <View style={style.priceTag}>
               <Text
@@ -87,12 +102,14 @@ const DetailProductScreen = ({ navigation, route }) => {
                   fontSize: 16,
                 }}
               >
-                ${plant.price}
+                {medicine.dongia}VND
               </Text>
             </View>
           </View>
           <View style={{ paddingHorizontal: 20, marginTop: 10 }}>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>About</Text>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              {medicine.mota_ngan}
+            </Text>
             <Text
               style={{
                 color: "grey",
@@ -101,7 +118,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                 marginTop: 10,
               }}
             >
-              {plant.about}
+              {medicine.mota_chitiet}
             </Text>
             <View
               style={{
@@ -116,9 +133,11 @@ const DetailProductScreen = ({ navigation, route }) => {
                   alignItems: "center",
                 }}
               >
-                <View style={style.borderBtn}>
-                  <Text style={style.borderBtnText}>-</Text>
-                </View>
+                <TouchableOpacity onPress={() => setCount(count - 1)}>
+                  <View style={style.borderBtn}>
+                    <Text style={style.borderBtnText}>-</Text>
+                  </View>
+                </TouchableOpacity>
                 <Text
                   style={{
                     fontSize: 20,
@@ -126,31 +145,35 @@ const DetailProductScreen = ({ navigation, route }) => {
                     fontWeight: "bold",
                   }}
                 >
-                  1
+                  {count}
                 </Text>
-                <View style={style.borderBtn}>
-                  <Text style={style.borderBtnText}>+</Text>
-                </View>
+                <TouchableOpacity onPress={() => setCount(count + 1)}>
+                  <View style={style.borderBtn}>
+                    <Text style={style.borderBtnText}>+</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
 
-              <View style={style.buyBtn}>
-                <Text
-                  style={{
-                    color: COLORS.white,
-                    fontSize: 18,
-                    fontWeight: "bold",
-                  }}
-                >
-                  Buy
-                </Text>
-              </View>
+              <TouchableOpacity onPress={()=>addCart("NT3892785", medicine.masp, count)}>
+                <View style={style.buyBtn}>
+                  <Text
+                    style={{
+                      color: COLORS.white,
+                      fontSize: 18,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Buy
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
 
         {/* COMMENTS */}
-        <View style={{paddingHorizontal: 10}}>
-          <Text style={[style.headerText, {marginTop: 30}]}>Comments</Text>
+        <View style={{ paddingHorizontal: 10 }}>
+          <Text style={[style.headerText, { marginTop: 30 }]}>Comments</Text>
           <FlatList
             data={commentsData ? commentsData : []}
             renderItem={renderComment}

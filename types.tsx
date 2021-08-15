@@ -63,7 +63,10 @@ export type TabAdminHomeParamList = {
   TabAdminHomeProductList: {
     title: string
   };
-  TabAdminHomeAddProduct: undefined;
+  TabAdminHomeAddProduct: 
+  {
+    danhmuc: object
+  };
   TabAdminHomeProductDetail: {
     itemData: object
   };

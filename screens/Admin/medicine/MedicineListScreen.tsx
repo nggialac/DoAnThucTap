@@ -6,7 +6,7 @@ import { getMedicineByCategory } from '../../../api/MedicineApis';
 import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 
 const MedicineListScreen = ({navigation, route}) => {
-  const madm = route.params.madm;
+  const madm = route.params.danhmuc.madm;
   const [listData, setListData] = React.useState([]);
 
   React.useEffect(() => {
@@ -33,7 +33,6 @@ const MedicineListScreen = ({navigation, route}) => {
     return (
       <View style={styles.container}>
         <FlatList 
-            // key={item=>item.masp}
             data={listData}
             renderItem={renderItem}
             keyExtractor={item => item.masp}

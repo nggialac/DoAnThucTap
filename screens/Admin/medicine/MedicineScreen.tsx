@@ -9,16 +9,27 @@ import {
   ScrollView,
   Alert,
   FlatList,
+  RefreshControl,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { getListCategoryMedicine } from "../../../api/MedicineApis";
+import { getListCategoryMedicine, putCategoryMedicine, deleteCategoryMedicine } from "../../../api/MedicineApis";
 // import StarRating from '../components/StarRating';
 
 const MedicineScreen = ({ navigation }) => {
   const theme = useTheme();
   const [listData, setListData] = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(4000).then(() => setRefreshing(false));
+  }, []);
 
   React.useEffect(() => {
     getListCategoryMedicine()
@@ -29,10 +40,26 @@ const MedicineScreen = ({ navigation }) => {
       .catch((e) => {
         Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
       });
-  }, []);
+  }, [refreshing]);
+
+  // const handleEdit = (params) => {
+  //   // const reqData = {params.}
+  //   putCategoryMedicine(params)
+  //   .then(res=>{
+  //     Alert.alert("Fail!", "Success!", [{ text: "ok" }]);
+  //   })
+  //   .catch(e=> {
+  //     Alert.alert("Fail!", "" + e, [{ text: "ok" }]);
+  //   })
+  // }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+    style={styles.container} 
+    refreshControl={<RefreshControl
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+    />}>
       <StatusBar barStyle={theme.dark ? "light-content" : "dark-content"} />
       <View style={styles.items}>
         {listData ? (
@@ -42,6 +69,7 @@ const MedicineScreen = ({ navigation }) => {
                 key={item.madm}
                 style={styles.item}
                 onPress={() => navigation.navigate("TabAdminHomeProductList", {madm: item.madm})}
+                onLongPress={()=>{}}
               >
                 <View style={styles.itemLeft}>
                   <View style={styles.square}>

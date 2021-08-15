@@ -261,7 +261,7 @@ export default function SignInScreen({ navigation }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => navigation.navigate("SignUpScreen")}
+            onPress={() => navigation.navigate("ClientSignUpScreen")}
             style={[
               styles.signIn,
               {

@@ -9,27 +9,30 @@ import {
   Alert,
 } from "react-native";
 
-import { Text, View } from "../../components/Themed";
+import { Text, View } from "../../../components/Themed";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import { postAdmin } from "../../api/LoginApis";
+import { putStaff } from "../../../api/StaffApi";
+import { color } from "react-native-reanimated";
 
-export default function SignUpScreen({ navigation }) {
-  const [sex, setSex] = React.useState(0);
+export default function EditStaffScreen({ route }) {
+  const itemData = route.params.itemData;
+
+  const [sex, setSex] = React.useState(itemData.gioitinh);
   const [data, setData] = React.useState({
-    username: "",
-    password: "",
-    confirmPassword: "",
-    diachi: "",
-    email: "",
+    username: itemData.taikhoan.username,
+    password: itemData.taikhoan.password,
+    confirmPassword: itemData.taikhoan.password,
+    diachi: itemData.diachi,
+    email: itemData.email,
     // gioitinh: "",
-    ho: "",
-    ten: "",
-    sdt: "",
+    ho: itemData.ho,
+    ten: itemData.ten,
+    sdt: itemData.sdt,
     check_textInputChange: false,
     secureTextEntry: true,
     confirm_secureTextEntry: true,
@@ -49,7 +52,6 @@ export default function SignUpScreen({ navigation }) {
       Alert.alert("Submit Info", "Invalid data!", [{ text: "ok" }]);
       return;
     }
-
     const params = {
       diachi: data.diachi,
       email: data.email,
@@ -60,16 +62,16 @@ export default function SignUpScreen({ navigation }) {
       ten: data.ten,
       username: data.username,
     };
-
-    postAdmin(params)
+    // console.log(itemData);
+    putStaff(params)
       .then((res) => {
         // console.log(res);
         Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
       })
       .catch((e) => {
-        // Alert.alert("Submit Info", e+"", [{ text: "ok" }]);
+        Alert.alert("Submit Info", JSON.stringify(params), [{ text: "ok" }]);
         // console.log(params);
-        Alert.alert("Submit Info", "Cannot Sign up!", [{ text: "ok" }]);
+        // Alert.alert("Submit Info", "Fail!" + e, [{ text: "ok" }]);
       });
   };
 
@@ -117,13 +119,6 @@ export default function SignUpScreen({ navigation }) {
     });
   };
 
-  // const handleSexChange = (val: any) => {
-  //   setData({
-  //     ...data,
-  //     gioitinh: val,
-  //   });
-  // };
-
   const handleHoChange = (val: any) => {
     setData({
       ...data,
@@ -161,18 +156,21 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#009387" barStyle="light-content" />
+      {/* <StatusBar backgroundColor="#009387" barStyle="light-content" /> */}
       <View style={styles.header}>
-        <Text style={styles.text_header}>Register Account!</Text>
+        <Text style={styles.text_header}>Add Staff!</Text>
       </View>
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={styles.text_footer}>Username</Text>
-          <View style={styles.action}>
+          <View style={[styles.action, {backgroundColor: "#dddddd"}]}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
+              editable={false}
+              selectTextOnFocus={false}
+              value={data.username}
               placeholder="Your Username"
-              style={styles.textInput}
+              style={[styles.textInput, { color: "#05375a"}]}
               autoCapitalize="none"
               onChangeText={(val) => {
                 textInputChange(val);
@@ -189,6 +187,7 @@ export default function SignUpScreen({ navigation }) {
           <View style={styles.action}>
             <FontAwesome name="lock" color="#05375a" size={20} />
             <TextInput
+              value={data.password}
               placeholder="Your Password"
               secureTextEntry={data.secureTextEntry ? true : false}
               style={styles.textInput}
@@ -203,31 +202,12 @@ export default function SignUpScreen({ navigation }) {
               )}
             </TouchableOpacity>
           </View>
-          <Text style={[styles.text_footer, { marginTop: 15 }]}>
-            Confirm Password
-          </Text>
-          <View style={styles.action}>
-            <FontAwesome name="lock" color="#05375a" size={20} />
-            <TextInput
-              placeholder="Confirm Your Password"
-              secureTextEntry={data.secureTextEntry ? true : false}
-              style={styles.textInput}
-              autoCapitalize="none"
-              onChangeText={(val) => handleConfirmPasswordChange(val)}
-            />
-            {/* <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
-              {data.confirm_secureTextEntry ? (
-                <Feather name="eye-off" color="grey" size={16} />
-              ) : (
-                <Feather name="eye" color="green" size={16} />
-              )}
-            </TouchableOpacity> */}
-          </View>
 
           <Text style={styles.text_footer}>Last Name</Text>
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
+              value={data.ho}
               placeholder="Last Name"
               style={styles.textInput}
               autoCapitalize="none"
@@ -240,6 +220,7 @@ export default function SignUpScreen({ navigation }) {
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
+              value={data.ten}
               placeholder="First Name"
               style={styles.textInput}
               autoCapitalize="none"
@@ -273,6 +254,7 @@ export default function SignUpScreen({ navigation }) {
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
+              value={data.email}
               placeholder="Your email"
               style={styles.textInput}
               autoCapitalize="none"
@@ -285,6 +267,7 @@ export default function SignUpScreen({ navigation }) {
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
+              value={data.sdt}
               placeholder="Your Phone"
               style={styles.textInput}
               autoCapitalize="none"
@@ -297,6 +280,7 @@ export default function SignUpScreen({ navigation }) {
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
+              value={data.diachi}
               placeholder="Your Address"
               style={styles.textInput}
               autoCapitalize="none"
@@ -309,35 +293,11 @@ export default function SignUpScreen({ navigation }) {
           <View style={styles.button}>
             <TouchableOpacity onPress={handleSubmit} style={{ width: "100%" }}>
               <LinearGradient
-                colors={["#08d4c4", "#01ab9d"]}
+                colors={["#694fad", "#694fad"]}
                 style={styles.signIn}
               >
-                <Text style={[styles.textSign, { color: "#fff" }]}>
-                  Sign Up
-                </Text>
+                <Text style={[styles.textSign, { color: "#fff" }]}>Save</Text>
               </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={[
-                styles.signIn,
-                {
-                  borderColor: "#009387",
-                  borderWidth: 1,
-                  marginTop: 15,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: "#009387",
-                  },
-                ]}
-              >
-                Sign In
-              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -349,14 +309,14 @@ export default function SignUpScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#009387",
+    backgroundColor: "#694fad",
   },
   header: {
     flex: 1,
     justifyContent: "flex-end",
     paddingHorizontal: 20,
     paddingBottom: 50,
-    backgroundColor: "#009387",
+    backgroundColor: "#694fad",
   },
   footer: {
     flex: 3,
@@ -381,7 +341,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#f2f2f2",
-    paddingBottom: 5,
+    paddingBottom: 0,
   },
   actionError: {
     flexDirection: "row",

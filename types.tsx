@@ -37,6 +37,7 @@ export type LoginStackParamList = {
   SignInScreen: undefined;
   SignOutScreen: undefined;
   SignUpScreen: undefined;
+  ClientSignUpScreen: undefined;
 }
 
 //ADMIN
@@ -50,8 +51,15 @@ export type BottomTabAdminParamList = {
 export type TabAdminHomeParamList = {
   TabAdminHomeScreen: undefined;
   TabAdminHomeOrder: undefined;
+  //
   TabAdminHomeStaff: undefined;
+  TabAdminHomeAddStaff: undefined;
+  TabAdminHomeEditStaff: {
+    itemData: object
+  }
+  //
   TabAdminHomeProduct: undefined;
+  TabAdminHomeCategoryProduct: undefined;
   TabAdminHomeProductList: {
     title: string
   };

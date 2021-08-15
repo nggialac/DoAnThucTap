@@ -18,7 +18,14 @@ import AdminBottomTabNavigator from "./Admin/AdminBootTabNavigator";
 import BottomTabNavigator from "./BottomTabNavigator";
 import ClientBottomTabNavigator from "./Client/ClientBottomTabNavigator";
 import LinkingConfiguration from "./LinkingConfiguration";
+
 import LoginNavigator from "./Login/LoginNavigator";
+import SplashScreen from "../screens/Login/SplashScreen";
+import SignInScreen from "../screens/Login/SignInScreen";
+import SignOutScreen from "../screens/Login/SignOutScreen";
+import SignUpScreen from "../screens/Login/SignUpScreen";
+import ClientSignUpScreen from "../screens/Login/ClientSignUpScreen";
+
 import { AuthContext } from "../components/ContextLogin";
 import { ActivityIndicator, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -224,7 +231,11 @@ const LoginStack = createStackNavigator<LoginStackParamList>();
 function LoginStackNavigator() {
   return (
     <LoginStack.Navigator screenOptions={{ headerShown: false }}>
-      <LoginStack.Screen name="SplashScreen" component={LoginNavigator} />
+      <LoginStack.Screen name="SplashScreen" component={SplashScreen} />
+      <LoginStack.Screen name="SignInScreen" component={SignInScreen} />
+      <LoginStack.Screen name="SignOutScreen" component={SignOutScreen} />
+      <LoginStack.Screen name="SignUpScreen" component={SignUpScreen} />
+      <LoginStack.Screen name="ClientSignUpScreen" component={ClientSignUpScreen} />
     </LoginStack.Navigator>
   );
 }

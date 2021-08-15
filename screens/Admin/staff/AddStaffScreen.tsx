@@ -9,16 +9,16 @@ import {
   Alert,
 } from "react-native";
 
-import { Text, View } from "../../components/Themed";
+import { Text, View } from "../../../components/Themed";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import { postAdmin } from "../../api/LoginApis";
+import { postRegisterStaff } from "../../../api/LoginApis";
 
-export default function SignUpScreen({ navigation }) {
+export default function AddStaffScreen({ navigation }) {
   const [sex, setSex] = React.useState(0);
   const [data, setData] = React.useState({
     username: "",
@@ -61,7 +61,7 @@ export default function SignUpScreen({ navigation }) {
       username: data.username,
     };
 
-    postAdmin(params)
+    postRegisterStaff(params)
       .then((res) => {
         // console.log(res);
         Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
@@ -117,13 +117,6 @@ export default function SignUpScreen({ navigation }) {
     });
   };
 
-  // const handleSexChange = (val: any) => {
-  //   setData({
-  //     ...data,
-  //     gioitinh: val,
-  //   });
-  // };
-
   const handleHoChange = (val: any) => {
     setData({
       ...data,
@@ -161,9 +154,9 @@ export default function SignUpScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor="#009387" barStyle="light-content" />
+      {/* <StatusBar backgroundColor="#009387" barStyle="light-content" /> */}
       <View style={styles.header}>
-        <Text style={styles.text_header}>Register Account!</Text>
+        <Text style={styles.text_header}>Add Staff!</Text>
       </View>
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -309,35 +302,13 @@ export default function SignUpScreen({ navigation }) {
           <View style={styles.button}>
             <TouchableOpacity onPress={handleSubmit} style={{ width: "100%" }}>
               <LinearGradient
-                colors={["#08d4c4", "#01ab9d"]}
+                colors={["#694fad", "#694fad"]}
                 style={styles.signIn}
               >
                 <Text style={[styles.textSign, { color: "#fff" }]}>
-                  Sign Up
+                  Save
                 </Text>
               </LinearGradient>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={[
-                styles.signIn,
-                {
-                  borderColor: "#009387",
-                  borderWidth: 1,
-                  marginTop: 15,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.textSign,
-                  {
-                    color: "#009387",
-                  },
-                ]}
-              >
-                Sign In
-              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -349,14 +320,14 @@ export default function SignUpScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#009387",
+    backgroundColor: "#694fad",
   },
   header: {
     flex: 1,
     justifyContent: "flex-end",
     paddingHorizontal: 20,
     paddingBottom: 50,
-    backgroundColor: "#009387",
+    backgroundColor: "#694fad",
   },
   footer: {
     flex: 3,

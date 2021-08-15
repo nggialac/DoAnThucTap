@@ -16,10 +16,9 @@ import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import { postAdmin } from "../../api/LoginApis";
+import { postRegisterNT } from "../../api/LoginApis";
 
-export default function SignUpScreen({ navigation }) {
-  const [sex, setSex] = React.useState(0);
+export default function ClientSignUpScreen({ navigation }) {
   const [data, setData] = React.useState({
     username: "",
     password: "",
@@ -27,8 +26,7 @@ export default function SignUpScreen({ navigation }) {
     diachi: "",
     email: "",
     // gioitinh: "",
-    ho: "",
-    ten: "",
+    tennhathuoc: "",
     sdt: "",
     check_textInputChange: false,
     secureTextEntry: true,
@@ -40,10 +38,9 @@ export default function SignUpScreen({ navigation }) {
     if (
       !data.username ||
       !data.email ||
-      !data.ho ||
       !data.password ||
       !data.sdt ||
-      !data.ten ||
+      !data.tennhathuoc ||
       !data.username
     ) {
       Alert.alert("Submit Info", "Invalid data!", [{ text: "ok" }]);
@@ -53,15 +50,13 @@ export default function SignUpScreen({ navigation }) {
     const params = {
       diachi: data.diachi,
       email: data.email,
-      gioitinh: sex,
-      ho: data.ho,
       password: data.password,
       sdt: data.sdt,
-      ten: data.ten,
+      tennhathuoc: data.tennhathuoc,
       username: data.username,
     };
 
-    postAdmin(params)
+    postRegisterNT(params)
       .then((res) => {
         // console.log(res);
         Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
@@ -117,24 +112,10 @@ export default function SignUpScreen({ navigation }) {
     });
   };
 
-  // const handleSexChange = (val: any) => {
-  //   setData({
-  //     ...data,
-  //     gioitinh: val,
-  //   });
-  // };
-
-  const handleHoChange = (val: any) => {
-    setData({
-      ...data,
-      ho: val,
-    });
-  };
-
   const handleTenChange = (val: any) => {
     setData({
       ...data,
-      ten: val,
+      tennhathuoc: val,
     });
   };
 
@@ -224,19 +205,7 @@ export default function SignUpScreen({ navigation }) {
             </TouchableOpacity> */}
           </View>
 
-          <Text style={styles.text_footer}>Last Name</Text>
-          <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
-            <TextInput
-              placeholder="Last Name"
-              style={styles.textInput}
-              autoCapitalize="none"
-              onChangeText={(val) => {
-                handleHoChange(val);
-              }}
-            />
-          </View>
-          <Text style={styles.text_footer}>First Name</Text>
+          <Text style={styles.text_footer}>Drugstore Name</Text>
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
@@ -248,27 +217,7 @@ export default function SignUpScreen({ navigation }) {
               }}
             />
           </View>
-          <Text style={styles.text_footer}>Sex</Text>
-          <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
-            {/* <TextInput
-              placeholder="Sex"
-              style={styles.textInput}
-              autoCapitalize="none"
-              onChangeText={(val) => {
-                handleSexChange(val);
-              }}
-            /> */}
-            <Picker
-              style={styles.textInput}
-              numberOfLines={5}
-              selectedValue={sex}
-              onValueChange={(itemValue, itemIndex) => setSex(itemValue)}
-            >
-              <Picker.Item label="Male" value={0} />
-              <Picker.Item label="Female" value={1} />
-            </Picker>
-          </View>
+
           <Text style={styles.text_footer}>Email</Text>
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />

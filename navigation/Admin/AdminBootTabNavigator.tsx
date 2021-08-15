@@ -8,9 +8,15 @@ import useColorScheme from "../../hooks/useColorScheme";
 // import TabTwoScreen from "../../screens/TabTwoScreen";
 // import TabThreeScreen from "../../screens/TabThreeScreen";
 import TabAdminHomeScreen from "../../screens/Admin/AdminHomeScreen";
+
 import TabAdminHomeOrder from "../../screens/Admin/order/OrderScreen";
+
 import TabAdminHomeStaff from "../../screens/Admin/staff/StaffScreen";
+import TabAdminHomeAddStaff from "../../screens/Admin/staff/AddStaffScreen";
+import TabAdminHomeEditStaff from "../../screens/Admin/staff/EditStaffScreen";
+
 import TabAdminHomeProduct from "../../screens/Admin/medicine/MedicineScreen";
+import TabAdminHomeCategoryProduct from "../../screens/Admin/medicine/AddCategoryMedicineScreen";
 import TabAdminHomeProductList from "../../screens/Admin/medicine/MedicineListScreen";
 import TabAdminHomeProductDetail from "../../screens/Admin/medicine/DetailMedicineScreen";
 import TabAdminHomeEditProduct from "../../screens/Admin/medicine/EditMedicineScreen";
@@ -113,10 +119,56 @@ function AdminTabHomeNavigator({ navigation }) {
       <TabAdminHomeStack.Screen
         name="TabAdminHomeStaff"
         component={TabAdminHomeStaff}
+        options={() => ({
+          headerBackTitleVisible: false,
+          // headerShown: false,
+          headerRight: () => (
+            <MaterialCommunityIcons.Button
+              name="plus-box-multiple-outline"
+              size={25}
+              backgroundColor={colors.surface}
+              color={colors.text}
+              onPress={() => navigation.navigate("TabAdminHomeAddStaff")}
+            />
+          ),
+        })}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeAddStaff"
+        component={TabAdminHomeAddStaff}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeEditStaff"
+        component={TabAdminHomeEditStaff}
+        options={({ route }) => ({
+          itemData: route.params.itemData,
+          headerBackTitleVisible: false,
+        })}
       />
       <TabAdminHomeStack.Screen
         name="TabAdminHomeProduct"
         component={TabAdminHomeProduct}
+        options={() => ({
+          headerBackTitleVisible: false,
+          // headerShown: false,
+          headerRight: () => (
+            <MaterialCommunityIcons.Button
+              name="plus-box-multiple-outline"
+              size={25}
+              backgroundColor={colors.surface}
+              color={colors.text}
+              onPress={() => navigation.navigate("TabAdminHomeCategoryProduct")}
+            />
+          ),
+        })}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeCategoryProduct"
+        component={TabAdminHomeCategoryProduct}
+        options={() => ({
+          headerBackTitleVisible: false,
+          // headerShown: false,
+        })}
       />
       <TabAdminHomeStack.Screen
         name="TabAdminHomeProductList"
@@ -127,13 +179,13 @@ function AdminTabHomeNavigator({ navigation }) {
           // headerShown: false,
           headerRight: () => (
             <MaterialCommunityIcons.Button
-                name="plus-box-multiple-outline"
-                size={25}
-                backgroundColor={colors.surface}
-                color={colors.text}
-                onPress={() => navigation.navigate("TabAdminHomeAddProduct")}
-              />
-          )
+              name="plus-box-multiple-outline"
+              size={25}
+              backgroundColor={colors.surface}
+              color={colors.text}
+              onPress={() => navigation.navigate("TabAdminHomeAddProduct")}
+            />
+          ),
         })}
       />
       <TabAdminHomeStack.Screen
@@ -156,7 +208,11 @@ function AdminTabHomeNavigator({ navigation }) {
                 size={25}
                 backgroundColor={colors.surface}
                 color={colors.text}
-                onPress={() => navigation.navigate("TabAdminHomeEditProduct", {itemData: route.params.itemData})}
+                onPress={() =>
+                  navigation.navigate("TabAdminHomeEditProduct", {
+                    itemData: route.params.itemData,
+                  })
+                }
               />
             </View>
           ),

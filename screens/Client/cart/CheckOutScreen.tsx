@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Image, StyleSheet, Text, View } from 'react-native';
-import { useStripe } from '@stripe/stripe-react-native';
-import Button from './Button';
-import PaymentScreen from './PaymentScreen';
-import { API_URL } from './Config';
+import React, { useEffect, useState } from "react";
+import { Alert, Image, StyleSheet, Text, View } from "react-native";
+import { useStripe } from "@stripe/stripe-react-native";
+import Button from "./Button";
+import PaymentScreen from "./PaymentScreen";
+import { API_URL } from "./Config";
+//
+import { postOrder } from "../../../api/OrderApis";
+import { AuthContext } from "../../../components/ContextLogin";
 const colors = {
-  blurple: '#635BFF',
-  blurple_dark: '#5851DF',
-  white: '#FFFFFF',
-  light_gray: '#F6F9FC',
-  dark_gray: '#425466',
-  slate: '#0A2540',
+  blurple: "#635BFF",
+  blurple_dark: "#5851DF",
+  white: "#FFFFFF",
+  light_gray: "#F6F9FC",
+  dark_gray: "#425466",
+  slate: "#0A2540",
 };
 
+export default function PaymentsUICustomScreen({ route }) {
+  const context = React.useContext(AuthContext);
+  const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
 
-export default function PaymentsUICustomScreen({route}) {
-  const {
-    initPaymentSheet,
-    presentPaymentSheet,
-    confirmPaymentSheetPayment,
-  } = useStripe();
+  const { initPaymentSheet, presentPaymentSheet, confirmPaymentSheetPayment } =
+    useStripe();
   const [paymentSheetEnabled, setPaymentSheetEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<{
@@ -28,14 +30,15 @@ export default function PaymentsUICustomScreen({route}) {
   } | null>(null);
 
   const totalPrice = route.params.total;
+  const dataCart = route.params.dataCart;
   // console.log(route.params.);
 
   const fetchPaymentSheetParams = async () => {
     console.log(totalPrice);
     const response = await fetch(`${API_URL}/payment-sheet`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         total: totalPrice,
@@ -51,25 +54,45 @@ export default function PaymentsUICustomScreen({route}) {
     };
   };
 
+  const createOrders = (manhathuoc: string, params) => {
+    // const temp = [{params}]
+    postOrder(manhathuoc, params)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert(`Error`, e + "");
+      });
+  };
+
+  function requestData(dataCart) {
+    const newArray = dataCart.map(function (v) {
+      return {
+        dongia: v.sanpham.dongia,
+        masp: v.sanpham.masp,
+        soluong: v.soluong,
+      };
+    });
+    return newArray;
+  }
+
   const initialisePaymentSheet = async () => {
     setLoading(true);
 
     try {
-      const {
-        paymentIntent,
-        ephemeralKey,
-        customer,
-      } = await fetchPaymentSheetParams();
+      const { paymentIntent, ephemeralKey, customer } =
+        await fetchPaymentSheetParams();
 
       const { error, paymentOption } = await initPaymentSheet({
         customerId: customer,
         customerEphemeralKeySecret: ephemeralKey,
         paymentIntentClientSecret: paymentIntent,
         customFlow: true,
-        merchantDisplayName: 'Medical Ecom Inc.',
+        merchantDisplayName: "Medical Ecom Inc.",
         applePay: true,
-        merchantCountryCode: 'US',
-        style: 'alwaysDark',
+        merchantCountryCode: "US",
+        style: "alwaysDark",
         googlePay: true,
         testEnv: true,
       });
@@ -81,7 +104,7 @@ export default function PaymentsUICustomScreen({route}) {
         setPaymentMethod(paymentOption);
       }
     } catch (error) {
-      console.log('error', error);
+      console.log("error", error);
     } finally {
       setLoading(false);
     }
@@ -93,7 +116,7 @@ export default function PaymentsUICustomScreen({route}) {
     });
 
     if (error) {
-      console.log('error', error);
+      console.log("error", error);
     } else if (paymentOption) {
       setPaymentMethod({
         label: paymentOption.label,
@@ -111,10 +134,15 @@ export default function PaymentsUICustomScreen({route}) {
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
-      Alert.alert('Success', 'The payment was confirmed successfully!');
+      Alert.alert("Success", "The payment was confirmed successfully!");
       setPaymentSheetEnabled(false);
+
+      //CreateOrder
+      const data = requestData(dataCart);
+      await createOrders(nhathuoc.manhathuoc, data);
+
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -127,7 +155,14 @@ export default function PaymentsUICustomScreen({route}) {
 
   return (
     <PaymentScreen>
-      <View>
+      <View style={styles.container}>
+        <View style={styles.text}>
+          <Text style={styles.content}>Medical E-Commerce Payment</Text>
+          <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+            Total must pay: {totalPrice}VND
+          </Text>
+          <Text style={{ fontSize: 20 }}>Select your payment information</Text>
+        </View>
         <Button
           variant="primary"
           loading={loading}
@@ -143,7 +178,7 @@ export default function PaymentsUICustomScreen({route}) {
                 <Text style={styles.text}>{paymentMethod.label}</Text>
               </View>
             ) : (
-              'Choose payment method'
+              "Choose payment method"
             )
           }
           disabled={!paymentSheetEnabled}
@@ -165,12 +200,22 @@ export default function PaymentsUICustomScreen({route}) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    marginTop: 50,
+  },
+  content: {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: 30,
+  },
   flex: {
     flex: 1,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   section: {
     marginTop: 40,
@@ -178,11 +223,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     marginBottom: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   paymentMethodTitle: {
     color: colors.slate,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   image: {
     width: 26,
@@ -191,7 +236,7 @@ const styles = StyleSheet.create({
   text: {
     color: colors.white,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 12,
   },
 });

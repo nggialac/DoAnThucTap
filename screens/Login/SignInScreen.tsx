@@ -35,7 +35,7 @@ export default function SignInScreen({ navigation }) {
 
   const { colors } = useTheme();
 
-  const { signIn } = React.useContext(AuthContext);
+  const signIn = React.useContext(AuthContext);
 
   const textInputChange = (val: string) => {
     if (val.trim().length > 0) {
@@ -92,7 +92,7 @@ export default function SignInScreen({ navigation }) {
     }
   };
 
-  const doLogin = (userName: string, password: string) => {
+  const doLogin = async (userName: string, password: string) => {
     if (data.username.length == 0 || data.password.length == 0) {
       Alert.alert(
         "Wrong Input!",
@@ -101,21 +101,25 @@ export default function SignInScreen({ navigation }) {
       );
       return;
     }
+
+    console.log(userName);
+    console.log(password);
     const params = { password: password, username: userName };
-    postLogin(params)
-      .then((response) => {
+    await postLogin(params)
+      .then(async (response) => {
         console.log(response.data);
         // setUser(response.data);
         let Users = [];
         const user = response.data;
         Users.push(user);
-        const foundUser = Users.filter((item) => {
+        const foundUser = await Users.filter((item) => {
           return userName == item.username && password == item.password;
         });
         // getDataUser(user, mnv_mnt);
-        
+
         // console.log("TEST: " + mnv_mnt);
-        signIn(foundUser);
+        // console.log(foundUser);
+        await signIn.authContext.signIn(foundUser);
       })
       .catch((e) => {
         console.log(e);
@@ -125,9 +129,6 @@ export default function SignInScreen({ navigation }) {
         // alert(e);
       });
   };
-  
-
-
 
   // React.useEffect(() => {
   //   getListNV()
@@ -191,17 +192,19 @@ export default function SignInScreen({ navigation }) {
           </Animatable.View>
         )}
 
-        <Text
-          style={[
-            styles.text_footer,
-            {
-              color: colors.text,
-              marginTop: 35,
-            },
-          ]}
-        >
-          Password
-        </Text>
+        <TouchableOpacity>
+          <Text
+            style={[
+              styles.text_footer,
+              {
+                color: colors.text,
+                marginTop: 35,
+              },
+            ]}
+          >
+            Password
+          </Text>
+        </TouchableOpacity>
         <View style={styles.action}>
           <Feather name="lock" color={colors.text} size={20} />
           <TextInput

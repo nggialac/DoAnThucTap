@@ -8,7 +8,7 @@ import {
   View,
   Alert,
   RefreshControl,
-  LogBox
+  LogBox,
 } from "react-native";
 import {
   FlatList,
@@ -25,12 +25,13 @@ import {
   getMedicineByCategory,
   getListCategoryMedicine,
   getListMedicine,
+  getListMedicineSearch,
 } from "../../api/MedicineApis";
 const { width } = Dimensions.get("screen");
 const cardWidth = width / 2 - 20;
 
 const HomeScreen = ({ navigation }) => {
-  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(-1);
   const [refreshing, setRefreshing] = useState(false);
 
   const wait = (timeout) => {
@@ -44,12 +45,15 @@ const HomeScreen = ({ navigation }) => {
 
   const [categories, setCategories] = useState([]);
   const [medicines, setMedicines] = useState([]);
+  const [medicinesChange, setMedicinesChange] = useState();
+  const [textInputValue, setTextInputValue] = React.useState('');
+
   LogBox.ignoreAllLogs();
 
   const getCategories = () => {
     getListCategoryMedicine()
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setCategories(res.data);
       })
       .catch((e) => {
@@ -60,13 +64,35 @@ const HomeScreen = ({ navigation }) => {
   const getMedicines = () => {
     getListMedicine()
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setMedicines(res.data);
       })
       .catch((e) => {
         Alert.alert("Fail!", "" + e, [{ text: "ok" }]);
       });
   };
+
+  const getMedicinesSearch = (tensp: string) => {
+    getListMedicineSearch(tensp)
+      .then((res) => {
+        // console.log(res.data);
+        setMedicines(res.data);
+        setSelectedCategoryIndex(-1);
+        setMedicinesChange(undefined);
+      })
+      .catch((e) => {
+        Alert.alert("Fail!", "" + e, [{ text: "ok" }]);
+      });
+  };
+
+  function filterMedicine(madm: string, index: any) {
+    const arr = medicines;
+    const temp = arr.filter((item) => item.danhmuc.madm === madm);
+    setMedicinesChange(temp);
+    console.log(temp);
+    // return temp;
+    setSelectedCategoryIndex(index);
+  }
 
   useEffect(() => {
     getCategories();
@@ -80,43 +106,45 @@ const HomeScreen = ({ navigation }) => {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={style.categoriesListContainer}
       >
-        {categories ? categories.map((category, index) => (
-          <TouchableOpacity
-            key={index}
-            activeOpacity={0.8}
-            onPress={() => setSelectedCategoryIndex(index)}
-          >
-            <View
-              style={{
-                backgroundColor:
-                  selectedCategoryIndex == index
-                    ? COLORS.primary
-                    : COLORS.secondary,
-                ...style.categoryBtn,
-              }}
-            >
-              {/* <View style={style.categoryBtnImgCon}>
+        {categories
+          ? categories.map((category, index) => (
+              <TouchableOpacity
+                key={index}
+                activeOpacity={0.8}
+                onPress={() => filterMedicine(category.madm, index)}
+              >
+                <View
+                  style={{
+                    backgroundColor:
+                      selectedCategoryIndex == index
+                        ? COLORS.primary
+                        : COLORS.secondary,
+                    ...style.categoryBtn,
+                  }}
+                >
+                  {/* <View style={style.categoryBtnImgCon}>
                 <Image
                   source={category.image}
                   style={{ height: 35, width: 35, resizeMode: "cover" }}
                 />
               </View> */}
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  marginLeft: 10,
-                  color:
-                    selectedCategoryIndex == index
-                      ? COLORS.white
-                      : COLORS.primary,
-                }}
-              >
-                {category.tendm}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        )) : null}
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "bold",
+                      marginLeft: 10,
+                      color:
+                        selectedCategoryIndex == index
+                          ? COLORS.white
+                          : COLORS.primary,
+                    }}
+                  >
+                    {category.tendm}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))
+          : null}
       </ScrollView>
     );
   };
@@ -129,7 +157,10 @@ const HomeScreen = ({ navigation }) => {
       >
         <View style={style.card}>
           <View style={{ alignItems: "center", top: -16 }}>
-            <Image source={{uri: medicine.photo}} style={{ height: 120, width: 120 }} />
+            <Image
+              source={{ uri: medicine.photo }}
+              style={{ height: 120, width: 120 }}
+            />
           </View>
           <View style={{ marginHorizontal: 16 }}>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
@@ -150,9 +181,9 @@ const HomeScreen = ({ navigation }) => {
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>
               ${medicine.dongia}
             </Text>
-            <View style={style.addToCartBtn}>
+            {/* <View style={style.addToCartBtn}>
               <Icon name="add" size={20} color={COLORS.white} />
-            </View>
+            </View> */}
           </View>
         </View>
       </TouchableHighlight>
@@ -160,7 +191,7 @@ const HomeScreen = ({ navigation }) => {
   };
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <View>
+    <View>
       <View style={style.header}>
         <View>
           <View style={{ flexDirection: "row" }}>
@@ -189,29 +220,30 @@ const HomeScreen = ({ navigation }) => {
           <TextInput
             style={{ flex: 1, fontSize: 18 }}
             placeholder="Search for product"
+            onChangeText={text => setTextInputValue(text)}
+            value={textInputValue}
           />
         </View>
         <View style={style.sortBtn}>
+          <TouchableOpacity onPress={()=>getMedicinesSearch(textInputValue)}>
           <Icon name="tune" size={28} color={COLORS.white} />
+          </TouchableOpacity>
         </View>
       </View>
 
       <ListCategories />
 
-      
-
       <FlatList
-        keyExtractor={medicine => medicine.masp}
+        keyExtractor={(medicine) => medicine.masp}
         showsVerticalScrollIndicator={false}
         numColumns={2}
-        data={medicines}
+        data={medicinesChange ? medicinesChange:medicines}
         renderItem={({ item }) => <Card medicine={item} />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
-
-      </View>
+    </View>
     // </SafeAreaView>
   );
 };

@@ -101,7 +101,8 @@ export type TabClientHomeParamList = {
   DetailProductScreen: undefined;
   CartScreen: undefined;
   CheckOutScreen: {
-    total: number
+    total: number,
+    dataCart: []
   };
   
 }
@@ -112,5 +113,11 @@ export type TabClientCategoriesParamList = {
 
 export type TabClientProfileParamList = {
   ClientProfileScreen: undefined;
-  ClientEditProfileScreen: undefined;
+  ClientEditProfileScreen: {
+    nhathuoc: object
+  };
+  BuyHistoryScreen: undefined;
+  DetailBuyHistoryScreen: {
+    madh: any
+  };
 }

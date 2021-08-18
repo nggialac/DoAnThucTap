@@ -17,6 +17,8 @@ import TabClientCategoriesScreen from "../../screens/Client/ClientCategoriesScre
 
 import ClientProfileScreen from "../../screens/Client/ClientProfileScreen";
 import ClientEditProfileScreen from "../../screens/Client/profile/EditProfileClientScreen";
+import BuyHistoryScreen from "../../screens/Client/profile/BuyHistoryScreen";
+import DetailBuyHistoryScreen from "../../screens/Client/profile/DetailBuyHistoryScreen"
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
@@ -46,7 +48,7 @@ export default function AdminBottomTabNavigator() {
           ),
         }}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name="Categories"
         component={ClientTabCategoriesNavigator}
         options={{
@@ -54,7 +56,7 @@ export default function AdminBottomTabNavigator() {
             <TabBarIcon name="book-outline" color={color} />
           ),
         }}
-      />
+      /> */}
       <BottomTab.Screen
         name="Profile"
         component={ClientTabProfileNavigator}
@@ -100,8 +102,9 @@ function ClientTabHomeNavigator() {
         component={CheckOutScreen}
         options={({ route }) => ({
           total: route.params.total,
+          dataCart: route.params.dataCart,
           headerBackTitleVisible: false,
-          headerShown: false,
+          headerShown: true,
         })}
       />
     </TabClientHomeStack.Navigator>
@@ -148,6 +151,7 @@ function ClientTabProfileNavigator({ navigation }) {
               backgroundColor={colors.background}
               color={colors.text}
               onPress={() => navigation.navigate("ClientEditProfileScreen")}
+            
             />
           ),
         }}
@@ -155,9 +159,29 @@ function ClientTabProfileNavigator({ navigation }) {
       <TabClientProfileStack.Screen
         name="ClientEditProfileScreen"
         component={ClientEditProfileScreen}
+        options={({ route }) => ({
+          // nhathuoc: route.params.nhathuoc,
+          headerBackTitleVisible: false,
+          title: "Client Edit Profile Screen",
+          headerShown: false,
+        })}
+      />
+            <TabClientProfileStack.Screen
+        name="BuyHistoryScreen"
+        component={BuyHistoryScreen}
         options={{
-          title: "Edit Profile",
+          title: "Buy History Screen",
         }}
+      />
+      <TabClientProfileStack.Screen
+        name="DetailBuyHistoryScreen"
+        component={DetailBuyHistoryScreen}
+        options={({ route }) => ({
+          madh: route.params.madh,
+          headerBackTitleVisible: false,
+          title: "Buy History Screen",
+          headerShown: true,
+        })}
       />
     </TabClientProfileStack.Navigator>
   );

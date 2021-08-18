@@ -14,6 +14,12 @@ import { AuthContext } from "../../components/ContextLogin";
 
 export default function ClientProfileScreen({navigation}) {
 
+  const context = React.useContext(AuthContext);
+  // const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
+  const nhathuoc = (context.loginState.mnv_mnt);
+  // console.log(context);
+  // console.log(context.loginState);
+
   // const myCustomShare = async() => {
     // const shareOptions = {
     //   message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
@@ -29,10 +35,11 @@ export default function ClientProfileScreen({navigation}) {
     // }
   // };
 
-  const { signOut } = React.useContext(AuthContext);
+  const signOut = React.useContext(AuthContext);
 
   const logoutHandle = () => {
-    signOut();
+    signOut.authContext.signOut();
+    // console.log(signOut);
   }
 
   return (
@@ -47,8 +54,8 @@ export default function ClientProfileScreen({navigation}) {
             size={80}
           />
           <View style={{marginLeft: 20}}>
-            <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>Lac Nguyen</Title>
-            <Caption style={styles.caption}>Lac Nguyen</Caption>
+            <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>{nhathuoc.tennhathuoc}</Title>
+            <Caption style={styles.caption}>{nhathuoc.manhathuoc}</Caption>
           </View>
         </View>
       </View>
@@ -56,20 +63,20 @@ export default function ClientProfileScreen({navigation}) {
       <View style={styles.userInfoSection}>
         <View style={styles.row}>
             <Icon name="map-marker-radius" size={20} color="#777777"/>
-            <Text style={styles.infoLocation}>Tp.HCM, VietNam</Text>
+            <Text style={styles.infoLocation}>{nhathuoc.diachi}</Text>
         </View>
         <View style={styles.row}>
             <Icon name="phone" size={20} color="#777777"/>
-            <Text style={styles.infoLocation}>+83 856696690</Text>
+            <Text style={styles.infoLocation}>{nhathuoc.sdt}</Text>
         </View>
         <View style={styles.row}>
             <Icon name="email" size={20} color="#777777"/>
-            <Text style={styles.infoLocation}>nggialac99@gmail.com</Text>
+            <Text style={styles.infoLocation}>{nhathuoc.email}</Text>
         </View>
       </View>
 
-      {/* <View style={styles.infoBoxWrapper}>
-          <View style={[styles.infoBox, {
+      <View style={styles.infoBoxWrapper}>
+          {/* <View style={[styles.infoBox, {
             borderRightColor: '#dddddd',
             borderRightWidth: 1
           }]}>
@@ -79,8 +86,8 @@ export default function ClientProfileScreen({navigation}) {
           <View style={styles.infoBox}>
             <Title>12</Title>
             <Caption>Orders</Caption>
-          </View>
-      </View> */}
+          </View> */}
+      </View>
 
       <View style={styles.menuWrapper}>
         <TouchableRipple onPress={()=>navigation.navigate('CartScreen')}>
@@ -89,18 +96,18 @@ export default function ClientProfileScreen({navigation}) {
             <Text style={styles.menuItemText}>Your Cart</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={() => {}}>
+        <TouchableRipple onPress={() => {navigation.navigate('BuyHistoryScreen')}}>
           <View style={styles.menuItem}>
             <Icon name="history" color="#FF6347" size={25}/>
             <Text style={styles.menuItemText}>Buy History</Text>
           </View>
         </TouchableRipple>
-        <TouchableRipple onPress={()=>navigation.navigate('TabAdminProfilePaymentScreen')}>
+        {/* <TouchableRipple onPress={()=>navigation.navigate('TabAdminProfilePaymentScreen')}>
           <View style={styles.menuItem}>
             <Icon name="credit-card" color="#FF6347" size={25}/>
             <Text style={styles.menuItemText}>Payment</Text>
           </View>
-        </TouchableRipple>
+        </TouchableRipple> */}
         {/* <TouchableRipple onPress={myCustomShare}>
           <View style={styles.menuItem}>
             <Icon name="share-outline" color="#FF6347" size={25}/>
@@ -152,11 +159,11 @@ const styles = StyleSheet.create({
   },
   infoBoxWrapper: {
     borderBottomColor: "#dddddd",
-    borderBottomWidth: 1,
+    // borderBottomWidth: 1,
     borderTopColor: "#dddddd",
     borderTopWidth: 1,
     flexDirection: "row",
-    height: 100,
+    height: 10,
   },
   infoBox: {
     width: "50%",

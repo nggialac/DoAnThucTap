@@ -4,6 +4,10 @@ export function getListMedicine() {
   return InstanceApi.get("sanpham");
 }
 
+export function getListMedicineSearch(tensp: string) {
+  return InstanceApi.get("sanpham/search", {params: {tensp: tensp}});
+}
+
 export function postMedicine(params: object) {
   return InstanceApi.post("sanpham", params);
 }

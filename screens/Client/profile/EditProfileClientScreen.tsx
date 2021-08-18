@@ -1,201 +1,360 @@
-import React, { useState } from "react";
+import * as React from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  ImageBackground,
-  TextInput,
-  StyleSheet,
   Platform,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  ScrollView,
+  Alert,
 } from "react-native";
 
-import { useTheme } from "react-native-paper";
+import { Text, View } from "../../../components/Themed";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
+import * as Animatable from "react-native-animatable";
+import { FontAwesome } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import { putNTInfo } from "../../../api/NTApis";
+import { AuthContext } from "../../../components/ContextLogin";
 
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Feather from "@expo/vector-icons/Feather";
+export default function SignUpScreen({ navigation }) {
+  const [total, setTotal] = React.useState(0);
+  const context = React.useContext(AuthContext);
+  // const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
+  const nhathuoc = (context.loginState.mnv_mnt);
+  // console.log(nhathuoc.diachi);
 
-import BottomSheet from "reanimated-bottom-sheet";
-import Animated from "react-native-reanimated";
+  const [data, setData] = React.useState({
+    username: nhathuoc.taikhoan.username,
+    password: nhathuoc.taikhoan.password,
+    confirmPassword: nhathuoc.taikhoan.password,
+    diachi: nhathuoc.diachi,
+    email: nhathuoc.email,
+    // gioitinh: "",
+    tennhathuoc: nhathuoc.tennhathuoc,
+    sdt: nhathuoc.sdt,
+    check_textInputChange: false,
+    secureTextEntry: true,
+    confirm_secureTextEntry: true,
+  });
 
-import ImagePicker from "react-native-image-crop-picker";
+  function logoutHandle(){
+    context.authContext.signOut();
+    // console.log(signOut);
+  }
 
-const EditProfileScreen = () => {
-  const [image, setImage] = useState(
-    "https://st.gamevui.com/images/image/2020/09/17/AmongUs-Avatar-maker-hd01.jpg"
-  );
-  const { colors } = useTheme();
+  const handleSubmit = () => {
+    // Alert.alert("Submit Info", JSON.stringify(data), [{ text: "ok" }]);
+    if (
+      !data.username ||
+      !data.email ||
+      !data.password ||
+      !data.sdt ||
+      !data.tennhathuoc ||
+      !data.username ||
+      !data.confirmPassword ||
+      data.password !== data.confirmPassword
+    ) {
+      Alert.alert("Submit Info", "Invalid data!", [{ text: "ok" }]);
+      return;
+    }
+
+    const params = {
+      diachi: data.diachi,
+      email: data.email,
+      password: data.password,
+      sdt: data.sdt,
+      tennhathuoc: data.tennhathuoc,
+      username: data.username,
+    };
+
+    putNTInfo(params)
+      .then((res) => {
+        // console.log(res);
+        Alert.alert("Submit Info", "Success! Please Login again to update.", [{ text: "ok" }]);
+        logoutHandle();
+      })
+      .catch((e) => {
+        // Alert.alert("Submit Info", e+"", [{ text: "ok" }]);
+        console.log(e);
+        Alert.alert("Submit Info", "Cannot Edit Your Profile!", [
+          { text: "ok" },
+        ]);
+      });
+
+      
+  };
+
+  const textInputChange = (val: any) => {
+    if (val.length !== 0) {
+      setData({
+        ...data,
+        username: val,
+        check_textInputChange: true,
+      });
+    } else {
+      setData({
+        ...data,
+        username: val,
+        check_textInputChange: false,
+      });
+    }
+  };
+
+  const handlePasswordChange = (val: any) => {
+    setData({
+      ...data,
+      password: val,
+    });
+  };
+
+  const handleConfirmPasswordChange = (val: any) => {
+    setData({
+      ...data,
+      confirmPassword: val,
+    });
+  };
+
+  const handleAddressChange = (val: any) => {
+    setData({
+      ...data,
+      diachi: val,
+    });
+  };
+
+  const handleEmailChange = (val: any) => {
+    setData({
+      ...data,
+      email: val,
+    });
+  };
+
+  const handleTenChange = (val: any) => {
+    setData({
+      ...data,
+      tennhathuoc: val,
+    });
+  };
+
+  const handleSDTChange = (val: any) => {
+    setData({
+      ...data,
+      sdt: val,
+    });
+  };
+
+  const updateSecureTextEntry = () => {
+    setData({
+      ...data,
+      secureTextEntry: !data.secureTextEntry,
+    });
+  };
+
+  const updateConfirmSecureTextEntry = () => {
+    setData({
+      ...data,
+      confirm_secureTextEntry: !data.confirm_secureTextEntry,
+    });
+  };
 
   return (
     <View style={styles.container}>
-      <View style={{ alignItems: "center" }}>
-        <View
-          style={{
-            height: 100,
-            width: 100,
-            borderRadius: 15,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ImageBackground
-            source={{
-              uri: image,
-            }}
-            style={{ height: 100, width: 100 }}
-            imageStyle={{ borderRadius: 15 }}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
+      <StatusBar backgroundColor="#009387" barStyle="light-content" />
+      <View style={styles.header}>
+        <Text style={styles.text_header}>Edit Account!</Text>
+      </View>
+      <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={styles.text_footer}>Username</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              placeholder="Your Username"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                textInputChange(val);
               }}
-            ></View>
-          </ImageBackground>
-        </View>
+              value={data.username}
+            />
+            {data.check_textInputChange ? (
+              <Animatable.View animation="bounceIn">
+                <Feather name="check-circle" color="green" size={16} />
+              </Animatable.View>
+            ) : null}
+          </View>
 
-        <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>
-          John Doe
-        </Text>
-      </View>
+          <Text style={[styles.text_footer, { marginTop: 15 }]}>Password</Text>
+          <View style={styles.action}>
+            <FontAwesome name="lock" color="#05375a" size={20} />
+            <TextInput
+              placeholder="Your Password"
+              secureTextEntry={data.secureTextEntry ? true : false}
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => handlePasswordChange(val)}
+              value={data.password}
+            />
+            <TouchableOpacity onPress={updateSecureTextEntry}>
+              {data.secureTextEntry ? (
+                <Feather name="eye-off" color="grey" size={16} />
+              ) : (
+                <Feather name="eye" color="green" size={16} />
+              )}
+            </TouchableOpacity>
+          </View>
+          <Text style={[styles.text_footer, { marginTop: 15 }]}>
+            Confirm Password
+          </Text>
+          <View style={styles.action}>
+            <FontAwesome name="lock" color="#05375a" size={20} />
+            <TextInput
+              placeholder="Confirm Your Password"
+              secureTextEntry={data.secureTextEntry ? true : false}
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => handleConfirmPasswordChange(val)}
+              value={data.confirmPassword}
+            />
+            {/* <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
+              {data.confirm_secureTextEntry ? (
+                <Feather name="eye-off" color="grey" size={16} />
+              ) : (
+                <Feather name="eye" color="green" size={16} />
+              )}
+            </TouchableOpacity> */}
+          </View>
+          <Text style={styles.text_footer}>Name</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              placeholder="Name"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleTenChange(val);
+              }}
+              value={data.tennhathuoc}
+            />
+          </View>
 
-      <View style={styles.action}>
-        <FontAwesome name="user-o" color={colors.text} size={20} />
-        <TextInput
-          placeholder="First Name"
-          placeholderTextColor="#666666"
-          autoCorrect={false}
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-      <View style={styles.action}>
-        <FontAwesome name="user-o" color={colors.text} size={20} />
-        <TextInput
-          placeholder="Last Name"
-          placeholderTextColor="#666666"
-          autoCorrect={false}
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-      <View style={styles.action}>
-        <Feather name="phone" color={colors.text} size={20} />
-        <TextInput
-          placeholder="Phone"
-          placeholderTextColor="#666666"
-          keyboardType="number-pad"
-          autoCorrect={false}
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-      <View style={styles.action}>
-        <FontAwesome name="envelope-o" color={colors.text} size={20} />
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#666666"
-          keyboardType="email-address"
-          autoCorrect={false}
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-      <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
-        <Text style={styles.panelButtonTitle}>Submit</Text>
-      </TouchableOpacity>
+          <Text style={styles.text_footer}>Email</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              placeholder="Your email"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleEmailChange(val);
+              }}
+              value={data.email}
+            />
+          </View>
+          <Text style={styles.text_footer}>Phone</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              placeholder="Your Phone"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleSDTChange(val);
+              }}
+              value={data.sdt}
+            />
+          </View>
+          <Text style={styles.text_footer}>Address</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              placeholder="Your Address"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleAddressChange(val);
+              }}
+              value={data.diachi}
+            />
+          </View>
+
+          <View style={styles.button}>
+            <TouchableOpacity onPress={handleSubmit} style={{ width: "100%" }}>
+              <LinearGradient
+                colors={["#08d4c4", "#01ab9d"]}
+                style={styles.signIn}
+              >
+                <Text style={[styles.textSign, { color: "#fff" }]}>
+                  Save Changes
+                </Text>
+              </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={[
+                styles.signIn,
+                {
+                  borderColor: "#009387",
+                  borderWidth: 1,
+                  marginTop: 15,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: "#009387",
+                  },
+                ]}
+                onPress={() => {
+                  navigation.goBack();
+                }}
+              >
+                Go Back
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </Animatable.View>
     </View>
   );
-};
-
-export default EditProfileScreen;
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  commandButton: {
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: "#FF6347",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  panel: {
-    padding: 20,
-    backgroundColor: "#FFFFFF",
-    paddingTop: 20,
-    // borderTopLeftRadius: 20,
-    // borderTopRightRadius: 20,
-    // shadowColor: '#000000',
-    // shadowOffset: {width: 0, height: 0},
-    // shadowRadius: 5,
-    // shadowOpacity: 0.4,
+    backgroundColor: "#009387",
   },
   header: {
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#333333",
-    shadowOffset: { width: -1, height: -3 },
-    shadowRadius: 2,
-    shadowOpacity: 0.4,
-    // elevation: 5,
-    paddingTop: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+    paddingBottom: 50,
+    backgroundColor: "#009387",
   },
-  panelHeader: {
-    alignItems: "center",
+  footer: {
+    flex: 3,
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
   },
-  panelHandle: {
-    width: 40,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#00000040",
-    marginBottom: 10,
-  },
-  panelTitle: {
-    fontSize: 27,
-    height: 35,
-  },
-  panelSubtitle: {
-    fontSize: 14,
-    color: "gray",
-    height: 30,
-    marginBottom: 10,
-  },
-  panelButton: {
-    padding: 13,
-    borderRadius: 10,
-    backgroundColor: "#FF6347",
-    alignItems: "center",
-    marginVertical: 7,
-  },
-  panelButtonTitle: {
-    fontSize: 17,
+  text_header: {
+    color: "#fff",
     fontWeight: "bold",
-    color: "white",
+    fontSize: 30,
+  },
+  text_footer: {
+    color: "#05375a",
+    fontSize: 18,
+    marginTop: 20,
   },
   action: {
     flexDirection: "row",
     marginTop: 10,
-    marginBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#f2f2f2",
     paddingBottom: 5,
@@ -209,8 +368,27 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    marginTop: Platform.OS === "ios" ? 0 : -12,
+    marginTop: Platform.OS === "ios" ? 0 : 0,
     paddingLeft: 10,
     color: "#05375a",
+  },
+  errorMsg: {
+    color: "#FF0000",
+    fontSize: 14,
+  },
+  button: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  signIn: {
+    width: "100%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  textSign: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

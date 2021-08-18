@@ -154,25 +154,38 @@ export default function Navigation({
       return temp;
   }
 
+  const check = async(role: any, userName: any) => {
+    let mnv_mnt
+    if (role === "3") {
+      mnv_mnt = await callNv(userName);
+    }
+    else if (role === "2"){
+      mnv_mnt = await callNt(userName);
+    }
+    return mnv_mnt;
+  }
+
   const authContext = React.useMemo(
     () => ({
-      signIn: async (foundUser: any) => {
+      signIn: async (foundUser:any) => {
         // setUserToken("lacnguyen");
         // setIsLoading(false);
-
+        console.log(foundUser);
         const userToken = String(foundUser[0].userToken);
         const role = String(foundUser[0].quyen.maquyen);
         const userName = foundUser[0].username;
+        
 
-        let mnv_mnt;
+        
 
-        if (role === "3") {
-          mnv_mnt = await callNv(userName);
-        }
-        else if (role === "2"){
-          mnv_mnt = await callNt(userName);
-        }
-        console.log("MNV_MNT: " + mnv_mnt);
+        // if (role === "3") {
+        //   mnv_mnt = await callNv(userName);
+        // }
+        // else if (role === "2"){
+        //   mnv_mnt = await callNt(userName);
+        // }
+        const mnv_mnt = await check(role, userName);
+         console.log("MNV_MNT: " + mnv_mnt);
         // return mnv_mnt;
 
         try {
@@ -259,9 +272,9 @@ export default function Navigation({
           // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
           theme={theme}
         >
-          {console.log(loginState.userName)}
-          {console.log(authContext)}
-          {console.log(loginState.role)}
+          {/* {console.log(loginState.userName)} */}
+          {/* {console.log(authContext)} */}
+          {/* {console.log(loginState.role)} */}
           {console.log(loginState.mnv_mnt)}
           {loginState.mnv_mnt !== null && loginState.mnv_mnt !== undefined ? (
             // <RootNavigator role={loginState.role}/>

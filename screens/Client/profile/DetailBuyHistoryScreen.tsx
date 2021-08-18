@@ -11,41 +11,24 @@ import {
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "@expo/vector-icons/MaterialIcons";
 import COLORS from "../../../assets/colors/Colors";
-import foods from "../../../navigation/Models/Foods";
 import { PrimaryButton } from "../../../components/PrimaryButton";
-import { getListCart, putNumberOfProduct } from "../../../api/CartApis";
 import { AuthContext } from "../../../components/ContextLogin";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getListOrderByMaDH } from "../../../api/OrderApis";
 
-const CartScreen = ({ navigation }) => {
+
+const DetailBuyHistoryScreen = ({ navigation, route }) => {
   // const [tk, setTk] = React.useState();
   const [listData, setListData] = React.useState([]);
-  const [dataCart, setDataCart] = React.useState([]);
-  const [total, setTotal] = React.useState(0);
   const context = React.useContext(AuthContext);
   const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
-  // console.log(context.loginState.mnv_mnt);
+  const madh = route.params.madh;
+  // console.log(madh);
 
-  // const getData = async () => {
-  //   try {
-  //     const res = await AsyncStorage.getItem("MNV_MNT");
-  //     if (res !== null) {
-  //       console.log(tk);
-  //       setTk(JSON.parse(res));
-  //     }
-  //   } catch (e) {
-  //     Alert.alert("Invalid User!", "" + e, [{ text: "Okay" }]);
-  //   }
-  // };
-
-  const getCart = (manhathuoc: string) => {
-    getListCart(manhathuoc)
+  const getData = (madh: string) => {
+    getListOrderByMaDH(madh)
       .then((res) => {
-        // Alert.alert("Success!", "" + res, [{ text: "ok" }]);
         console.log(res.data);
         setListData(res.data);
-        setDataCart(res.data);
-        setTotal(totalPrice(res.data));
       })
       .catch((e) => {
         console.log(e);
@@ -53,56 +36,10 @@ const CartScreen = ({ navigation }) => {
       });
   };
 
-  const changeNumberOfProduct = (
-    manhathuoc: string,
-    masp: string,
-    soluong: number
-  ) => {
-    putNumberOfProduct(manhathuoc, masp, soluong)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-        Alert.alert("Submit Info", "Fail!" + e, [{ text: "ok" }]);
-      });
-  };
-
   React.useEffect(() => {
     // console.log(JSON.parse(nhathuoc).manhathuoc);
-    getCart(nhathuoc.manhathuoc);
+    getData(madh);
   }, []);
-
-  const onChangeQual = async (i, type) => {
-    const dataCar = dataCart;
-    let cantd = dataCar[i].soluong;
-
-    if (type) {
-      cantd = cantd + 1;
-      dataCar[i].soluong = cantd;
-
-      changeNumberOfProduct(nhathuoc.manhathuoc, dataCar[i].id.masp, cantd);
-      setDataCart([...dataCar]);
-      setTotal(totalPrice(dataCart));
-    } else if (type == false && cantd >= 2) {
-      cantd = cantd - 1;
-      dataCar[i].soluong = cantd;
-
-      changeNumberOfProduct(nhathuoc.manhathuoc, dataCar[i].id.masp, cantd);
-      setDataCart([...dataCar]);
-      setTotal(totalPrice(dataCart));
-    } else if (type == false && cantd == 1) {
-      dataCar.splice(i, 1);
-      setDataCart([...dataCar]);
-      setTotal(totalPrice(dataCart));
-    }
-  };
-
-  function totalPrice(arr) {
-    return arr.reduce((sum, i) => {
-      return sum + i.sanpham.dongia * i.soluong;
-    }, 0);
-  }
 
   const CartCard = ({ item, index }) => {
     return (
@@ -128,31 +65,23 @@ const CartScreen = ({ navigation }) => {
         </View>
         <View style={{ marginRight: 20, alignItems: "center" }}>
           <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-            {item.soluong}
+            Số lượng: {item.soluong}
           </Text>
-          <View style={style.actionBtn}>
-            <TouchableOpacity onPress={() => onChangeQual(index, false)}>
-              <Icon name="remove" size={25} color={COLORS.white} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => onChangeQual(index, true)}>
-              <Icon name="add" size={25} color={COLORS.white} />
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
     );
   };
+
   return (
     <SafeAreaView style={{ backgroundColor: COLORS.white, flex: 1 }}>
       <View style={style.header}>
-        <Icon name="arrow-back-ios" size={28} onPress={navigation.goBack} />
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Cart</Text>
+        {/* <Icon name="arrow-back-ios" size={28} onPress={navigation.goBack} /> */}
       </View>
       <FlatList
         keyExtractor={(item) => item.id.masp}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
-        data={listData}
+        data={listData.listCTDH}
         renderItem={({ item, index }) => <CartCard item={item} index={index} />}
         ListFooterComponentStyle={{ paddingHorizontal: 20, marginTop: 20 }}
         ListFooterComponent={() => (
@@ -165,17 +94,8 @@ const CartScreen = ({ navigation }) => {
               }}
             >
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                Total Price
+                Total Price: {listData.tongtien}
               </Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>{total}</Text>
-            </View>
-            <View style={{ marginHorizontal: 30 }}>
-              <PrimaryButton
-                title="CHECKOUT"
-                onPress={() => {
-                  navigation.navigate("CheckOutScreen", { total, dataCart });
-                }}
-              />
             </View>
           </View>
         )}
@@ -214,4 +134,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default CartScreen;
+export default DetailBuyHistoryScreen;

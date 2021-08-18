@@ -20,7 +20,9 @@ const DetailProductScreen = ({ navigation, route }) => {
   const medicine = route.params;
   const [count, setCount] = useState(1);
   const context = useContext(AuthContext);
-  const nhathuoc = context.getContext;
+  const nhathuoc = context.loginState.mnv_mnt;
+  const ma = nhathuoc.manhathuoc;
+  // console.log(ma);
 
   const addCart = (manhathuoc: string, masp: string, soluong: number) => {
     postCart(manhathuoc, masp, soluong)
@@ -136,7 +138,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                   alignItems: "center",
                 }}
               >
-                <TouchableOpacity onPress={() => setCount(count - 1)}>
+                <TouchableOpacity onPress={() => count>0 ? setCount(count - 1): setCount(count)}>
                   <View style={style.borderBtn}>
                     <Text style={style.borderBtnText}>-</Text>
                   </View>
@@ -150,6 +152,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                 >
                   {count}
                 </Text>
+                {/* CHECK SO LUONG TON */}
                 <TouchableOpacity onPress={() => setCount(count + 1)}>
                   <View style={style.borderBtn}>
                     <Text style={style.borderBtnText}>+</Text>
@@ -157,7 +160,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity onPress={()=>addCart(nhathuoc.manhathuoc, medicine.masp, count)}>
+              <TouchableOpacity onPress={()=>addCart(ma, medicine.masp, count)}>
                 <View style={style.buyBtn}>
                   <Text
                     style={{

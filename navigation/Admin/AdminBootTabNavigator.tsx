@@ -112,6 +112,16 @@ function AdminTabHomeNavigator({ navigation }) {
         component={TabAdminHomeScreen}
         options={{ headerTitle: "Tab Admin Home Title" }}
       />
+
+{/* <TabAdminHomeStack.Screen
+        name="ListOrderNTScreen"
+        component={ListOrderNTScreen}
+        options={() => ({
+          headerBackTitleVisible: false,
+          headerShown: true,
+        })}
+      /> */}
+
       <TabAdminHomeStack.Screen
         name="TabAdminHomeOrder"
         component={TabAdminHomeOrder}

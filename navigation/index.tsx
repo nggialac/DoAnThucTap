@@ -25,6 +25,7 @@ import SignInScreen from "../screens/Login/SignInScreen";
 import SignOutScreen from "../screens/Login/SignOutScreen";
 import SignUpScreen from "../screens/Login/SignUpScreen";
 import ClientSignUpScreen from "../screens/Login/ClientSignUpScreen";
+import ForgetPassScreen from "../screens/Login/ForgetPassScreen";
 
 import { AuthContext } from "../components/ContextLogin";
 import { ActivityIndicator, View } from "react-native";
@@ -155,7 +156,7 @@ export default function Navigation({
   }
 
   const check = async(role: any, userName: any) => {
-    let mnv_mnt
+    var mnv_mnt;
     if (role === "3") {
       mnv_mnt = await callNv(userName);
     }
@@ -170,11 +171,9 @@ export default function Navigation({
       signIn: async (foundUser:any) => {
         // setUserToken("lacnguyen");
         // setIsLoading(false);
-        console.log(foundUser);
         const userToken = String(foundUser[0].userToken);
         const role = String(foundUser[0].quyen.maquyen);
-        const userName = foundUser[0].username;
-        
+        const userName = String(foundUser[0].username);
 
         
 
@@ -184,38 +183,38 @@ export default function Navigation({
         // else if (role === "2"){
         //   mnv_mnt = await callNt(userName);
         // }
-        const mnv_mnt = await check(role, userName);
-         console.log("MNV_MNT: " + mnv_mnt);
-        // return mnv_mnt;
+        // const mnv_mnt = ;
+        //  console.log("MNV_MNT: " + mnv_mnt);
+        // // return mnv_mnt;
 
-        try {
-          await AsyncStorage.setItem("userToken", userToken);
-          await AsyncStorage.setItem("userName", userName);
-          await AsyncStorage.setItem("role", role);
-          await AsyncStorage.setItem("MNV_MNT", JSON.stringify(mnv_mnt));
-        } catch (e) {
-          console.log(e);
-        }
+        // try {
+        //   await AsyncStorage.setItem("userToken", userToken);
+        //   await AsyncStorage.setItem("userName", userName);
+        //   await AsyncStorage.setItem("role", role);
+        //   await AsyncStorage.setItem("MNV_MNT", JSON.stringify(mnv_mnt));
+        // } catch (e) {
+        //   console.log(e);
+        // }
 
         dispatch({
           type: "LOGIN",
           id: userName,
           quyen: role,
-          ma: mnv_mnt,
+          ma: await check(role, userName),
           token: userToken,
         });
       },
       signOut: async () => {
         // setUserToken(null);
         // setIsLoading(false);
-        try {
-          await AsyncStorage.removeItem("userToken");
-          await AsyncStorage.removeItem("userName");
-          await AsyncStorage.removeItem("role");
-          await AsyncStorage.removeItem("MNV_MNT");
-        } catch (e) {
-          console.log(e);
-        }
+        // try {
+        //   await AsyncStorage.removeItem("userToken");
+        //   await AsyncStorage.removeItem("userName");
+        //   await AsyncStorage.removeItem("role");
+        //   await AsyncStorage.removeItem("MNV_MNT");
+        // } catch (e) {
+        //   console.log(e);
+        // }
         dispatch({ type: "LOGOUT" });
       },
       signUp: () => {
@@ -231,40 +230,40 @@ export default function Navigation({
   );
 
   React.useEffect(() => {
-    setTimeout(async () => {
-      // setIsLoading(false);
-      let userToken = null;
-      let userName = null;
-      let role = null;
-      let ma = null;
+    // setTimeout(async () => {
+    //   // setIsLoading(false);
+    //   let userToken = null;
+    //   let userName = null;
+    //   let role = null;
+    //   let ma = null;
 
-      try {
-        userToken = await AsyncStorage.getItem("userToken");
-        userName = await AsyncStorage.getItem("userName");
-        role = await AsyncStorage.getItem("role");
-        ma = await AsyncStorage.getItem("MNV_MNT");
-      } catch (e) {
-        console.log(e);
-      }
-      dispatch({
-        type: "RETRIEVE_TOKEN",
-        token: userToken,
-        id: userName,
-        quyen: role,
-        ma: ma,
-      });
-      //  dispatch({ type: "RETRIEVE_TOKEN", id: "user", token: "lacnguyen" });
-    }, 2000);
+    //   try {
+    //     userToken = await AsyncStorage.getItem("userToken");
+    //     userName = await AsyncStorage.getItem("userName");
+    //     role = await AsyncStorage.getItem("role");
+    //     ma = await AsyncStorage.getItem("MNV_MNT");
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    //   dispatch({
+    //     type: "RETRIEVE_TOKEN",
+    //     token: userToken,
+    //     id: userName,
+    //     quyen: role,
+    //     ma: ma,
+    //   });
+    //   //  dispatch({ type: "RETRIEVE_TOKEN", id: "user", token: "lacnguyen" });
+    // }, 2000);
   }, []);
 
-  if (loginState.isLoading) {
-    // return null;
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  } else {
+  // if (loginState.isLoading) {
+  //   // return null;
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <ActivityIndicator size="large" />
+  //     </View>
+  //   );
+  // } else {
     return (
       <AuthContext.Provider value={{authContext, loginState}}>
         <NavigationContainer
@@ -274,11 +273,11 @@ export default function Navigation({
         >
           {/* {console.log(loginState.userName)} */}
           {/* {console.log(authContext)} */}
-          {/* {console.log(loginState.role)} */}
-          {console.log(loginState.mnv_mnt)}
-          {loginState.mnv_mnt !== null && loginState.mnv_mnt !== undefined ? (
+          {console.log(loginState.role)}
+          {/* {console.log(loginState.mnv_mnt)} */}
+          {loginState.mnv_mnt !== null ? (
             // <RootNavigator role={loginState.role}/>
-            loginState.role === "1" ? (
+            loginState.role === "3" ? (
               <AdminBottomTabNavigator />
             ) : (
               <ClientBottomTabNavigator />
@@ -291,7 +290,7 @@ export default function Navigation({
       </AuthContext.Provider>
     );
   }
-}
+// }
 
 // const Stack = createStackNavigator<RootStackParamList>();
 
@@ -319,6 +318,7 @@ function LoginStackNavigator() {
       <LoginStack.Screen name="SignInScreen" component={SignInScreen} />
       <LoginStack.Screen name="SignOutScreen" component={SignOutScreen} />
       <LoginStack.Screen name="SignUpScreen" component={SignUpScreen} />
+      <LoginStack.Screen name="ForgetPasswordScreen" component={ForgetPassScreen} />
       <LoginStack.Screen
         name="ClientSignUpScreen"
         component={ClientSignUpScreen}

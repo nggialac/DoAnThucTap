@@ -38,6 +38,7 @@ export type LoginStackParamList = {
   SignOutScreen: undefined;
   SignUpScreen: undefined;
   ClientSignUpScreen: undefined;
+  ForgetPasswordScreen: undefined;
 }
 
 //ADMIN
@@ -51,6 +52,7 @@ export type BottomTabAdminParamList = {
 export type TabAdminHomeParamList = {
   TabAdminHomeScreen: undefined;
   TabAdminHomeOrder: undefined;
+  ListOrderNTScreen: undefined;
   //
   TabAdminHomeStaff: undefined;
   TabAdminHomeAddStaff: undefined;

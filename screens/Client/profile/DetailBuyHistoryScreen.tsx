@@ -20,7 +20,7 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
   // const [tk, setTk] = React.useState();
   const [listData, setListData] = React.useState([]);
   const context = React.useContext(AuthContext);
-  const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
+  const nhathuoc = (context.loginState.mnv_mnt);
   const madh = route.params.madh;
   // console.log(madh);
 

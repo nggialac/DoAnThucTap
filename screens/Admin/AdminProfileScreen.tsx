@@ -14,10 +14,10 @@ import { AuthContext } from "../../components/ContextLogin";
 
 export default function AdminProfileScreen({navigation}) {
 
-  const { signOut } = React.useContext(AuthContext);
+  const signOut = React.useContext(AuthContext);
 
   const logoutHandle = () => {
-    signOut();
+    signOut.authContext.signOut();
   }
 
   return (

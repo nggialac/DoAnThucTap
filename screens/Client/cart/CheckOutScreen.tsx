@@ -18,7 +18,8 @@ const colors = {
 
 export default function PaymentsUICustomScreen({ route }) {
   const context = React.useContext(AuthContext);
-  const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
+  const nhathuoc = (context.loginState.mnv_mnt);
+  // console.log(nhathuoc);
 
   const { initPaymentSheet, presentPaymentSheet, confirmPaymentSheetPayment } =
     useStripe();

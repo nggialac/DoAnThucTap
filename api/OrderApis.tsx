@@ -15,3 +15,7 @@ export function getListOrderByClient(manhathuoc: string) {
 export function getListOrderByMaDH(madh: string) {
   return InstanceApi.get(`donhang/manhathuoc/${madh}`);
 }
+
+export function deleteOrderById(madh: string) {
+  return InstanceApi.delete(`donhang/${madh}`);
+}

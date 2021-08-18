@@ -23,8 +23,8 @@ const CartScreen = ({ navigation }) => {
   const [dataCart, setDataCart] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const context = React.useContext(AuthContext);
-  const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
-  // console.log(context.loginState.mnv_mnt);
+  const nhathuoc = (context.loginState.mnv_mnt);
+  // console.log(nhathuoc);
 
   // const getData = async () => {
   //   try {

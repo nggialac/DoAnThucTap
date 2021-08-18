@@ -8,33 +8,88 @@ import {
   TouchableHighlight,
   StatusBar,
   Animated,
+  RefreshControl,
+  Alert,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Orders from "../../../navigation/Models/ListOrder";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { deleteOrderById, getListOrder } from "../../../api/OrderApis";
 // import Animated from "react-native-reanimated";
 
 function OrderScreen({ navigation }) {
-  const [listData, setListData] = React.useState(
-    Orders.map((OrderItem, index) => ({
-      key: `${index}`,
-      title: OrderItem.title,
-      details: OrderItem.details,
-    }))
-  );
+  // const [listData, setListData] = React.useState(
+  //   Orders.map((OrderItem, index) => ({
+  //     key: `${index}`,
+  //     title: OrderItem.title,
+  //     details: OrderItem.details,
+  //   }))
+  // );
 
+  const [orders, setOrders] = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(4000).then(() => setRefreshing(false));
+  }, []);
+
+  
+  React.useEffect(() => {
+    listOrder();
+  }, [refreshing]);
+
+  const listOrder = async () => {
+    await getListOrder()
+      .then((res) => {
+        // console.log(res.data);
+        // Alert.alert("Success!", "Success!", [{ text: "ok" }]);
+        // setListData(res.data);
+        // res.data.map((obj, index)=> ({ ...obj, key: index}));
+        const newArr = res.data.map((v, index) => ({ ...v, key: index }));
+        console.log(res.data);
+        setOrders(newArr);
+        // setListData(res.data);
+      })
+      .catch((e) => {
+        Alert.alert("Fail!", "" + e, [{ text: "ok" }]);
+      });
+  };
+
+  const deleteOrderID = (id) => {
+    deleteOrderById(id)
+      .then((res) => {
+        // Alert.alert("Success!", "Success!", [{ text: "ok" }]);
+        console.log(res);
+      })
+      .catch((e) => {
+        // Alert.alert("Fail!", '', [{ text: "ok" }]);
+        console.log(e);
+      });
+  };
+
+//
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
     }
   };
 
-  const deleteRow = (rowMap, rowKey) => {
+  const editRow = async (rowMap, rowKey, order) => {
+    // navigation.navigate("TabAdminHomeEditOrder", { itemData: nv });
+  };
+
+  const deleteRow = async (rowMap, rowKey, madh) => {
     closeRow(rowMap, rowKey);
-    const newData = [...listData];
-    const prevIndex = listData.findIndex(item => item.key === rowKey);
+    await deleteOrderID(madh);
+    const newData = [...orders];
+    const prevIndex = orders.findIndex(item => item.key === rowKey);
     newData.splice(prevIndex, 1);
-    setListData(newData);
+    setOrders(newData);
   };
 
   const onRowDidOpen = rowKey => {
@@ -79,16 +134,20 @@ function OrderScreen({ navigation }) {
     return (
       <Animated.View
         style={[styles.rowFront, {height: rowHeightAnimatedValue}]}>
+          {console.log(data.item)}
         <TouchableHighlight
           style={styles.rowFrontVisible}
           onPress={() => console.log('Element touched')}
           underlayColor={'#aaa'}>
           <View>
             <Text style={styles.title} numberOfLines={1}>
-              {data.item.title}
+              {data.item.madh}                                                  Trạng thái: {data.item.trangthai}
             </Text>
             <Text style={styles.details} numberOfLines={1}>
-              {data.item.details}
+              Ngày đặt: {data.item.ngaydat.slice(0,10)}                                   Tổng tiền: {data.item.tongtien}đ
+            </Text>
+            <Text style={styles.details} numberOfLines={1}>
+              Nhà thuốc: {data.item.nhathuoc.tennhathuoc}
             </Text>
           </View>
         </TouchableHighlight>
@@ -103,7 +162,10 @@ function OrderScreen({ navigation }) {
       <VisibleItem
         data={data}
         rowHeightAnimatedValue={rowHeightAnimatedValue}
-        removeRow={() => deleteRow(rowMap, data.item.key)}
+        removeRow={() => 
+          // deleteRow(rowMap, data.item.key)
+          deleteRow(rowMap, data.item.key, data.item.madh)
+        }
       />
     );
   };
@@ -139,7 +201,7 @@ function OrderScreen({ navigation }) {
             style={[styles.backRightBtn, styles.backRightBtnLeft]}
             onPress={onClose}>
             <MaterialCommunityIcons
-              name="close-circle-outline"
+              name="file-edit-outline"
               size={25}
               style={styles.trash}
               color="#fff"
@@ -197,8 +259,14 @@ function OrderScreen({ navigation }) {
         rowMap={rowMap}
         rowActionAnimatedValue={rowActionAnimatedValue}
         rowHeightAnimatedValue={rowHeightAnimatedValue}
-        onClose={() => closeRow(rowMap, data.item.key)}
-        onDelete={() => deleteRow(rowMap, data.item.key)}
+        onClose={() => 
+          // closeRow(rowMap, data.item.key)
+          editRow(rowMap, data.item.key, data.item)
+        }
+        onDelete={() => 
+          // deleteRow(rowMap, data.item.key)
+          deleteRow(rowMap, data.item.key, data.item.madh)
+        }
       />
     );
   };
@@ -208,7 +276,7 @@ function OrderScreen({ navigation }) {
       <StatusBar barStyle="dark-content"/>
       {/* <StatusBar backgroundColor="#FF6347" barStyle="light-content"/> */}
       <SwipeListView
-        data={listData}
+        data={orders}
         renderItem={renderItem}
         renderHiddenItem={renderHiddenItem}
         leftOpenValue={75}
@@ -223,6 +291,9 @@ function OrderScreen({ navigation }) {
         onRightAction={onRightAction}
         onLeftActionStatusChange={onLeftActionStatusChange}
         onRightActionStatusChange={onRightActionStatusChange}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </View>
   );
@@ -241,7 +312,7 @@ const styles = StyleSheet.create({
   rowFront: {
     backgroundColor: '#FFF',
     borderRadius: 5,
-    height: 60,
+    height: 100,
     margin: 5,
     marginBottom: 15,
     shadowColor: '#999',
@@ -253,7 +324,7 @@ const styles = StyleSheet.create({
   rowFrontVisible: {
     backgroundColor: '#FFF',
     borderRadius: 5,
-    height: 60,
+    height: 100,
     padding: 10,
     marginBottom: 15,
   },

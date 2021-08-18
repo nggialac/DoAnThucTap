@@ -9,6 +9,13 @@ const data = [
   { quarter: 4, earnings: 19000 },
 ];
 
+const dataReal = [
+  {
+    thang: "1",
+    tien: 0
+  }
+]
+
 export default function AdminStatisticScreen() {
   return (
     <View style={styles.container}>

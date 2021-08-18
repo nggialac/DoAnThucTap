@@ -10,7 +10,7 @@ import { AuthContext } from "../../../components/ContextLogin";
 const BuyHistoryScreen = ({ navigation, route }) => {
   const [listData, setListData] = React.useState([]);
   const context = React.useContext(AuthContext);
-  const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
+  const nhathuoc = (context.loginState.mnv_mnt);
 
   const getData = (manhathuoc: string) => {
     getListOrderByClient(manhathuoc)

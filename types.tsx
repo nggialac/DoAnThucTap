@@ -100,6 +100,10 @@ export type TabClientHomeParamList = {
   TabClientHomeScreen: undefined;
   DetailProductScreen: undefined;
   CartScreen: undefined;
+  CheckOutScreen: {
+    total: number
+  };
+  
 }
 
 export type TabClientCategoriesParamList = {

@@ -36,6 +36,9 @@ import {
   DarkTheme as PaperDarkTheme,
 } from "react-native-paper";
 
+import { getStaffByUsername } from "../api/StaffApi";
+import { getNtByUsername } from "../api/NTApis";
+
 export default function Navigation({
   colorScheme,
 }: {
@@ -50,6 +53,7 @@ export default function Navigation({
     userName: null,
     role: null,
     userToken: null,
+    mnv_mnt: null,
   };
 
   const CustomDefaultTheme = {
@@ -84,6 +88,7 @@ export default function Navigation({
           userName: action.id,
           role: action.quyen,
           userToken: action.token,
+          mnv_mnt: action.ma,
           isLoading: false,
         };
       case "LOGIN":
@@ -92,6 +97,7 @@ export default function Navigation({
           userName: action.id,
           role: action.quyen,
           userToken: action.token,
+          mnv_mnt: action.ma,
           isLoading: false,
         };
       case "LOGOUT":
@@ -100,6 +106,7 @@ export default function Navigation({
           userName: null,
           role: null,
           userToken: null,
+          mnv_mnt: null,
           isLoading: false,
         };
       case "REGISTER":
@@ -108,8 +115,11 @@ export default function Navigation({
           userName: action.id,
           role: action.quyen,
           userToken: action.token,
+          mnv_mnt: action.ma,
           isLoading: false,
         };
+        default:
+        return prevState;
     }
   };
 
@@ -119,25 +129,68 @@ export default function Navigation({
   );
 
   // const { signIn } = React.useContext(AuthContext);
+  const callNt = async (username) => {
+    let temp;
+      await getNtByUsername(username)
+      .then(res => {
+        console.log(res.data);
+        temp = res.data;
+      })
+      .catch(e => {
+        console.log(e);
+      })
+      return temp;
+  }
+  const callNv = async (username) => {
+    let temp;
+    await getStaffByUsername(username)
+      .then(res => {
+        console.log(res.data);
+        temp = res.data;
+      })
+      .catch(e => {
+        console.log(e);
+      })
+      return temp;
+  }
 
   const authContext = React.useMemo(
     () => ({
       signIn: async (foundUser: any) => {
         // setUserToken("lacnguyen");
         // setIsLoading(false);
+
         const userToken = String(foundUser[0].userToken);
-        // console.log(userToken);
-        const role = String(foundUser[0].quyen.maquyen)
+        const role = String(foundUser[0].quyen.maquyen);
         const userName = foundUser[0].username;
+
+        let mnv_mnt;
+
+        if (role === "3") {
+          mnv_mnt = await callNv(userName);
+        }
+        else if (role === "2"){
+          mnv_mnt = await callNt(userName);
+        }
+        console.log("MNV_MNT: " + mnv_mnt);
+        // return mnv_mnt;
+
         try {
           await AsyncStorage.setItem("userToken", userToken);
           await AsyncStorage.setItem("userName", userName);
           await AsyncStorage.setItem("role", role);
+          await AsyncStorage.setItem("MNV_MNT", JSON.stringify(mnv_mnt));
         } catch (e) {
           console.log(e);
         }
 
-        dispatch({ type: "LOGIN", id: userName, quyen: role, token: userToken });
+        dispatch({
+          type: "LOGIN",
+          id: userName,
+          quyen: role,
+          ma: mnv_mnt,
+          token: userToken,
+        });
       },
       signOut: async () => {
         // setUserToken(null);
@@ -146,6 +199,7 @@ export default function Navigation({
           await AsyncStorage.removeItem("userToken");
           await AsyncStorage.removeItem("userName");
           await AsyncStorage.removeItem("role");
+          await AsyncStorage.removeItem("MNV_MNT");
         } catch (e) {
           console.log(e);
         }
@@ -156,8 +210,9 @@ export default function Navigation({
         // setIsLoading(false);
       },
       toggleTheme: () => {
-        setIsDarkTheme( isDarkTheme => !isDarkTheme );
+        setIsDarkTheme((isDarkTheme) => !isDarkTheme);
       },
+      // getContext: loginState.mnv_mnt
     }),
     []
   );
@@ -168,16 +223,25 @@ export default function Navigation({
       let userToken = null;
       let userName = null;
       let role = null;
+      let ma = null;
+
       try {
         userToken = await AsyncStorage.getItem("userToken");
         userName = await AsyncStorage.getItem("userName");
         role = await AsyncStorage.getItem("role");
+        ma = await AsyncStorage.getItem("MNV_MNT");
       } catch (e) {
         console.log(e);
       }
-      dispatch({ type: "RETRIEVE_TOKEN", token: userToken, id: userName, quyen: role });
-      // dispatch({ type: "RETRIEVE_TOKEN", id: "user", token: "lacnguyen" });
-    }, 1000);
+      dispatch({
+        type: "RETRIEVE_TOKEN",
+        token: userToken,
+        id: userName,
+        quyen: role,
+        ma: ma,
+      });
+      //  dispatch({ type: "RETRIEVE_TOKEN", id: "user", token: "lacnguyen" });
+    }, 2000);
   }, []);
 
   if (loginState.isLoading) {
@@ -189,20 +253,25 @@ export default function Navigation({
     );
   } else {
     return (
-      <AuthContext.Provider value={authContext}>
+      <AuthContext.Provider value={{authContext, loginState}}>
         <NavigationContainer
           linking={LinkingConfiguration}
           // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
           theme={theme}
         >
           {console.log(loginState.userName)}
-          {console.log(loginState.userToken)}
+          {console.log(authContext)}
           {console.log(loginState.role)}
-          {loginState.userName !== null ? (
+          {console.log(loginState.mnv_mnt)}
+          {loginState.mnv_mnt !== null && loginState.mnv_mnt !== undefined ? (
             // <RootNavigator role={loginState.role}/>
-              (loginState.role === '1' ? <AdminBottomTabNavigator/> : <ClientBottomTabNavigator/>)
-            // <AdminBottomTabNavigator/>
+            loginState.role === "1" ? (
+              <AdminBottomTabNavigator />
+            ) : (
+              <ClientBottomTabNavigator />
+            )
           ) : (
+            // <AdminBottomTabNavigator/>
             <LoginStackNavigator />
           )}
         </NavigationContainer>
@@ -212,7 +281,6 @@ export default function Navigation({
 }
 
 // const Stack = createStackNavigator<RootStackParamList>();
-
 
 // function RootNavigator(props) {
 //   return (
@@ -238,7 +306,10 @@ function LoginStackNavigator() {
       <LoginStack.Screen name="SignInScreen" component={SignInScreen} />
       <LoginStack.Screen name="SignOutScreen" component={SignOutScreen} />
       <LoginStack.Screen name="SignUpScreen" component={SignUpScreen} />
-      <LoginStack.Screen name="ClientSignUpScreen" component={ClientSignUpScreen} />
+      <LoginStack.Screen
+        name="ClientSignUpScreen"
+        component={ClientSignUpScreen}
+      />
     </LoginStack.Navigator>
   );
 }

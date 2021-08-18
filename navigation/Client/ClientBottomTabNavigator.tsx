@@ -11,6 +11,7 @@ import useColorScheme from "../../hooks/useColorScheme";
 import TabClientHomeScreen from "../../screens/Client/ClientHomeScreen";
 import DetailProductScreen from "../../screens/Client/product/DetailProductScreen";
 import CartScreen from "../../screens/Client/cart/CartScreen";
+import CheckOutScreen from "../../screens/Client/cart/CheckOutScreen";
 
 import TabClientCategoriesScreen from "../../screens/Client/ClientCategoriesScreen";
 
@@ -93,6 +94,15 @@ function ClientTabHomeNavigator() {
         name="CartScreen"
         component={CartScreen}
         options={{ headerTitle: "Client Cart Title", headerShown: false }}
+      />
+            <TabClientHomeStack.Screen
+        name="CheckOutScreen"
+        component={CheckOutScreen}
+        options={({ route }) => ({
+          total: route.params.total,
+          headerBackTitleVisible: false,
+          headerShown: false,
+        })}
       />
     </TabClientHomeStack.Navigator>
   );

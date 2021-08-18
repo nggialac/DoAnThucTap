@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   View,
   SafeAreaView,
@@ -14,10 +14,13 @@ import Icon from "@expo/vector-icons/MaterialIcons";
 import COLORS from "../../../assets/colors/Colors";
 import { CommentCard } from "./CommentCard";
 import { postCart } from "../../../api/CartApis";
+import { AuthContext } from "../../../components/ContextLogin";
 
 const DetailProductScreen = ({ navigation, route }) => {
   const medicine = route.params;
   const [count, setCount] = useState(1);
+  const context = useContext(AuthContext);
+  const nhathuoc = context.getContext;
 
   const addCart = (manhathuoc: string, masp: string, soluong: number) => {
     postCart(manhathuoc, masp, soluong)
@@ -154,7 +157,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity onPress={()=>addCart("NT3892785", medicine.masp, count)}>
+              <TouchableOpacity onPress={()=>addCart(nhathuoc.manhathuoc, medicine.masp, count)}>
                 <View style={style.buyBtn}>
                   <Text
                     style={{

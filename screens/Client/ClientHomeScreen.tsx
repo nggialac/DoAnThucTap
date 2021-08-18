@@ -8,6 +8,7 @@ import {
   View,
   Alert,
   RefreshControl,
+  LogBox
 } from "react-native";
 import {
   FlatList,
@@ -43,6 +44,7 @@ const HomeScreen = ({ navigation }) => {
 
   const [categories, setCategories] = useState([]);
   const [medicines, setMedicines] = useState([]);
+  LogBox.ignoreAllLogs();
 
   const getCategories = () => {
     getListCategoryMedicine()
@@ -196,7 +198,10 @@ const HomeScreen = ({ navigation }) => {
 
       <ListCategories />
 
+      
+
       <FlatList
+        keyExtractor={medicine => medicine.masp}
         showsVerticalScrollIndicator={false}
         numColumns={2}
         data={medicines}
@@ -205,6 +210,7 @@ const HomeScreen = ({ navigation }) => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
+
       </View>
     // </SafeAreaView>
   );

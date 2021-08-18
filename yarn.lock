@@ -1166,7 +1166,7 @@
   dependencies:
     "@types/hammerjs" "^2.0.36"
 
-"@expo/config-plugins@1.0.33":
+"@expo/config-plugins@1.0.33", "@expo/config-plugins@^1.0.24":
   version "1.0.33"
   resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-1.0.33.tgz#8ee78ea6f939f7e04606e9afa22b32139ea974a0"
   integrity sha512-YQJop0c69LKD/6ZJJto7klS7TDmzgs44TI0Z5RBqesOjYlDwNFcQk2Rl2BaA1wlAYkH+rRrhN2+WjjSyD9HiPg==
@@ -1210,25 +1210,6 @@
   dependencies:
     "@expo/config-types" "^42.0.0"
     "@expo/json-file" "8.2.31"
-    "@expo/plist" "0.0.13"
-    debug "^4.3.1"
-    find-up "~5.0.0"
-    fs-extra "9.0.0"
-    getenv "^1.0.0"
-    glob "7.1.6"
-    resolve-from "^5.0.0"
-    semver "^7.3.5"
-    slash "^3.0.0"
-    xcode "^3.0.1"
-    xml2js "^0.4.23"
-
-"@expo/config-plugins@^3.0.5":
-  version "3.0.7"
-  resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-3.0.7.tgz#50870e26d34b11740a5841076c921729381d4319"
-  integrity sha512-7YOoFtxB6XqDil+OlGXi7iredKHxXVFCAOIVfFyEDzO3oo0gBmWGmUnHgrPDvpMj0q+adCCh5BL8OcvGfc9ITQ==
-  dependencies:
-    "@expo/config-types" "^42.0.0"
-    "@expo/json-file" "8.2.33"
     "@expo/plist" "0.0.13"
     debug "^4.3.1"
     find-up "~5.0.0"
@@ -1392,15 +1373,6 @@
   version "8.2.31"
   resolved "https://registry.yarnpkg.com/@expo/json-file/-/json-file-8.2.31.tgz#70ac99cb9c9029a51a5b879212f7f4ec21804589"
   integrity sha512-GvbL1tQnM3kGOM9hG+lwGbPJ/1tX+Sb8ZkqRrJlRpWGRa4DwnpLvIZHlWMb1ug/ye1QC7+RK/KwRZ7xcAXergA==
-  dependencies:
-    "@babel/code-frame" "~7.10.4"
-    json5 "^1.0.1"
-    write-file-atomic "^2.3.0"
-
-"@expo/json-file@8.2.33":
-  version "8.2.33"
-  resolved "https://registry.yarnpkg.com/@expo/json-file/-/json-file-8.2.33.tgz#78f56f33a2cfb807b23c81e00237a33159aa1f32"
-  integrity sha512-CDnhjdirUs6OdN5hOSTJ2y3i9EiJMk7Z5iDljC5xyCHCrUex7oyI8vbRsZEojAahxZccgL/PrO+CjakiFFWurg==
   dependencies:
     "@babel/code-frame" "~7.10.4"
     json5 "^1.0.1"
@@ -2550,12 +2522,12 @@
   dependencies:
     type-detect "4.0.8"
 
-"@stripe/stripe-react-native@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.2.0.tgz#dcfefc0b24412620ae3bbeb5f8b26d6330cda453"
-  integrity sha512-INBEZVk2yOxd98oP8JQ43kTvKiKBra5dcq/jJ46FLhd2tKFnmiCRmfFk2qNlwsXqhYPROUTkfqgjNhpYeEuRuA==
+"@stripe/stripe-react-native@0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-react-native/-/stripe-react-native-0.1.5.tgz#4adbbb58caf47cef2388b87008b640edaf238b6d"
+  integrity sha512-goGM83qKiVkkRnV3ogei7GM4R7wAGcvnDzrx+6/piXw4yzRy+DWHp5QwQCdJYGF6jBPk1X2PNinm0oG/zi2eYw==
   dependencies:
-    "@expo/config-plugins" "^3.0.5"
+    "@expo/config-plugins" "^1.0.24"
 
 "@types/babel__core@^7.1.7":
   version "7.1.15"

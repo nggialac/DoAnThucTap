@@ -12,3 +12,7 @@ export function putStaff(param){
 export function deleteStaff(id){
     return InstanceApi.delete(`nhanvien/${id}`);
 } 
+
+export function getStaffByUsername(username: string) {
+    return InstanceApi.get(`nhanvien/${username}`);
+}

@@ -18,7 +18,6 @@ import { AuthContext } from "../../components/ContextLogin";
 
 // import Users from "../../navigation/Models/Users";
 import { postLogin } from "../../api/LoginApis";
-import { getListNV } from "../../api/ClientApis";
 
 import { useTheme } from "react-native-paper";
 
@@ -113,6 +112,9 @@ export default function SignInScreen({ navigation }) {
         const foundUser = Users.filter((item) => {
           return userName == item.username && password == item.password;
         });
+        // getDataUser(user, mnv_mnt);
+        
+        // console.log("TEST: " + mnv_mnt);
         signIn(foundUser);
       })
       .catch((e) => {
@@ -120,10 +122,10 @@ export default function SignInScreen({ navigation }) {
         Alert.alert("Invalid User!", "Username or password is incorrect.", [
           { text: "Okay" },
         ]);
-        return;
         // alert(e);
       });
   };
+  
 
 
 

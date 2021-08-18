@@ -4,6 +4,12 @@ export function getListCart(manhathuoc: string) {
   return InstanceApi.get(`giohang/${manhathuoc}`);
 }
 
+export function putNumberOfProduct(manhathuoc: string, masp: string, soluong: number) {
+  return InstanceApi.put(`giohang/${manhathuoc}/${masp}`, null, {
+    params: { soluong: soluong },
+  });
+}
+
 export function getNumberListCart(manhathuoc: string) {
   return InstanceApi.get(`giohang/${manhathuoc}`);
 }

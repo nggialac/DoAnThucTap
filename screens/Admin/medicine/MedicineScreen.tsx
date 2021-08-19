@@ -14,7 +14,11 @@ import {
 import { useTheme } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { getListCategoryMedicine, putCategoryMedicine, deleteCategoryMedicine } from "../../../api/MedicineApis";
+import {
+  getListCategoryMedicine,
+  putCategoryMedicine,
+  deleteCategoryMedicine,
+} from "../../../api/MedicineApis";
 // import StarRating from '../components/StarRating';
 
 const MedicineScreen = ({ navigation }) => {
@@ -23,13 +27,33 @@ const MedicineScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = React.useState(false);
 
   const wait = (timeout) => {
-    return new Promise(resolve => setTimeout(resolve, timeout));
-  }
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     wait(4000).then(() => setRefreshing(false));
   }, []);
+
+  const deleteACategory = async (madm: string) => {
+    Alert.alert("Success!", "Deleted", [
+      { text: "ok", onPress: () => deleteDM(madm) },
+      { text: "Cancel", style: "cancel" },
+    ]);
+  };
+
+  const deleteDM = (madm: string) => {
+    deleteCategoryMedicine(madm)
+      .then((res) => {
+        console.log(res);
+        Alert.alert("Success!", "Deleted");
+        onRefresh();
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Fail!", "Cannot delete");
+      });
+  };
 
   React.useEffect(() => {
     getListCategoryMedicine()
@@ -54,12 +78,12 @@ const MedicineScreen = ({ navigation }) => {
   // }
 
   return (
-    <ScrollView 
-    style={styles.container} 
-    refreshControl={<RefreshControl
-      refreshing={refreshing}
-      onRefresh={onRefresh}
-    />}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <StatusBar barStyle={theme.dark ? "light-content" : "dark-content"} />
       <View style={styles.items}>
         {listData ? (
@@ -68,8 +92,14 @@ const MedicineScreen = ({ navigation }) => {
               <TouchableOpacity
                 key={item.madm}
                 style={styles.item}
-                onPress={() => navigation.navigate("TabAdminHomeProductList", {danhmuc: item})}
-                onLongPress={()=>{}}
+                onPress={() =>
+                  navigation.navigate("TabAdminHomeProductList", {
+                    danhmuc: item,
+                  })
+                }
+                onLongPress={() => {
+                  deleteACategory(item.madm);
+                }}
               >
                 <View style={styles.itemLeft}>
                   <View style={styles.square}>

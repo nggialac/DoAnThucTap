@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   View,
   SafeAreaView,
@@ -15,6 +15,17 @@ import COLORS from "../../../assets/colors/Colors";
 import { CommentCard } from "./CommentCard";
 import { postCart } from "../../../api/CartApis";
 import { AuthContext } from "../../../components/ContextLogin";
+import {
+  getListComment,
+  getListCommentOfProduct,
+  getRatingOfNT,
+  getRatingsByProduct,
+  postComment,
+  postRating,
+} from "../../../api/RatingCommentApis";
+import { AirbnbRating, Rating } from "react-native-ratings";
+import { Ionicons } from "@expo/vector-icons";
+// import { Image } from "react-native-animatable";
 
 const DetailProductScreen = ({ navigation, route }) => {
   const medicine = route.params;
@@ -24,39 +35,157 @@ const DetailProductScreen = ({ navigation, route }) => {
   const ma = nhathuoc.manhathuoc;
   // console.log(ma);
 
+  const [ratings, setRatings] = useState(0);
+  const [rated, setRated] = useState(0);
+  const [comments, setComments] = useState([]);
+
   const addCart = (manhathuoc: string, masp: string, soluong: number) => {
     postCart(manhathuoc, masp, soluong)
-    .then(res=> {
-      Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
-    })
-    .catch(e=> {
-      console.log(e);
-      Alert.alert("Submit Info", "Fail!" + e, [{ text: "ok" }]);
-    })
-  }
+      .then((res) => {
+        Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Submit Info", "Fail!" + e, [{ text: "ok" }]);
+      });
+  };
 
-  const commentsData = [
-    {
-      comment: "comment 1",
-    },
-    {
-      comment: "comment 2",
-    },
-    {
-      comment: "comment 3",
-    },
-    {
-      comment: "comment 4",
-    },
-  ];
+  const getCommentsOfProduct = (masp: string) => {
+    getListCommentOfProduct(masp)
+      .then((res) => {
+        console.log(res.data);
+        setComments(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Fail", "Cannot get comments " + e, [{ text: "ok" }]);
+      });
+  };
 
-  return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: COLORS.white,
-      }}
-    >
+  const addComment = (
+    sanpham: object,
+    nhathuoc: object,
+    noidung: string,
+    time: string,
+    id: number
+  ) => {
+    var params = {
+      sanpham,
+      nhathuoc,
+      id,
+      noidung,
+      time,
+    };
+    // params["sanpham"] = sanpham;
+    // params["nhathuoc"] = nhathuoc;
+
+    postComment(params)
+      .then((res) => {
+        console.log(res.data);
+        setComments(res.data);
+      })
+      .catch((e) => {
+        console.log(params);
+        console.log(e);
+        Alert.alert("Fail", "Cannot create comment " + e, [{ text: "ok" }]);
+      });
+  };
+
+  const getRatingOfProduct = (masp: string) => {
+    getRatingsByProduct(masp)
+      .then((res) => {
+        console.log(res.data);
+        let obj = res.data;
+        let temp = Object.keys(obj).reduce((a, b) => (obj[a] > obj[b]) ? a : b);
+        // console.log(temp);
+        var check = {
+          'one': 1,
+          'two': 2,
+          'three': 3,
+          'four': 4,
+          'five': 5,
+        }
+        let max;
+        for(let key in check) {
+          if (key === temp) {
+            max = check[key];
+          }
+        }
+        setRatings(max);
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Fail", "Cannot get ratings " + e, [{ text: "ok" }]);
+      });
+  };
+
+  const clientRated = (mant:string, masp: string) => {
+    getRatingOfNT(mant, masp)
+      .then((res) => {
+        console.log(res.data);
+        setRated(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Fail", "Cannot get ratings " + e, [{ text: "ok" }]);
+      });
+  };
+
+  const postRatingProduct = (
+    sanpham: object,
+    nhathuoc: object,
+    danhgia: any
+  ) => {
+    var params = {
+      sanpham,
+      nhathuoc,
+      danhgia,
+      id: {
+        masp: sanpham.masp,
+        manhathuoc: nhathuoc.manhathuoc,
+      },
+    };
+    postRating(params)
+      .then((res) => {
+        console.log(res.data);
+        setRatings(res.data.danhgia);
+      })
+      .catch((e) => {
+        console.log(params);
+        console.log(e);
+        Alert.alert("Fail", "Cannot get ratings " + e, [{ text: "ok" }]);
+      });
+  };
+
+  useEffect(() => {
+    getRatingOfProduct(medicine.masp);
+    getCommentsOfProduct(medicine.masp);
+    clientRated(nhathuoc.manhathuoc, medicine.masp);
+  }, []);
+
+  // const commentsData = [
+  //   {
+  //     comment: "comment 1",
+  //   },
+  //   {
+  //     comment: "comment 2",
+  //   },
+  //   {
+  //     comment: "comment 3",
+  //   },
+  //   {
+  //     comment: "comment 4",
+  //   },
+  // ];
+
+  if (medicine)
+    return (
+      // <SafeAreaView
+      //   style={{
+      //     flex: 1,
+      //     backgroundColor: COLORS.white,
+      //   }}
+      // >
       <ScrollView>
         <View style={style.header}>
           <Icon
@@ -68,9 +197,27 @@ const DetailProductScreen = ({ navigation, route }) => {
           <Icon name="shopping-cart" size={28} />
         </View>
         <View style={style.imageContainer}>
-          <Image
-            source={{ uri: medicine.photo }}
-            style={{ resizeMode: "cover", flex: 1 }}
+          {console.log(medicine.photo)}
+          {medicine.photo ? (
+            <Image
+              source={{ uri: medicine.photo }}
+
+              // style={{ resizeMode: "contain", flex: 1 }}
+            />
+          ) : (
+            <></>
+          )}
+        </View>
+        <View>
+          <Rating
+            type="star"
+            // ratingBackgroundColor=
+            showRating={true}
+            showReadOnlyText={true}
+            ratingCount={5}
+            imageSize={30}
+            startingValue={ratings}
+            readonly={true}
           />
         </View>
         <View style={style.detailsContainer}>
@@ -82,9 +229,6 @@ const DetailProductScreen = ({ navigation, route }) => {
             }}
           >
             {/* <View style={style.line} /> */}
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-              Best choice
-            </Text>
           </View>
           <View
             style={{
@@ -138,7 +282,11 @@ const DetailProductScreen = ({ navigation, route }) => {
                   alignItems: "center",
                 }}
               >
-                <TouchableOpacity onPress={() => count>0 ? setCount(count - 1): setCount(count)}>
+                <TouchableOpacity
+                  onPress={() =>
+                    count > 0 ? setCount(count - 1) : setCount(count)
+                  }
+                >
                   <View style={style.borderBtn}>
                     <Text style={style.borderBtnText}>-</Text>
                   </View>
@@ -160,7 +308,9 @@ const DetailProductScreen = ({ navigation, route }) => {
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity onPress={()=>addCart(ma, medicine.masp, count)}>
+              <TouchableOpacity
+                onPress={() => addCart(ma, medicine.masp, count)}
+              >
                 <View style={style.buyBtn}>
                   <Text
                     style={{
@@ -177,19 +327,47 @@ const DetailProductScreen = ({ navigation, route }) => {
           </View>
         </View>
 
+        {/* RATINGS */}
+        <View style={{ paddingHorizontal: 10, alignItems: "center" }}>
+          <Text style={[style.headerText, { marginTop: 30 }]}>
+            Rating for product
+          </Text>
+          <AirbnbRating
+            // ratingBackgroundColor=
+            showRating
+            count={5}
+            reviews={["Terrible", "Bad", "Meh", "OK", "Good"]}
+            size={20}
+            defaultRating={rated}
+            onFinishRating={(val) => postRatingProduct(medicine, nhathuoc, val)}
+          />
+        </View>
+
         {/* COMMENTS */}
         <View style={{ paddingHorizontal: 10 }}>
-          <Text style={[style.headerText, { marginTop: 30 }]}>Comments</Text>
+          <View style={{ alignItems: "center" }}>
+            <Text style={[style.headerText, { marginTop: 30 }]}>Comments</Text>
+          </View>
           <FlatList
-            data={commentsData ? commentsData : []}
+            data={comments}
             renderItem={renderComment}
             // ListHeaderComponent={renderHeader()}
             contentContainerStyle={style.commentsContainer}
           />
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity
+              style={{}}
+              onPress={() =>
+                addComment(medicine, nhathuoc, "TEST COMMENT", "2021-08-19", 1)
+              }
+            >
+              <Ionicons name="add-circle-outline" style={{ fontSize: 50 }} />
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
-  );
+      // </SafeAreaView>
+    );
 };
 
 // const {
@@ -212,7 +390,8 @@ function renderComment({ item: comment }) {
       style={style.commentCard}
       // id={comment.id}
     >
-      <Text>{comment.comment}</Text>
+      <Text>{comment.nhathuoc.tennhathuoc}: {comment.noidung}</Text>
+      <Text>Ngày: {comment.time}</Text>
     </CommentCard>
   );
 }

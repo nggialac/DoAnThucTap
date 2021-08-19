@@ -173,7 +173,7 @@ const CartScreen = ({ navigation }) => {
               <PrimaryButton
                 title="CHECKOUT"
                 onPress={() => {
-                  navigation.navigate("CheckOutScreen", { total, dataCart });
+                  total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
                 }}
               />
             </View>

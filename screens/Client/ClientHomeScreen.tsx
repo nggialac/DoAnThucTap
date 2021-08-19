@@ -95,8 +95,11 @@ const HomeScreen = ({ navigation }) => {
   }
 
   useEffect(() => {
-    getCategories();
-    getMedicines();
+    async function fetchMyAPI() {
+      await getCategories();
+      await getMedicines();
+    }
+    fetchMyAPI();
   }, [refreshing]);
 
   const ListCategories = () => {

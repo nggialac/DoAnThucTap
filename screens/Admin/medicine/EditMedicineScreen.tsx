@@ -343,7 +343,7 @@ const EditMedicineScreen = ({ route }) => {
             </View>
             <TouchableOpacity
               style={styles.commandButton}
-              onPress={()=>handleSubmit}
+              onPress={handleSubmit}
             >
               <Text style={styles.panelButtonTitle}>Commit Change</Text>
             </TouchableOpacity>

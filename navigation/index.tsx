@@ -119,7 +119,7 @@ export default function Navigation({
           mnv_mnt: action.ma,
           isLoading: false,
         };
-        default:
+      default:
         return prevState;
     }
   };
@@ -132,50 +132,47 @@ export default function Navigation({
   // const { signIn } = React.useContext(AuthContext);
   const callNt = async (username) => {
     let temp;
-      await getNtByUsername(username)
-      .then(res => {
+    await getNtByUsername(username)
+      .then((res) => {
         console.log(res.data);
         temp = res.data;
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
-      })
-      return temp;
-  }
+      });
+    return temp;
+  };
   const callNv = async (username) => {
     let temp;
     await getStaffByUsername(username)
-      .then(res => {
+      .then((res) => {
         console.log(res.data);
         temp = res.data;
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
-      })
-      return temp;
-  }
+      });
+    return temp;
+  };
 
-  const check = async(role: any, userName: any) => {
+  const check = async (role: any, userName: any) => {
     var mnv_mnt;
     if (role === "3") {
       mnv_mnt = await callNv(userName);
-    }
-    else if (role === "2"){
+    } else if (role === "2") {
       mnv_mnt = await callNt(userName);
     }
     return mnv_mnt;
-  }
+  };
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async (foundUser:any) => {
+      signIn: async (foundUser: any) => {
         // setUserToken("lacnguyen");
         // setIsLoading(false);
         const userToken = String(foundUser[0].userToken);
         const role = String(foundUser[0].quyen.maquyen);
         const userName = String(foundUser[0].username);
-
-        
 
         // if (role === "3") {
         //   mnv_mnt = await callNv(userName);
@@ -236,7 +233,6 @@ export default function Navigation({
     //   let userName = null;
     //   let role = null;
     //   let ma = null;
-
     //   try {
     //     userToken = await AsyncStorage.getItem("userToken");
     //     userName = await AsyncStorage.getItem("userName");
@@ -264,32 +260,32 @@ export default function Navigation({
   //     </View>
   //   );
   // } else {
-    return (
-      <AuthContext.Provider value={{authContext, loginState}}>
-        <NavigationContainer
-          linking={LinkingConfiguration}
-          // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-          theme={theme}
-        >
-          {/* {console.log(loginState.userName)} */}
-          {/* {console.log(authContext)} */}
-          {console.log(loginState.role)}
-          {/* {console.log(loginState.mnv_mnt)} */}
-          {loginState.mnv_mnt !== null ? (
-            // <RootNavigator role={loginState.role}/>
-            loginState.role === "3" ? (
-              <AdminBottomTabNavigator />
-            ) : (
-              <ClientBottomTabNavigator />
-            )
+  return (
+    <AuthContext.Provider value={{ authContext, loginState }}>
+      <NavigationContainer
+        linking={LinkingConfiguration}
+        // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        theme={theme}
+      >
+        {/* {console.log(loginState.userName)} */}
+        {/* {console.log(authContext)} */}
+        {console.log(loginState.role)}
+        {/* {console.log(loginState.mnv_mnt)} */}
+        {loginState.mnv_mnt !== null ? (
+          // <RootNavigator role={loginState.role}/>
+          loginState.role === "1" ? (
+            <AdminBottomTabNavigator />
           ) : (
-            // <AdminBottomTabNavigator/>
-            <LoginStackNavigator />
-          )}
-        </NavigationContainer>
-      </AuthContext.Provider>
-    );
-  }
+            <ClientBottomTabNavigator />
+          )
+        ) : (
+          // <AdminBottomTabNavigator/>
+          <LoginStackNavigator />
+        )}
+      </NavigationContainer>
+    </AuthContext.Provider>
+  );
+}
 // }
 
 // const Stack = createStackNavigator<RootStackParamList>();
@@ -318,7 +314,10 @@ function LoginStackNavigator() {
       <LoginStack.Screen name="SignInScreen" component={SignInScreen} />
       <LoginStack.Screen name="SignOutScreen" component={SignOutScreen} />
       <LoginStack.Screen name="SignUpScreen" component={SignUpScreen} />
-      <LoginStack.Screen name="ForgetPasswordScreen" component={ForgetPassScreen} />
+      <LoginStack.Screen
+        name="ForgetPasswordScreen"
+        component={ForgetPassScreen}
+      />
       <LoginStack.Screen
         name="ClientSignUpScreen"
         component={ClientSignUpScreen}

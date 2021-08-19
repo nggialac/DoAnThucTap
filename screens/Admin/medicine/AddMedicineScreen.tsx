@@ -65,7 +65,7 @@ const AddMedicineScreen = ({route}) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      // aspect: [3, 4],
       quality: 1,
     });
     console.log(result);
@@ -124,7 +124,7 @@ const AddMedicineScreen = ({route}) => {
               source={{
                 uri: image,
               }}
-              style={{ height: 100, width: 100 }}
+              style={{ height: 150, width: 150 }}
               imageStyle={{ borderRadius: 15 }}
             >
               <View

@@ -29,5 +29,5 @@ export function putComment(params: object) {
 }
 
 export function deleteComment(id: number) {
-    return InstanceApi.delete("binhluan", {params: { id }});
+    return InstanceApi.delete(`binhluan/${id}`);
 }

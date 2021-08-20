@@ -9,10 +9,16 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  RefreshControl,
+  Dimensions,
+  Modal,
+  TextInput,
+  Pressable,
+  ImageBackground,
 } from "react-native";
 import Icon from "@expo/vector-icons/MaterialIcons";
 import COLORS from "../../../assets/colors/Colors";
-import { CommentCard } from "./CommentCard";
+// import { CommentCard } from "./CommentCard";
 import { postCart } from "../../../api/CartApis";
 import { AuthContext } from "../../../components/ContextLogin";
 import {
@@ -22,9 +28,12 @@ import {
   getRatingsByProduct,
   postComment,
   postRating,
+  deleteComment,
 } from "../../../api/RatingCommentApis";
 import { AirbnbRating, Rating } from "react-native-ratings";
 import { Ionicons } from "@expo/vector-icons";
+import { Item } from "react-native-paper/lib/typescript/components/List/List";
+const { width } = Dimensions.get("window");
 // import { Image } from "react-native-animatable";
 
 const DetailProductScreen = ({ navigation, route }) => {
@@ -35,9 +44,42 @@ const DetailProductScreen = ({ navigation, route }) => {
   const ma = nhathuoc.manhathuoc;
   // console.log(ma);
 
-  const [ratings, setRatings] = useState(0);
+  const [ratings, setRatings] = useState();
   const [rated, setRated] = useState(0);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(4000).then(() => setRefreshing(false));
+  }, []);
+
+  const renderComment = ({ item, index }) => {
+    return (
+      <View style={{ marginBottom: 20 }}>
+        {item.nhathuoc.manhathuoc === nhathuoc.manhathuoc ? (
+          <TouchableOpacity onPress={() => deleteMyComment(item.id)}>
+            <Icon
+              name="delete"
+              style={{ fontSize: 20, justifyContent: "flex-end" }}
+            />
+          </TouchableOpacity>
+        ) : null}
+        <TouchableOpacity style={[style.card, style.commentCard]}>
+          <Text>
+            {item.nhathuoc.tennhathuoc}: {item.noidung}
+          </Text>
+          <Text>
+            Mã:{item.id} - Ngày: {item.time}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   const addCart = (manhathuoc: string, masp: string, soluong: number) => {
     postCart(manhathuoc, masp, soluong)
@@ -66,23 +108,19 @@ const DetailProductScreen = ({ navigation, route }) => {
     sanpham: object,
     nhathuoc: object,
     noidung: string,
-    time: string,
-    id: number
+    time: string
   ) => {
     var params = {
       sanpham,
       nhathuoc,
-      id,
       noidung,
       time,
     };
-    // params["sanpham"] = sanpham;
-    // params["nhathuoc"] = nhathuoc;
-
     postComment(params)
       .then((res) => {
-        console.log(res.data);
-        setComments(res.data);
+        Alert.alert("Success", "Success!", [{ text: "ok" }]);
+        toggleModalVisibility();
+        setInputValue("");
       })
       .catch((e) => {
         console.log(params);
@@ -96,17 +134,17 @@ const DetailProductScreen = ({ navigation, route }) => {
       .then((res) => {
         console.log(res.data);
         let obj = res.data;
-        let temp = Object.keys(obj).reduce((a, b) => (obj[a] > obj[b]) ? a : b);
+        let temp = Object.keys(obj).reduce((a, b) => (obj[a] > obj[b] ? a : b));
         // console.log(temp);
         var check = {
-          'one': 1,
-          'two': 2,
-          'three': 3,
-          'four': 4,
-          'five': 5,
-        }
+          one: 1,
+          two: 2,
+          three: 3,
+          four: 4,
+          five: 5,
+        };
         let max;
-        for(let key in check) {
+        for (let key in check) {
           if (key === temp) {
             max = check[key];
           }
@@ -119,7 +157,7 @@ const DetailProductScreen = ({ navigation, route }) => {
       });
   };
 
-  const clientRated = (mant:string, masp: string) => {
+  const clientRated = (mant: string, masp: string) => {
     getRatingOfNT(mant, masp)
       .then((res) => {
         console.log(res.data);
@@ -157,36 +195,80 @@ const DetailProductScreen = ({ navigation, route }) => {
       });
   };
 
+  function getDate() {
+    const monthNames = [
+      "01",
+      "02",
+      "03",
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "10",
+      "11",
+      "12",
+    ];
+    const dateObj = new Date();
+    const month = monthNames[dateObj.getMonth() + 1];
+    const day = String(dateObj.getDate()).padStart(2, "0");
+    const year = dateObj.getFullYear();
+    const output = year + "-" + month + "-" + day;
+    // console.log(output);
+    return output;
+  }
+
   useEffect(() => {
     getRatingOfProduct(medicine.masp);
     getCommentsOfProduct(medicine.masp);
     clientRated(nhathuoc.manhathuoc, medicine.masp);
-  }, []);
+  }, [refreshing]);
 
-  // const commentsData = [
-  //   {
-  //     comment: "comment 1",
-  //   },
-  //   {
-  //     comment: "comment 2",
-  //   },
-  //   {
-  //     comment: "comment 3",
-  //   },
-  //   {
-  //     comment: "comment 4",
-  //   },
-  // ];
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  const toggleModalVisibility = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const deleteMyComment = (id: number) => {
+    deleteComment(id)
+      .then((res) => {
+        console.log(res.data);
+        Alert.alert("Success!", "Comment has deleted", [{ text: "ok" }]);
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Fail!", "Cannot delete after admin reply... ", [
+          { text: "ok" },
+        ]);
+      });
+  };
+
+  // const [quantity, setQuantity] = useState(3);
+  // const seeMore = (comments) => {
+  //   comments.slice(0, quantity);
+  //   setQuantity(quantity+3);
+  // }
+
+  const format = (value: number) => {
+    let val = value.toLocaleString("it-IT", {
+      style: "currency",
+      currency: "VND",
+    });
+    return val;
+  };
 
   if (medicine)
     return (
-      // <SafeAreaView
-      //   style={{
-      //     flex: 1,
-      //     backgroundColor: COLORS.white,
-      //   }}
-      // >
-      <ScrollView>
+      <View>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        
         <View style={style.header}>
           <Icon
             name="arrow-back"
@@ -196,29 +278,30 @@ const DetailProductScreen = ({ navigation, route }) => {
           <Text style={style.headerText}>Hello</Text>
           <Icon name="shopping-cart" size={28} />
         </View>
+        
         <View style={style.imageContainer}>
-          {console.log(medicine.photo)}
-          {medicine.photo ? (
-            <Image
-              source={{ uri: medicine.photo }}
 
-              // style={{ resizeMode: "contain", flex: 1 }}
-            />
-          ) : (
-            <></>
-          )}
-        </View>
-        <View>
-          <Rating
+          <Image
+            source={{ uri: medicine.photo }}
+            style={{ flex: 1 }}
+          />
+                      <Rating
             type="star"
-            // ratingBackgroundColor=
+            ratingBackgroundColor='transparent'
+            ratingColor='transparent'
             showRating={true}
-            showReadOnlyText={true}
+            showReadOnlyText={false}
             ratingCount={5}
             imageSize={30}
             startingValue={ratings}
+            minValue={0}
             readonly={true}
+            // tintColor='transparent'
+            tintColor={COLORS.white}
+            style={{backgroundColor: 'transparent'}}
           />
+        </View>
+        <View>
         </View>
         <View style={style.detailsContainer}>
           <View
@@ -229,6 +312,7 @@ const DetailProductScreen = ({ navigation, route }) => {
             }}
           >
             {/* <View style={style.line} /> */}
+
           </View>
           <View
             style={{
@@ -239,6 +323,7 @@ const DetailProductScreen = ({ navigation, route }) => {
               alignItems: "center",
             }}
           >
+            
             <Text style={{ fontSize: 22, fontWeight: "bold" }}>
               {medicine.tensp}
             </Text>
@@ -251,7 +336,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                   fontSize: 16,
                 }}
               >
-                {medicine.dongia}VND
+                {format(medicine.dongia)}Đ
               </Text>
             </View>
           </View>
@@ -351,73 +436,66 @@ const DetailProductScreen = ({ navigation, route }) => {
           <FlatList
             data={comments}
             renderItem={renderComment}
-            // ListHeaderComponent={renderHeader()}
             contentContainerStyle={style.commentsContainer}
+            // keyExtractor={(e) => e.id.toString()}
           />
-          <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              style={{}}
-              onPress={() =>
-                addComment(medicine, nhathuoc, "TEST COMMENT", "2021-08-19", 1)
-              }
+
+          {/* MODAL */}
+          <View>
+            <Modal
+              animationType="slide"
+              transparent
+              visible={isModalVisible}
+              presentationStyle="overFullScreen"
+              onDismiss={toggleModalVisibility}
             >
+              <View style={style.viewWrapper}>
+                <View style={style.modalView}>
+                  <TextInput
+                    placeholder="Enter something..."
+                    value={inputValue}
+                    style={style.textInput}
+                    onChangeText={(value) => setInputValue(value)}
+                  />
+
+                  {/** This button is responsible to close the modal */}
+                  <View style={{ flexDirection: "row" }}>
+                    <Pressable
+                      onPress={() =>
+                        addComment(medicine, nhathuoc, inputValue, getDate())
+                      }
+                      style={[style.button, style.buttonOpen, { margin: 10 }]}
+                    >
+                      <Text style={{ color: COLORS.white }}>Comment</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={toggleModalVisibility}
+                      style={[style.button, style.buttonClose, { margin: 10 }]}
+                    >
+                      <Text style={{ color: COLORS.white }}>Cancel</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+          </View>
+          {/* <Pressable
+            onPress={toggleModalVisibility}
+            style={[style.button, style.buttonClose, { alignItems: "center" }]}
+          >
+            <Text style={{ color: COLORS.white }}>Pop Up</Text>
+          </Pressable> */}
+
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity onPress={toggleModalVisibility}>
               <Ionicons name="add-circle-outline" style={{ fontSize: 50 }} />
             </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
-      // </SafeAreaView>
+      </View>
     );
 };
-
-// const {
-//   loading: false,
-//   error: false,
-//   data: false,
-// };
-
-// if (productLoading) {
-//   return <Loading hasBackground />;
-// }
-
-// if (productError) {
-//   return <Error error={productError} />;
-// }
-
-function renderComment({ item: comment }) {
-  return (
-    <CommentCard
-      style={style.commentCard}
-      // id={comment.id}
-    >
-      <Text>{comment.nhathuoc.tennhathuoc}: {comment.noidung}</Text>
-      <Text>Ngày: {comment.time}</Text>
-    </CommentCard>
-  );
-}
-
-// function renderNumberOfComments() {
-//   return (
-//     <Text style={styles.title}>
-//       {commentsData && commentsData.comments.length > 0
-//         ? `Comments [${commentsData.comments.length}]`
-//         : 'No comments found'}
-//     </Text>
-//   );
-// }
-
-// function renderHeader() {
-//   const {product} = productData;
-//   return (
-//     <>
-//       <Product product={product} />
-//       <AddComment productId={product.id} />
-//       {commentsLoading && <Loading />}
-//       {commentsError && <Error error={commentsError} />}
-//       {renderNumberOfComments()}
-//     </>
-//   );
-// }
 
 const style = StyleSheet.create({
   header: {
@@ -434,9 +512,9 @@ const style = StyleSheet.create({
     flex: 0.45,
     marginTop: 20,
     justifyContent: "center",
-    alignItems: "center",
+    // alignItems: "center",
     // minHeight: 120,
-    height: 400,
+    height: 350,
   },
   detailsContainer: {
     flex: 0.55,
@@ -474,7 +552,7 @@ const style = StyleSheet.create({
   },
   priceTag: {
     backgroundColor: COLORS.green,
-    width: 80,
+    width: 100,
     height: 40,
     justifyContent: "center",
     borderTopLeftRadius: 25,
@@ -491,6 +569,63 @@ const style = StyleSheet.create({
   title: {
     marginTop: 16,
     marginBottom: 8,
+  },
+  card: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowColor: "black",
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    elevation: 1,
+  },
+  screen: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#fff",
+  },
+  viewWrapper: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+  },
+  modalView: {
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    elevation: 5,
+    transform: [{ translateX: -(width * 0.4) }, { translateY: -90 }],
+    height: 180,
+    width: width * 0.8,
+    backgroundColor: "#fff",
+    borderRadius: 7,
+  },
+  textInput: {
+    width: "80%",
+    borderRadius: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderColor: "rgba(0, 0, 0, 0.8)",
+    borderWidth: 1,
+    marginBottom: 8,
+  },
+  button: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: "#16c90a",
+  },
+  buttonClose: {
+    backgroundColor: "#05375a",
   },
 });
 

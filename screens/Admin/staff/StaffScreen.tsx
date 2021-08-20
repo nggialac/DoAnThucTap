@@ -10,7 +10,7 @@ import {
   Alert,
   RefreshControl,
   ScrollView,
-  SafeAreaView
+  SafeAreaView,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 // import Orders from "../../../navigation/Models/ListOrder";
@@ -128,15 +128,15 @@ function StaffScreen({ navigation }) {
         <TouchableHighlight
           key={data.item.key}
           style={styles.rowFrontVisible}
-          onPress={() => console.log("Element touched")}
+          onPress={() => {}}
           underlayColor={"#aaa"}
         >
           <View>
             <Text style={styles.title} numberOfLines={1}>
-              {data.item.manv}
+              Mã: {data.item.manv} - Họ Tên: {data.item.ho} {data.item.ten}
             </Text>
             <Text style={styles.details} numberOfLines={1}>
-              {data.item.ten}
+              Phone: {data.item.sdt}
             </Text>
           </View>
         </TouchableHighlight>

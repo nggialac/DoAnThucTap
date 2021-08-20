@@ -10,21 +10,30 @@ import {
   Animated,
   RefreshControl,
   Alert,
+  LogBox
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Orders from "../../../navigation/Models/ListOrder";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { deleteOrderById, getListOrder } from "../../../api/OrderApis";
+import {
+  cancelOrder,
+  deleteOrderById,
+  getListOrder,
+  putOrder,
+} from "../../../api/OrderApis";
 // import Animated from "react-native-reanimated";
 
 function OrderScreen({ navigation }) {
-  // const [listData, setListData] = React.useState(
-  //   Orders.map((OrderItem, index) => ({
-  //     key: `${index}`,
-  //     title: OrderItem.title,
-  //     details: OrderItem.details,
-  //   }))
-  // );
+
+  LogBox.ignoreAllLogs();
+
+  var listTrangthai = {
+    0: "Chờ xử lý",
+    1: "Đã duyệt",
+    2: "Đang giao",
+    3: "Giao hàng thành công",
+    4: "Đã hủy"
+  }
 
   const [orders, setOrders] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -38,7 +47,6 @@ function OrderScreen({ navigation }) {
     wait(4000).then(() => setRefreshing(false));
   }, []);
 
-  
   React.useEffect(() => {
     listOrder();
   }, [refreshing]);
@@ -72,7 +80,7 @@ function OrderScreen({ navigation }) {
       });
   };
 
-//
+  //
   const closeRow = (rowMap, rowKey) => {
     if (rowMap[rowKey]) {
       rowMap[rowKey].closeRow();
@@ -80,39 +88,108 @@ function OrderScreen({ navigation }) {
   };
 
   const editRow = async (rowMap, rowKey, order) => {
-    // navigation.navigate("TabAdminHomeEditOrder", { itemData: nv });
+    cancelOrderByMadh(order.madh);
   };
 
   const deleteRow = async (rowMap, rowKey, madh) => {
-    closeRow(rowMap, rowKey);
-    await deleteOrderID(madh);
-    const newData = [...orders];
-    const prevIndex = orders.findIndex(item => item.key === rowKey);
-    newData.splice(prevIndex, 1);
-    setOrders(newData);
+    Alert.alert("Notice!", "Are you want update status for this order?", [
+      {
+        text: "Approve",
+        onPress: async() => {
+          closeRow(rowMap, rowKey);
+          await deleteOrderID(madh);
+          const newData = [...orders];
+          const prevIndex = orders.findIndex((item) => item.key === rowKey);
+          newData.splice(prevIndex, 1);
+          setOrders(newData);
+        },
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
+
   };
 
-  const onRowDidOpen = rowKey => {
-    console.log('This row opened', rowKey);
+  const onRowDidOpen = (rowKey) => {
+    console.log("This row opened", rowKey);
   };
 
-  const onLeftActionStatusChange = rowKey => {
-    console.log('onLeftActionStatusChange', rowKey);
+  const onLeftActionStatusChange = (rowKey) => {
+    console.log("onLeftActionStatusChange", rowKey);
   };
 
-  const onRightActionStatusChange = rowKey => {
-    console.log('onRightActionStatusChange', rowKey);
+  const onRightActionStatusChange = (rowKey) => {
+    console.log("onRightActionStatusChange", rowKey);
   };
 
-  const onRightAction = rowKey => {
-    console.log('onRightAction', rowKey);
+  const onRightAction = (rowKey) => {
+    console.log("onRightAction", rowKey);
   };
 
-  const onLeftAction = rowKey => {
-    console.log('onLeftAction', rowKey);
+  const onLeftAction = (rowKey) => {
+    console.log("onLeftAction", rowKey);
   };
 
-  const VisibleItem = props => {
+  const cancelOrderByMadh = (madh: string) => {
+    Alert.alert("Notice!", "Are you want cancel this order?", [
+      {
+        text: "Approve",
+        onPress: () =>
+          cancelOrder(madh)
+            .then((res) => {
+              console.log(res.data);
+              Alert.alert("Success!", "Order was canceled");
+            })
+            .catch((e) => {
+              console.log(e);
+              Alert.alert("Failed!", "Cannot cancel");
+            }),
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
+  };
+
+  const updateOrder = (madh: string, params: any) => {
+    Alert.alert("Notice!", "Are you want update status for this order?", [
+      {
+        text: "Approve",
+        onPress: () => getUpdate(madh, params),
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
+  };
+
+  const getUpdate = async (madh: string, params: any) => {
+    let changed;
+    // console.log(params.trangthai);
+    params["trangthai"] > 2 
+      ? (changed = 1)
+      : (changed = params["trangthai"] + 1);
+    // console.log(changed);
+    params["trangthai"] = changed;
+    console.log(params["trangthai"]);
+    await putOrder(params)
+      .then((res) => {
+        console.log(res.data);
+        Alert.alert("Success!", "Order was updated");
+        onRefresh();
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Failed!", "Cannot update");
+      });
+  };
+
+  // function getValue(key: number) {
+  //   return listTrangthai[key];
+  // }
+
+  const VisibleItem = (props) => {
     const {
       data,
       rowHeightAnimatedValue,
@@ -133,21 +210,24 @@ function OrderScreen({ navigation }) {
 
     return (
       <Animated.View
-        style={[styles.rowFront, {height: rowHeightAnimatedValue}]}>
-          {console.log(data.item)}
+        style={[styles.rowFront, { height: rowHeightAnimatedValue }]}
+      >
+        {/* {console.log(data.item)} */}
         <TouchableHighlight
           style={styles.rowFrontVisible}
-          onPress={() => console.log('Element touched')}
-          underlayColor={'#aaa'}>
+          onPress={() => updateOrder(data.item.madh, data.item)}
+          underlayColor={"#aaa"}
+        >
           <View>
             <Text style={styles.title} numberOfLines={1}>
-              {data.item.madh}                                                  Trạng thái: {data.item.trangthai}
+              {data.item.madh} - Trạng thái: {listTrangthai[data.item.trangthai]}
             </Text>
             <Text style={styles.details} numberOfLines={1}>
-              Ngày đặt: {data.item.ngaydat.slice(0,10)}                                   Tổng tiền: {data.item.tongtien}đ
+              Ngày đặt: {data.item.ngaydat.slice(0, 10)}, Tổng tiền:{" "}
+              {data.item.tongtien}đ
             </Text>
             <Text style={styles.details} numberOfLines={1}>
-              Nhà thuốc: {data.item.nhathuoc.tennhathuoc}
+              Client: {data.item.nhathuoc.tennhathuoc}
             </Text>
           </View>
         </TouchableHighlight>
@@ -162,7 +242,7 @@ function OrderScreen({ navigation }) {
       <VisibleItem
         data={data}
         rowHeightAnimatedValue={rowHeightAnimatedValue}
-        removeRow={() => 
+        removeRow={() =>
           // deleteRow(rowMap, data.item.key)
           deleteRow(rowMap, data.item.key, data.item.madh)
         }
@@ -170,7 +250,7 @@ function OrderScreen({ navigation }) {
     );
   };
 
-  const HiddenItemWithActions = props => {
+  const HiddenItemWithActions = (props) => {
     const {
       swipeAnimatedValue,
       leftActionActivated,
@@ -184,22 +264,25 @@ function OrderScreen({ navigation }) {
     if (rightActionActivated) {
       Animated.spring(rowActionAnimatedValue, {
         toValue: 500,
-        useNativeDriver: false
+        useNativeDriver: false,
       }).start();
     } else {
       Animated.spring(rowActionAnimatedValue, {
         toValue: 75,
-        useNativeDriver: false
+        useNativeDriver: false,
       }).start();
     }
 
     return (
-      <Animated.View style={[styles.rowBack, {height: rowHeightAnimatedValue}]}>
+      <Animated.View
+        style={[styles.rowBack, { height: rowHeightAnimatedValue }]}
+      >
         <Text>Left</Text>
         {!leftActionActivated && (
           <TouchableOpacity
             style={[styles.backRightBtn, styles.backRightBtnLeft]}
-            onPress={onClose}>
+            onPress={onClose}
+          >
             <MaterialCommunityIcons
               name="file-edit-outline"
               size={25}
@@ -217,10 +300,12 @@ function OrderScreen({ navigation }) {
                 flex: 1,
                 width: rowActionAnimatedValue,
               },
-            ]}>
+            ]}
+          >
             <TouchableOpacity
               style={[styles.backRightBtn, styles.backRightBtnRight]}
-              onPress={onDelete}>
+              onPress={onDelete}
+            >
               <Animated.View
                 style={[
                   styles.trash,
@@ -230,12 +315,13 @@ function OrderScreen({ navigation }) {
                         scale: swipeAnimatedValue.interpolate({
                           inputRange: [-90, -45],
                           outputRange: [1, 0],
-                          extrapolate: 'clamp',
+                          extrapolate: "clamp",
                         }),
                       },
                     ],
                   },
-                ]}>
+                ]}
+              >
                 <MaterialCommunityIcons
                   name="trash-can-outline"
                   size={25}
@@ -259,11 +345,11 @@ function OrderScreen({ navigation }) {
         rowMap={rowMap}
         rowActionAnimatedValue={rowActionAnimatedValue}
         rowHeightAnimatedValue={rowHeightAnimatedValue}
-        onClose={() => 
+        onClose={() =>
           // closeRow(rowMap, data.item.key)
           editRow(rowMap, data.item.key, data.item)
         }
-        onDelete={() => 
+        onDelete={() =>
           // deleteRow(rowMap, data.item.key)
           deleteRow(rowMap, data.item.key, data.item.madh)
         }
@@ -273,7 +359,7 @@ function OrderScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content"/>
+      <StatusBar barStyle="dark-content" />
       {/* <StatusBar backgroundColor="#FF6347" barStyle="light-content"/> */}
       <SwipeListView
         data={orders}
@@ -284,7 +370,7 @@ function OrderScreen({ navigation }) {
         disableRightSwipe
         onRowDidOpen={onRowDidOpen}
         leftActivationValue={100}
-        rightActivationValue={-200}
+        // rightActivationValue={-150}
         leftActionValue={0}
         rightActionValue={-500}
         onLeftAction={onLeftAction}
@@ -297,63 +383,63 @@ function OrderScreen({ navigation }) {
       />
     </View>
   );
-};
+}
 
 export default OrderScreen;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#f4f4f4',
+    backgroundColor: "#f4f4f4",
     flex: 1,
   },
   backTextWhite: {
-    color: '#FFF',
+    color: "#FFF",
   },
   rowFront: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     borderRadius: 5,
     height: 100,
     margin: 5,
     marginBottom: 15,
-    shadowColor: '#999',
-    shadowOffset: {width: 0, height: 1},
+    shadowColor: "#999",
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
   },
   rowFrontVisible: {
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     borderRadius: 5,
     height: 100,
     padding: 10,
     marginBottom: 15,
   },
   rowBack: {
-    alignItems: 'center',
-    backgroundColor: '#DDD',
+    alignItems: "center",
+    backgroundColor: "#DDD",
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingLeft: 15,
     margin: 5,
     marginBottom: 15,
     borderRadius: 5,
   },
   backRightBtn: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     bottom: 0,
-    justifyContent: 'center',
-    position: 'absolute',
+    justifyContent: "center",
+    position: "absolute",
     top: 0,
     width: 75,
     paddingRight: 17,
   },
   backRightBtnLeft: {
-    backgroundColor: '#1f65ff',
+    backgroundColor: "#1f65ff",
     right: 75,
   },
   backRightBtnRight: {
-    backgroundColor: 'red',
+    backgroundColor: "red",
     right: 0,
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
@@ -365,12 +451,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
-    color: '#666',
+    color: "#666",
   },
   details: {
     fontSize: 12,
-    color: '#999',
+    color: "#999",
   },
 });

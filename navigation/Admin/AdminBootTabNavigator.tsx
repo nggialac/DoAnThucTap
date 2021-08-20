@@ -24,6 +24,7 @@ import TabAdminHomeAddProduct from "../../screens/Admin/medicine/AddMedicineScre
 
 import TabAdminStatisticScreen from "../../screens/Admin/AdminStatisticScreen";
 import TabAdminCommentsScreen from "../../screens/Admin/AdminCommentsScreen";
+import DetailCommentsScreen from "../../screens/Admin/comment/DetailCommentsScreen";
 import TabAdminProfileScreen from "../../screens/Admin/AdminProfileScreen";
 import EditProfileScreen from "../../screens/Admin/profile/EditProfileScreen";
 import PaymentScreen from "../../screens/Admin/profile/PaymentScreen";
@@ -38,6 +39,7 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
 import { View } from "react-native";
+import DetailProductScreen from "../../screens/Client/product/DetailProductScreen";
 
 // const BottomTab = createBottomTabNavigator<BottomTabAdminParamList>();
 const BottomTab = createMaterialBottomTabNavigator<BottomTabAdminParamList>();
@@ -273,6 +275,11 @@ function AdminTabCommentsNavigator() {
         name="TabAdminCommentsScreen"
         component={TabAdminCommentsScreen}
         options={{ headerTitle: "Tab comments Home Title" }}
+      />
+      <TabAdminCommentsStack.Screen
+        name="DetailCommentsScreen"
+        component={DetailCommentsScreen}
+        options={{ headerTitle: "Client Detail Product Title", headerShown: false }}
       />
     </TabAdminCommentsStack.Navigator>
   );

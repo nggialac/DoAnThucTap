@@ -36,8 +36,8 @@ const MedicineScreen = ({ navigation }) => {
   }, []);
 
   const deleteACategory = async (madm: string) => {
-    Alert.alert("Success!", "Deleted", [
-      { text: "ok", onPress: () => deleteDM(madm) },
+    Alert.alert("Notice!", "Delete this category?", [
+      { text: "Approve", onPress: () => deleteDM(madm) },
       { text: "Cancel", style: "cancel" },
     ]);
   };
@@ -65,17 +65,6 @@ const MedicineScreen = ({ navigation }) => {
         Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
       });
   }, [refreshing]);
-
-  // const handleEdit = (params) => {
-  //   // const reqData = {params.}
-  //   putCategoryMedicine(params)
-  //   .then(res=>{
-  //     Alert.alert("Fail!", "Success!", [{ text: "ok" }]);
-  //   })
-  //   .catch(e=> {
-  //     Alert.alert("Fail!", "" + e, [{ text: "ok" }]);
-  //   })
-  // }
 
   return (
     <ScrollView
@@ -118,27 +107,6 @@ const MedicineScreen = ({ navigation }) => {
           <></>
         )}
 
-        {/* <TouchableOpacity
-          style={styles.categoryBtn}
-          onPress={() =>
-            navigation.navigate("TabAdminHomeProductList", { title: "Fastfood Center" })
-          }
-        >
-          <View style={styles.categoryIcon}>
-            <MaterialCommunityIcons
-              name="food-fork-drink"
-              size={35}
-              color="#FF6347"
-            />
-          </View>
-          <Text style={styles.categoryBtnTxt}>Fastfood Center</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.categoryBtn} onPress={() => {}}>
-          <View style={styles.categoryIcon}>
-            <MaterialCommunityIcons name="food" size={35} color="#FF6347" />
-          </View>
-          <Text style={styles.categoryBtnTxt}>Snacks Corner</Text>
-        </TouchableOpacity> */}
       </View>
     </ScrollView>
   );

@@ -83,6 +83,7 @@ export type TabAdminStatisticParamList = {
 
 export type TabAdminCommentsParamList = {
   TabAdminCommentsScreen: undefined;
+  DetailCommentsScreen: any;
 }
 
 export type TabAdminProfileParamList = {

@@ -157,7 +157,7 @@ export default function Navigation({
 
   const check = async (role: any, userName: any) => {
     var mnv_mnt;
-    if (role === "3") {
+    if (role === "3" || role === "1") {
       mnv_mnt = await callNv(userName);
     } else if (role === "2") {
       mnv_mnt = await callNt(userName);

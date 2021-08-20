@@ -97,6 +97,11 @@ function ClientTabHomeNavigator() {
         component={CartScreen}
         options={{ headerTitle: "Client Cart Title", headerShown: false }}
       />
+            {/* <TabClientHomeStack.Screen
+        name="DeliveryInfo"
+        component={CartScreen}
+        options={{ headerTitle: "Client Cart Title", headerShown: false }}
+      /> */}
             <TabClientHomeStack.Screen
         name="CheckOutScreen"
         component={CheckOutScreen}

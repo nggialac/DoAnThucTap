@@ -11,6 +11,7 @@ import { Text, View } from "../../components/Themed";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
+import COLORS from "../../assets/colors/Colors";
 
 export default function SplashScreen({ navigation }) {
   return (
@@ -23,10 +24,11 @@ export default function SplashScreen({ navigation }) {
           style={styles.logo}
           resizeMode="stretch"
         />
+        <Text style={[styles.title, {color: COLORS.white}]}>Medical Pharmacy</Text>
       </View>
       <Animatable.View style={styles.footer}
       animation="fadeInUpBig">
-        <Text style={styles.title}>Stay connect!</Text>
+        <Text style={styles.title}>Nền tảng online cung cấp dược phẩm!</Text>
         <Text style={styles.textSign}>Sign in</Text>
         <View style={styles.button}>
           <TouchableOpacity onPress={() => navigation.navigate('SignInScreen')}>
@@ -73,6 +75,7 @@ const styles = StyleSheet.create({
   logo: {
       width: height_logo,
       height: height_logo
+
   },
   title: {
       color: '#05375a',

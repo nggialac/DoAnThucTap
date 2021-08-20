@@ -19,3 +19,11 @@ export function getListOrderByMaDH(madh: string) {
 export function deleteOrderById(madh: string) {
   return InstanceApi.delete(`donhang/${madh}`);
 }
+
+export function cancelOrder(madh: string) {
+  return InstanceApi.put(`donhang/${madh}`);
+}
+
+export function putOrder(params: object) {
+  return InstanceApi.put(`donhang`, params);
+}

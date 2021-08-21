@@ -27,11 +27,14 @@ import { AuthContext } from "../../../components/ContextLogin";
 
 const { width } = Dimensions.get("window");
 
-const DetailCommentsScreen = ({ navigation, route }) => {
+const DetailCommentClientScreen = ({ navigation, route }) => {
   const comments = route.params;
   LogBox.ignoreAllLogs();
   // console.log(comments);
   const [listData, setListData] = React.useState();
+
+  const context = React.useContext(AuthContext);
+  const nhathuoc = context.loginState.mnv_mnt;
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -45,9 +48,6 @@ const DetailCommentsScreen = ({ navigation, route }) => {
     setRefreshing(true);
     wait(4000).then(() => setRefreshing(false));
   }, []);
-
-  const context = React.useContext(AuthContext);
-  const nhanvien = context.loginState.mnv_mnt;
 
   const toggleModalVisibility = () => {
     setModalVisible(!isModalVisible);
@@ -88,48 +88,8 @@ const DetailCommentsScreen = ({ navigation, route }) => {
     return output;
   }
 
-  const doReply = async (
-    binhluan: object,
-    nhanvien: object,
-    noidung: string
-  ) => {
-    // setModalVisible(true);
-    var params = {
-      binhluan,
-      nhanvien,
-      noidung,
-      time: await getDate(),
-    };
-    // console.log(params);
-    await postReply(params)
-      .then((res) => {
-        Alert.alert("Success", "Success!", [{ text: "ok" }]);
-        toggleModalVisibility();
-        setInputValue("");
-      })
-      .catch((e) => {
-        console.log(params);
-        console.log(e);
-        Alert.alert("Fail", "Cannot create reply " + e, [{ text: "ok" }]);
-      });
-  };
-
-  const doDeleteReply = (id: number) => {
-    deleteReply(id)
-    .then((res) => {
-      Alert.alert("Success", "Success!", [{ text: "ok" }]);
-      // toggleModalVisibility();
-      // setInputValue("");
-    })
-    .catch((e) => {
-      console.log(id);
-      console.log(e);
-      Alert.alert("Fail", "Cannot delete this reply " + e, [{ text: "ok" }]);
-    });
-  }
-
   useEffect(() => {
-    getData(comments.item.id);
+    getData(comments.id);
     // console.log(comments);
   }, [refreshing]);
 
@@ -137,15 +97,6 @@ const DetailCommentsScreen = ({ navigation, route }) => {
     return (
       <View style={{ marginBottom: 20 }}>
         {/* {console.log(item)} */}
-
-        {item.nhanvien.manv === nhanvien.manv ? (
-          <TouchableOpacity onPress={() => {doDeleteReply(item.id)}}>
-            <Icon
-              name="delete"
-              style={{ fontSize: 20, justifyContent: "flex-end" }}
-            />
-          </TouchableOpacity>
-        ) : null}
 
         <TouchableOpacity style={[style.card, style.commentCard]}>
           <Text>
@@ -158,9 +109,12 @@ const DetailCommentsScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView style={{ paddingHorizontal: 10 }} refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-    }>
+    <ScrollView
+      style={{ paddingHorizontal: 10 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={{ alignItems: "center" }}>
         <Text style={[style.headerText, { marginTop: 50 }]}>
           Client's Comment
@@ -171,9 +125,9 @@ const DetailCommentsScreen = ({ navigation, route }) => {
         {/* {console.log(comments)} */}
         <TouchableOpacity style={[style.card, style.commentCard]}>
           <Text>
-            {comments.item.nhathuoc.manhathuoc}: {comments.item.noidung}
+            {comments.nhathuoc.manhathuoc}: {comments.noidung}
           </Text>
-          <Text>Ngày: {comments.item.time}</Text>
+          <Text>Ngày: {comments.time}</Text>
         </TouchableOpacity>
       </View>
       {/* COMMENT OF NV */}
@@ -186,61 +140,6 @@ const DetailCommentsScreen = ({ navigation, route }) => {
         contentContainerStyle={style.commentsContainer}
         // keyExtractor={(e) => e.id.toString()}
       />
-
-      {/* MODAL */}
-      <View>
-        <Modal
-          animationType="slide"
-          transparent
-          visible={isModalVisible}
-          presentationStyle="overFullScreen"
-          onDismiss={toggleModalVisibility}
-        >
-          <View style={style.viewWrapper}>
-            <View style={style.modalView}>
-              <TextInput
-                placeholder="Enter something..."
-                value={inputValue}
-                style={style.textInput}
-                onChangeText={(value) => setInputValue(value)}
-              />
-
-              {/** This button is responsible to close the modal */}
-              <View style={{ flexDirection: "row" }}>
-                <Pressable
-                  onPress={
-                    () => {
-                      doReply(comments.item, comments.nhanvien, inputValue);
-                    }
-                    //   addComment(medicine, nhathuoc, inputValue, getDate())
-                  }
-                  style={[style.button, style.buttonOpen, { margin: 10 }]}
-                >
-                  <Text style={{ color: COLORS.white }}>Comment</Text>
-                </Pressable>
-                <Pressable
-                  onPress={toggleModalVisibility}
-                  style={[style.button, style.buttonClose, { margin: 10 }]}
-                >
-                  <Text style={{ color: COLORS.white }}>Cancel</Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </Modal>
-      </View>
-      <Pressable
-        onPress={toggleModalVisibility}
-        style={[style.button, style.buttonClose, { alignItems: "center" }]}
-      >
-        <Text style={{ color: COLORS.white }}>Add more reply</Text>
-      </Pressable>
-
-      {/* <View style={{ alignItems: "center" }}>
-          <TouchableOpacity onPress={toggleModalVisibility}>
-            <Ionicons name="add-circle-outline" style={{ fontSize: 50 }} />
-          </TouchableOpacity>
-        </View> */}
     </ScrollView>
   );
 };
@@ -345,4 +244,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default DetailCommentsScreen;
+export default DetailCommentClientScreen;

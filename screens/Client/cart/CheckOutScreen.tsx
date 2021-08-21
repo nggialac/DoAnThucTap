@@ -18,7 +18,7 @@ const colors = {
 
 export default function PaymentsUICustomScreen({ route }) {
   const context = React.useContext(AuthContext);
-  const nhathuoc = (context.loginState.mnv_mnt);
+  const nhathuoc = context.loginState.mnv_mnt;
   // console.log(nhathuoc);
 
   const { initPaymentSheet, presentPaymentSheet, confirmPaymentSheetPayment } =
@@ -32,6 +32,7 @@ export default function PaymentsUICustomScreen({ route }) {
 
   const totalPrice = route.params.total;
   const dataCart = route.params.dataCart;
+  var payment_intent_fetched;
   // console.log(route.params.);
 
   const fetchPaymentSheetParams = async () => {
@@ -48,6 +49,8 @@ export default function PaymentsUICustomScreen({ route }) {
     });
     const { paymentIntent, ephemeralKey, customer } = await response.json();
 
+    payment_intent_fetched = paymentIntent;
+
     return {
       paymentIntent,
       ephemeralKey,
@@ -55,16 +58,20 @@ export default function PaymentsUICustomScreen({ route }) {
     };
   };
 
-  const createOrders = (manhathuoc: string, params) => {
+  const createOrders = async (manhathuoc: string, params) => {
     // const temp = [{params}]
-    postOrder(manhathuoc, params)
+    let check;
+    await postOrder(manhathuoc, params)
       .then((res) => {
         console.log(res.data);
+        check = true;
       })
       .catch((e) => {
         console.log(e);
         Alert.alert(`Error`, e + "");
+        check = false;
       });
+    return check;
   };
 
   function requestData(dataCart) {
@@ -97,6 +104,8 @@ export default function PaymentsUICustomScreen({ route }) {
         googlePay: true,
         testEnv: true,
       });
+      // console.log("PAYMENT INTENT");
+      // console.log(paymentIntent);
 
       if (!error) {
         setPaymentSheetEnabled(true);
@@ -136,15 +145,41 @@ export default function PaymentsUICustomScreen({ route }) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       Alert.alert("Success", "The payment was confirmed successfully!");
-      setPaymentSheetEnabled(false);
+      // setPaymentSheetEnabled(false);
 
       //CreateOrder
       const data = requestData(dataCart);
-      await createOrders(nhathuoc.manhathuoc, data);
+      let check = await createOrders(nhathuoc.manhathuoc, data);
+      // if(check === false) {
+      //   // refundPayment
+      // }
 
       setLoading(false);
     }
   };
+
+  const doRefund = async (pi: string) =>{
+    const response = await fetch(`${API_URL}/pi/cancel`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pi: pi,
+        // request_three_d_secure: 'any',
+      }),
+    });
+    const { paymentIntent } = await response.json();
+
+    return {
+      paymentIntent
+    };
+  
+  }
+
+  const refundButton = () => {
+
+  }
 
   useEffect(() => {
     // In your app’s checkout, make a network request to the backend and initialize PaymentSheet.
@@ -194,6 +229,15 @@ export default function PaymentsUICustomScreen({ route }) {
           disabled={!paymentMethod || !paymentSheetEnabled}
           title="Buy"
           onPress={onPressBuy}
+        />
+      </View>
+      <View style={styles.section}>
+        <Button
+          variant="primary"
+          loading={loading}
+          disabled={!paymentMethod || !paymentSheetEnabled}
+          title="Refund"
+          onPress={refundButton}
         />
       </View>
     </PaymentScreen>

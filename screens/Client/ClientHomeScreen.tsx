@@ -238,6 +238,7 @@ const HomeScreen = ({ navigation }) => {
 
       <FlatList
         keyExtractor={(medicine) => medicine.masp}
+        
         showsVerticalScrollIndicator={false}
         numColumns={2}
         data={medicinesChange ? medicinesChange:medicines}

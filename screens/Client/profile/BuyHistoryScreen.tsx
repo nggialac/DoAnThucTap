@@ -1,5 +1,14 @@
 import React from "react";
-import { View, Text, Button, FlatList, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Button,
+  FlatList,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 // import {data} from '../../../navigation/Models/MedicineData';
 import Card from "./Card";
 import { getMedicineByCategory } from "../../../api/MedicineApis";
@@ -10,7 +19,17 @@ import { AuthContext } from "../../../components/ContextLogin";
 const BuyHistoryScreen = ({ navigation, route }) => {
   const [listData, setListData] = React.useState([]);
   const context = React.useContext(AuthContext);
-  const nhathuoc = (context.loginState.mnv_mnt);
+  const nhathuoc = context.loginState.mnv_mnt;
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(4000).then(() => setRefreshing(false));
+  }, []);
 
   const getData = (manhathuoc: string) => {
     getListOrderByClient(manhathuoc)
@@ -30,7 +49,7 @@ const BuyHistoryScreen = ({ navigation, route }) => {
 
   React.useEffect(() => {
     getData(nhathuoc.manhathuoc);
-  }, []);
+  }, [refreshing]);
 
   const renderItem = ({ item }) => {
     return (
@@ -38,20 +57,25 @@ const BuyHistoryScreen = ({ navigation, route }) => {
         key={item.madh}
         itemData={item}
         onPress={() => {
-          passData(item.madh)
+          passData(item.madh);
         }}
       />
     );
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <FlatList
         data={listData}
         renderItem={renderItem}
         keyExtractor={(item) => item.madh}
       />
-    </View>
+    </ScrollView>
   );
 };
 

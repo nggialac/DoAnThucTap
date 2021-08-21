@@ -8,6 +8,10 @@ export function getListReplyOfComment(mabl: number) {
     return InstanceApi.get(`phanhoi/${mabl}`);
 }
 
+export function getListReplyByNhathuoc(manhathuoc: number) {
+    return InstanceApi.get(`phanhoi/nt/${manhathuoc}`);
+}
+
 export function postReply(params: object) {
     return InstanceApi.post("phanhoi", params);
 }

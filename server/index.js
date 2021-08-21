@@ -434,7 +434,6 @@ app.post("/payment-sheet", async (req, res) => {
 
   // Here, we're getting latest customer only for example purposes.
   const customer = customers.data[0];
-  console.log(customers);
 
   if (!customer) {
     res.send({
@@ -458,6 +457,28 @@ app.post("/payment-sheet", async (req, res) => {
     customer: customer.id
   });
 });
+
+app.post("/pi/cancel", async (req, res) => {
+
+  const {
+    pi,
+  } = req.body;
+  const { secret_key } = getKeys('');
+
+  const stripe = new Stripe(secret_key, {
+    apiVersion: "2020-08-27",
+    typescript: true
+  });
+  
+  console.log(pi);
+  // To create a PaymentIntent, see our guide at: https://stripe.com/docs/payments/payment-intents/creating-payment-intents#creating-for-automatic
+  // const paymentIntent = await stripe.paymentIntents.cancel(
+  //   pi
+  // );
+  // res.json({
+  //   paymentIntent
+  // });
+})
 
 app.listen(3000, () => console.log(`Node server listening on port 3000!`));
 

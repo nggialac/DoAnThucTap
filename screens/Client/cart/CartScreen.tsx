@@ -7,6 +7,7 @@ import {
   Image,
   Alert,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "@expo/vector-icons/MaterialIcons";
@@ -23,7 +24,7 @@ const CartScreen = ({ navigation }) => {
   const [dataCart, setDataCart] = React.useState([]);
   const [total, setTotal] = React.useState(0);
   const context = React.useContext(AuthContext);
-  const nhathuoc = (context.loginState.mnv_mnt);
+  const nhathuoc = context.loginState.mnv_mnt;
   // console.log(nhathuoc);
 
   // const getData = async () => {
@@ -173,17 +174,29 @@ const CartScreen = ({ navigation }) => {
               <PrimaryButton
                 title="CHECKOUT"
                 onPress={() => {
-                  total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
+                  // total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
+                  total && dataCart
+                    ? navigation.navigate("CheckOutCashScreen", {
+                        total,
+                        dataCart,
+                      })
+                    : Alert.alert("Fail!", "Cannot checkout without item!");
                 }}
               />
             </View>
           </View>
         )}
       />
+      {/* <View style={style.header}>
+        <Button variant="primary" title="Hủy đơn" onPress={() => {}} />
+      </View> */}
     </SafeAreaView>
   );
 };
 const style = StyleSheet.create({
+  section: {
+    marginTop: 90,
+  },
   header: {
     marginTop: 30,
     paddingVertical: 20,

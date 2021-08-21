@@ -20,6 +20,10 @@ export function getListCommentOfProduct(masp: string) {
     return InstanceApi.get(`binhluan/${masp}`);
 }
 
+export function getListCommentOfNhathuoc(manhathuoc: string) {
+    return InstanceApi.get(`binhluan/nt/${manhathuoc}`);
+}
+
 export function postComment(params: object) {
     return InstanceApi.post("binhluan", params);
 }

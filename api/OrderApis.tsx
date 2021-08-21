@@ -4,8 +4,8 @@ export function getListOrder() {
   return InstanceApi.get(`donhang`);
 }
 
-export function postOrder(manhathuoc: string, params) {
-  return InstanceApi.post(`donhang/${manhathuoc}`, params);
+export function postOrder(manhathuoc: string, hinhthucthanhtoan: number, params) {
+  return InstanceApi.post(`donhang/${manhathuoc}/${hinhthucthanhtoan}`, params);
 }
 
 export function getListOrderByClient(manhathuoc: string) {

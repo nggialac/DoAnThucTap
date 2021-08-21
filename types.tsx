@@ -39,7 +39,7 @@ export type LoginStackParamList = {
   SignUpScreen: undefined;
   ClientSignUpScreen: undefined;
   ForgetPasswordScreen: undefined;
-}
+};
 
 //ADMIN
 export type BottomTabAdminParamList = {
@@ -57,45 +57,44 @@ export type TabAdminHomeParamList = {
   TabAdminHomeStaff: undefined;
   TabAdminHomeAddStaff: undefined;
   TabAdminHomeEditStaff: {
-    itemData: object
-  }
+    itemData: object;
+  };
   //
   TabAdminHomeProduct: undefined;
   TabAdminHomeCategoryProduct: undefined;
   TabAdminHomeProductList: {
-    title: string
+    title: string;
   };
-  TabAdminHomeAddProduct: 
-  {
-    danhmuc: object
+  TabAdminHomeAddProduct: {
+    danhmuc: object;
   };
   TabAdminHomeProductDetail: {
-    itemData: object
+    itemData: object;
   };
   TabAdminHomeEditProduct: {
-    itemData: object
+    itemData: object;
   };
-}
+};
 
 export type TabAdminStatisticParamList = {
   TabAdminStatisticScreen: undefined;
-}
+};
 
 export type TabAdminCommentsParamList = {
   TabAdminCommentsScreen: undefined;
   DetailCommentsScreen: any;
-}
+};
 
 export type TabAdminProfileParamList = {
   TabAdminProfileScreen: undefined;
-  EditProfileScreen: undefined; 
+  EditProfileScreen: undefined;
   TabAdminProfilePaymentScreen: undefined;
-}
+};
 
 //CLIENT
 export type BottomTabClientParamList = {
   Home: undefined;
-  Categories: undefined;
+  Comments: undefined;
   Profile: undefined;
 };
 
@@ -104,23 +103,32 @@ export type TabClientHomeParamList = {
   DetailProductScreen: undefined;
   CartScreen: undefined;
   CheckOutScreen: {
-    total: number,
-    dataCart: []
+    total: number;
+    dataCart: [];
   };
-  
-}
+
+  CheckOutCashScreen: {
+    total: number;
+    dataCart: [];
+  };
+
+  DetailCommentClientScreen: {
+    item: any;
+  };
+};
 
 export type TabClientCategoriesParamList = {
-  TabClientCategoriesScreen: undefined;
-}
+  ClientCommentsScreen: undefined;
+  DetailCommentClientScreenN:any;
+};
 
 export type TabClientProfileParamList = {
   ClientProfileScreen: undefined;
   ClientEditProfileScreen: {
-    nhathuoc: object
+    nhathuoc: object;
   };
   BuyHistoryScreen: undefined;
   DetailBuyHistoryScreen: {
-    madh: any
+    madh: any;
   };
-}
+};

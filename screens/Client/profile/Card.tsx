@@ -2,6 +2,14 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 const Card = ({ itemData, onPress }) => {
+  var listTrangthai = {
+    0: "Chờ xử lý",
+    1: "Đã duyệt",
+    2: "Đang giao",
+    3: "Giao hàng thành công",
+    4: "Đã hủy",
+  };
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.card}>
@@ -13,10 +21,25 @@ const Card = ({ itemData, onPress }) => {
           />
         </View> */}
         <View style={styles.cardInfo}>
-          <Text style={styles.cardTitle}>Ngày đặt: {itemData.ngaydat.slice(0, 10)}</Text>
-          <Text style={styles.cardTitle}>Tổng tiền: {itemData.tongtien} VND</Text>
-          <Text numberOfLines={2} style={styles.cardDetails}> Tình trạng: 
-            {itemData.trangthai === 0 ? <Text> Đang xử lý</Text>: <Text> Chưa xử lý</Text>}
+          <Text style={styles.cardTitle}>Mã đơn: {itemData.madh}</Text>
+          <Text style={styles.cardTitle}>
+            Ngày đặt: {itemData.ngaydat.slice(0, 10)}
+          </Text>
+
+          <Text numberOfLines={1} style={styles.cardDetails}>
+            HTTT:
+            {itemData.hinhthucthanhtoan === 1 ? (
+              <Text> Online</Text>
+            ) : (
+              <Text> Tiền mặt</Text>
+            )}
+          </Text>
+          <Text numberOfLines={1} style={styles.cardDetails}>
+            Tình trạng: 
+            {listTrangthai[itemData.trangthai]}
+          </Text>
+          <Text numberOfLines={1} style={styles.cardDetails}>
+            <Text>Tổng tiền: {itemData.tongtien} VND</Text>
           </Text>
         </View>
       </View>
@@ -28,7 +51,7 @@ export default Card;
 
 const styles = StyleSheet.create({
   card: {
-    height: 100,
+    height: 110,
     marginVertical: 10,
     flexDirection: "row",
     shadowColor: "#999",
@@ -62,7 +85,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cardDetails: {
-    marginTop: 10,
+    // marginTop: 10,
     fontSize: 12,
     color: "#444",
   },

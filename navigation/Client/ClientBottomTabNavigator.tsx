@@ -12,13 +12,14 @@ import TabClientHomeScreen from "../../screens/Client/ClientHomeScreen";
 import DetailProductScreen from "../../screens/Client/product/DetailProductScreen";
 import CartScreen from "../../screens/Client/cart/CartScreen";
 import CheckOutScreen from "../../screens/Client/cart/CheckOutScreen";
+import CheckOutCashScreen from "../../screens/Client/cart/CheckOutCashScreen";
 
-import TabClientCategoriesScreen from "../../screens/Client/ClientCategoriesScreen";
+import TabClientCategoriesScreen from "../../screens/Client/ClientCommentsScreen";
 
 import ClientProfileScreen from "../../screens/Client/ClientProfileScreen";
 import ClientEditProfileScreen from "../../screens/Client/profile/EditProfileClientScreen";
 import BuyHistoryScreen from "../../screens/Client/profile/BuyHistoryScreen";
-import DetailBuyHistoryScreen from "../../screens/Client/profile/DetailBuyHistoryScreen"
+import DetailBuyHistoryScreen from "../../screens/Client/profile/DetailBuyHistoryScreen";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
@@ -28,6 +29,9 @@ import {
   TabClientCategoriesParamList,
   TabClientProfileParamList,
 } from "../../types";
+import DetailCommentsScreen from "../../screens/Admin/comment/DetailCommentsScreen";
+import DetailCommentClientScreen from "../../screens/Client/comment/DetailCommentClientScreen";
+import ClientCommentsScreen from "../../screens/Client/ClientCommentsScreen";
 
 const BottomTab = createBottomTabNavigator<BottomTabClientParamList>();
 
@@ -48,15 +52,15 @@ export default function AdminBottomTabNavigator() {
           ),
         }}
       />
-      {/* <BottomTab.Screen
-        name="Categories"
-        component={ClientTabCategoriesNavigator}
+      <BottomTab.Screen
+        name="Comments"
+        component={ClientCommentsNavigator}
         options={{
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="book-outline" color={color} />
+            <TabBarIcon name="chatbox-ellipses" color={color} />
           ),
         }}
-      /> */}
+      />
       <BottomTab.Screen
         name="Profile"
         component={ClientTabProfileNavigator}
@@ -90,21 +94,45 @@ function ClientTabHomeNavigator() {
       <TabClientHomeStack.Screen
         name="DetailProductScreen"
         component={DetailProductScreen}
-        options={{ headerTitle: "Client Detail Product Title", headerShown: false }}
+        options={{
+          headerTitle: "Client Detail Product Title",
+          headerShown: false,
+        }}
       />
       <TabClientHomeStack.Screen
         name="CartScreen"
         component={CartScreen}
         options={{ headerTitle: "Client Cart Title", headerShown: false }}
       />
-            {/* <TabClientHomeStack.Screen
+
+<TabClientHomeStack.Screen
+        name="DetailCommentClientScreen"
+        component={DetailCommentClientScreen}
+        options={({ route }) => ({
+          comments: route.params,
+          headerBackTitleVisible: false,
+          headerShown: true,
+        })}
+      />
+
+      {/* <TabClientHomeStack.Screen
         name="DeliveryInfo"
         component={CartScreen}
         options={{ headerTitle: "Client Cart Title", headerShown: false }}
       /> */}
-            <TabClientHomeStack.Screen
+      <TabClientHomeStack.Screen
         name="CheckOutScreen"
         component={CheckOutScreen}
+        options={({ route }) => ({
+          total: route.params.total,
+          dataCart: route.params.dataCart,
+          headerBackTitleVisible: false,
+          headerShown: true,
+        })}
+      />
+      <TabClientHomeStack.Screen
+        name="CheckOutCashScreen"
+        component={CheckOutCashScreen}
         options={({ route }) => ({
           total: route.params.total,
           dataCart: route.params.dataCart,
@@ -119,13 +147,22 @@ function ClientTabHomeNavigator() {
 const TabClientCategoriesStack =
   createStackNavigator<TabClientCategoriesParamList>();
 
-function ClientTabCategoriesNavigator() {
+function ClientCommentsNavigator() {
   return (
     <TabClientCategoriesStack.Navigator>
       <TabClientCategoriesStack.Screen
-        name="TabClientCategoriesScreen"
-        component={TabClientCategoriesScreen}
+        name="ClientCommentsScreen"
+        component={ClientCommentsScreen}
         options={{ headerTitle: "Tab Client Categories Title" }}
+      />
+      <TabClientHomeStack.Screen
+        name="DetailCommentClientScreenN"
+        component={DetailCommentClientScreen}
+        options={({ route }) => ({
+          comments: route.params,
+          headerBackTitleVisible: false,
+          headerShown: true,
+        })}
       />
     </TabClientCategoriesStack.Navigator>
   );
@@ -134,7 +171,6 @@ function ClientTabCategoriesNavigator() {
 const TabClientProfileStack = createStackNavigator<TabClientProfileParamList>();
 
 function ClientTabProfileNavigator({ navigation }) {
-  
   const { colors } = useTheme();
 
   return (
@@ -144,7 +180,7 @@ function ClientTabProfileNavigator({ navigation }) {
         component={TabClientProfileScreen}
         options={{ headerTitle: "Tab Client Profile Title" }}
       /> */}
-            <TabClientProfileStack.Screen
+      <TabClientProfileStack.Screen
         name="ClientProfileScreen"
         component={ClientProfileScreen}
         options={{
@@ -156,7 +192,6 @@ function ClientTabProfileNavigator({ navigation }) {
               backgroundColor={colors.background}
               color={colors.text}
               onPress={() => navigation.navigate("ClientEditProfileScreen")}
-            
             />
           ),
         }}
@@ -171,7 +206,7 @@ function ClientTabProfileNavigator({ navigation }) {
           headerShown: false,
         })}
       />
-            <TabClientProfileStack.Screen
+      <TabClientProfileStack.Screen
         name="BuyHistoryScreen"
         component={BuyHistoryScreen}
         options={{

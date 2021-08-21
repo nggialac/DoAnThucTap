@@ -1,5 +1,11 @@
 import React from "react";
-import { LogBox, RefreshControl, ScrollView, Touchable, TouchableOpacity } from "react-native";
+import {
+  LogBox,
+  RefreshControl,
+  ScrollView,
+  Touchable,
+  TouchableOpacity,
+} from "react-native";
 import {
   View,
   Text,
@@ -11,16 +17,18 @@ import {
   TextInput,
   Dimensions,
 } from "react-native";
-import { deleteComment, getListComment } from "../../api/RatingCommentApis";
-import { getListReply, postReply } from "../../api/ReplyApis";
+import {
+  deleteComment,
+  getListComment,
+  getListCommentOfNhathuoc,
+} from "../../api/RatingCommentApis";
+import { getListReply, getListReplyByNhathuoc, postReply } from "../../api/ReplyApis";
 import { AuthContext } from "../../components/ContextLogin";
 
 const MedicineListScreen = ({ navigation }) => {
   LogBox.ignoreAllLogs();
   const [listData, setListData] = React.useState([]);
   const [listComment, setListComment] = React.useState();
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [inputValue, setInputValue] = React.useState("");
   const [refreshing, setRefreshing] = React.useState(false);
 
   const wait = (timeout) => {
@@ -32,13 +40,11 @@ const MedicineListScreen = ({ navigation }) => {
     wait(4000).then(() => setRefreshing(false));
   }, []);
 
-  const [count, setCount] = React.useState(1);
   const context = React.useContext(AuthContext);
-  const nhanvien = context.loginState.mnv_mnt;
-  console.log(nhanvien);
+  const nhathuoc = context.loginState.mnv_mnt;
 
-  const getData = () => {
-    getListReply()
+  const getData = (manhathuoc: string) => {
+    getListReplyByNhathuoc(manhathuoc)
       .then((res) => {
         // console.log(res.data);
         setListData(res.data);
@@ -48,8 +54,8 @@ const MedicineListScreen = ({ navigation }) => {
       });
   };
 
-  const getComments = () => {
-    getListComment()
+  const getComments = (manhathuoc: string) => {
+    getListCommentOfNhathuoc(manhathuoc)
       .then((res) => {
         // console.log(res.data);
         setListComment(res.data.reverse());
@@ -61,10 +67,12 @@ const MedicineListScreen = ({ navigation }) => {
 
   React.useEffect(() => {
     async function use() {
-      await getData();
-      await getComments();
+      await getData(nhathuoc.manhathuoc);
+      await getComments(nhathuoc.manhathuoc);
     }
     use();
+    
+    console.log(nhathuoc.manhathuoc);
   }, [refreshing]);
 
   function getDate() {
@@ -91,46 +99,12 @@ const MedicineListScreen = ({ navigation }) => {
     return output;
   }
 
-  const modalAction = async (
-    binhluan: object,
-    nhanvien: object,
-    noidung: string
-  ) => {
-    // setModalVisible(true);
-    var params = {
-      binhluan,
-      nhanvien,
-      noidung,
-      time: await getDate(),
-    };
-    console.log(params);
-    await postReply(params)
-      .then((res) => {
-        Alert.alert("Success", "Success!", [{ text: "ok" }]);
-        setModalVisible(!modalVisible);
-        setInputValue("");
-      })
-      .catch((e) => {
-        console.log(params);
-        console.log(e);
-        Alert.alert("Fail", "Cannot create reply " + e, [{ text: "ok" }]);
-      });
-  };
-
-  const [temp, setTemp] = React.useState();
-  // const test = (listData: [], val: number) => {
-  //   const found = listData.find((item) => {
-  //     item === val;
-  //   })
-  // };
-
-  const doDeleteComment=(id: number)=>{
-    
-      Alert.alert("Notice!", "Are you want delete for this comment?", [
-        {
-          text: "Approve",
-          onPress: async() => {
-            await deleteComment(id)
+  const doDeleteComment = (id: number) => {
+    Alert.alert("Notice!", "Are you want delete for this comment?", [
+      {
+        text: "Approve",
+        onPress: async () => {
+          await deleteComment(id)
             .then((res) => {
               Alert.alert("Success", "Success!", [{ text: "ok" }]);
               // setModalVisible(!modalVisible);
@@ -139,17 +113,17 @@ const MedicineListScreen = ({ navigation }) => {
             .catch((e) => {
               console.log(id);
               console.log(e);
-              Alert.alert("Fail", "Cannot delete comment has replied! ", [{ text: "ok" }]);
+              Alert.alert("Fail", "Cannot delete comment has replied! ", [
+                { text: "ok" },
+              ]);
             });
-          },
         },
-        {
-          text: "Cancel",
-        },
-      ]);
-  
-  }
-
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
+  };
 
   const renderItem = (item) => {
     return (
@@ -159,7 +133,7 @@ const MedicineListScreen = ({ navigation }) => {
             // console.log("TESSSSSSSSSSSSSSSSSSSSSSS");
             // setTemp({item, nhanvien});
             // setModalVisible(!modalVisible);
-            navigation.navigate("DetailCommentsScreen", {item, nhanvien})
+            navigation.navigate("DetailCommentClientScreenN", item)
           }}
           onLongPress={()=>doDeleteComment(item.id)}
         >
@@ -167,7 +141,8 @@ const MedicineListScreen = ({ navigation }) => {
           <View style={styles.card}>
             <View style={styles.cardInfo}>
               <Text style={styles.cardTitle}>
-                Mã NT: {item.nhathuoc.manhathuoc} - ID:{item.id} - {listData.some(rep => rep.binhluan.id === item.id) === true ? "Replied" : "Waiting"}
+                Mã NT: {item.nhathuoc.manhathuoc} - ID:{item.id} - 
+                {listData.some(rep => rep.binhluan.id === item.id) === true ? "Replied" : "Waiting"}
               </Text>
               <Text style={styles.cardTitle}>
                 Sản phẩm: {item.sanpham.masp} - {item.sanpham.tensp}
@@ -184,63 +159,17 @@ const MedicineListScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container} refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-    }>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <FlatList
         data={listComment}
         renderItem={({ item }) => renderItem(item)}
-        keyExtractor={(item) => 'key'+item.id}
-        // key={({item})=>item}
+        keyExtractor={(item) => "key" + item.id}
       />
-
-      {/* <TouchableOpacity
-        onPress={() => setModalVisible(true)}
-        style={[styles.button, styles.buttonOpen]}
-      >
-        <Text>Show Modal</Text>
-      </TouchableOpacity> */}
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TextInput
-              placeholder="Enter something..."
-              value={inputValue}
-              style={styles.textInput}
-              onChangeText={(value) => setInputValue(value)}
-            />
-            <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity
-                onPress={
-                  () => {
-                    modalAction(temp.item, temp.nhanvien, inputValue)
-                    // console.log
-                  }
-                  // modalAction(comm, nhathuoc, inputValue, getDate())
-                }
-                style={[styles.button, styles.buttonClose]}
-              >
-                <Text style={styles.textStyle}>Action</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setModalVisible(!modalVisible)}
-                style={[styles.button, styles.buttonClose]}
-              >
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </ScrollView>
   );
 };

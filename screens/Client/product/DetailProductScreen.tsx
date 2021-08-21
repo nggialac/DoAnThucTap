@@ -15,6 +15,7 @@ import {
   TextInput,
   Pressable,
   ImageBackground,
+  LogBox,
 } from "react-native";
 import Icon from "@expo/vector-icons/MaterialIcons";
 import COLORS from "../../../assets/colors/Colors";
@@ -37,6 +38,7 @@ const { width } = Dimensions.get("window");
 // import { Image } from "react-native-animatable";
 
 const DetailProductScreen = ({ navigation, route }) => {
+  LogBox.ignoreAllLogs();
   const medicine = route.params;
   const [count, setCount] = useState(1);
   const context = useContext(AuthContext);
@@ -58,9 +60,12 @@ const DetailProductScreen = ({ navigation, route }) => {
     wait(4000).then(() => setRefreshing(false));
   }, []);
 
-  const renderComment = ({ item, index }) => {
+  const renderComment = ( item, navigation ) => {
     return (
+      // console.log("CHECK")
+      // console.log(item, index)
       <View style={{ marginBottom: 20 }}>
+        {/* {navigation ? console.log(navigation):null} */}
         {item.nhathuoc.manhathuoc === nhathuoc.manhathuoc ? (
           <TouchableOpacity onPress={() => deleteMyComment(item.id)}>
             <Icon
@@ -69,7 +74,11 @@ const DetailProductScreen = ({ navigation, route }) => {
             />
           </TouchableOpacity>
         ) : null}
-        <TouchableOpacity style={[style.card, style.commentCard]}>
+        <TouchableOpacity
+          style={[style.card, style.commentCard]}
+          onPress={() => {
+            navigation.navigate("DetailCommentClientScreen", item )}}
+        >
           <Text>
             {item.nhathuoc.tennhathuoc}: {item.noidung}
           </Text>
@@ -263,236 +272,236 @@ const DetailProductScreen = ({ navigation, route }) => {
   if (medicine)
     return (
       <View>
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        
-        <View style={style.header}>
-          <Icon
-            name="arrow-back"
-            size={28}
-            onPress={() => navigation.goBack()}
-          />
-          <Text style={style.headerText}>Hello</Text>
-          <Icon name="shopping-cart" size={28} />
-        </View>
-        
-        <View style={style.imageContainer}>
-
-          <Image
-            source={{ uri: medicine.photo }}
-            style={{ flex: 1 }}
-          />
-                      <Rating
-            type="star"
-            ratingBackgroundColor='transparent'
-            ratingColor='transparent'
-            showRating={true}
-            showReadOnlyText={false}
-            ratingCount={5}
-            imageSize={30}
-            startingValue={ratings}
-            minValue={0}
-            readonly={true}
-            // tintColor='transparent'
-            tintColor={COLORS.white}
-            style={{backgroundColor: 'transparent'}}
-          />
-        </View>
-        <View>
-        </View>
-        <View style={style.detailsContainer}>
-          <View
-            style={{
-              marginLeft: 20,
-              flexDirection: "row",
-              alignItems: "flex-end",
-            }}
-          >
-            {/* <View style={style.line} /> */}
-
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          <View style={style.header}>
+            <Icon
+              name="arrow-back"
+              size={28}
+              onPress={() => navigation.goBack()}
+            />
+            <Text style={style.headerText}>Hello</Text>
+            <Icon name="shopping-cart" size={28} />
           </View>
-          <View
-            style={{
-              marginLeft: 20,
-              marginTop: 20,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            
-            <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-              {medicine.tensp}
-            </Text>
-            <View style={style.priceTag}>
-              <Text
-                style={{
-                  marginLeft: 15,
-                  color: COLORS.white,
-                  fontWeight: "bold",
-                  fontSize: 16,
-                }}
-              >
-                {format(medicine.dongia)}Đ
-              </Text>
-            </View>
+
+          <View style={style.imageContainer}>
+            <Image source={{ uri: medicine.photo }} style={{ flex: 1 }} />
+            <Rating
+              type="star"
+              ratingBackgroundColor="transparent"
+              ratingColor="transparent"
+              showRating={true}
+              showReadOnlyText={false}
+              ratingCount={5}
+              imageSize={30}
+              startingValue={ratings}
+              minValue={0}
+              readonly={true}
+              // tintColor='transparent'
+              tintColor={COLORS.white}
+              style={{ backgroundColor: "transparent" }}
+            />
           </View>
-          <View style={{ paddingHorizontal: 20, marginTop: 10 }}>
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              {medicine.mota_ngan}
-            </Text>
-            <Text
-              style={{
-                color: "grey",
-                fontSize: 16,
-                lineHeight: 22,
-                marginTop: 10,
-              }}
-            >
-              {medicine.mota_chitiet}
-            </Text>
+          <View></View>
+          <View style={style.detailsContainer}>
             <View
               style={{
+                marginLeft: 20,
+                flexDirection: "row",
+                alignItems: "flex-end",
+              }}
+            >
+              {/* <View style={style.line} /> */}
+            </View>
+            <View
+              style={{
+                marginLeft: 20,
                 marginTop: 20,
                 flexDirection: "row",
                 justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() =>
-                    count > 0 ? setCount(count - 1) : setCount(count)
-                  }
-                >
-                  <View style={style.borderBtn}>
-                    <Text style={style.borderBtnText}>-</Text>
-                  </View>
-                </TouchableOpacity>
+              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                {medicine.tensp}
+              </Text>
+              <View style={style.priceTag}>
                 <Text
                   style={{
-                    fontSize: 20,
-                    marginHorizontal: 10,
+                    marginLeft: 15,
+                    color: COLORS.white,
                     fontWeight: "bold",
+                    fontSize: 16,
                   }}
                 >
-                  {count}
+                  {format(medicine.dongia)}Đ
                 </Text>
-                {/* CHECK SO LUONG TON */}
-                <TouchableOpacity onPress={() => setCount(count + 1)}>
-                  <View style={style.borderBtn}>
-                    <Text style={style.borderBtnText}>+</Text>
-                  </View>
-                </TouchableOpacity>
               </View>
-
-              <TouchableOpacity
-                onPress={() => addCart(ma, medicine.masp, count)}
+            </View>
+            <View style={{ paddingHorizontal: 20, marginTop: 10 }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                {medicine.mota_ngan}
+              </Text>
+              <Text
+                style={{
+                  color: "grey",
+                  fontSize: 16,
+                  lineHeight: 22,
+                  marginTop: 10,
+                }}
               >
-                <View style={style.buyBtn}>
+                {medicine.mota_chitiet}
+              </Text>
+              <View
+                style={{
+                  marginTop: 20,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() =>
+                      count > 0 ? setCount(count - 1) : setCount(count)
+                    }
+                  >
+                    <View style={style.borderBtn}>
+                      <Text style={style.borderBtnText}>-</Text>
+                    </View>
+                  </TouchableOpacity>
                   <Text
                     style={{
-                      color: COLORS.white,
-                      fontSize: 18,
+                      fontSize: 20,
+                      marginHorizontal: 10,
                       fontWeight: "bold",
                     }}
                   >
-                    Buy
+                    {count}
                   </Text>
+                  {/* CHECK SO LUONG TON */}
+                  <TouchableOpacity onPress={() => setCount(count + 1)}>
+                    <View style={style.borderBtn}>
+                      <Text style={style.borderBtnText}>+</Text>
+                    </View>
+                  </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => addCart(ma, medicine.masp, count)}
+                >
+                  <View style={style.buyBtn}>
+                    <Text
+                      style={{
+                        color: COLORS.white,
+                        fontSize: 18,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Buy
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
 
-        {/* RATINGS */}
-        <View style={{ paddingHorizontal: 10, alignItems: "center" }}>
-          <Text style={[style.headerText, { marginTop: 30 }]}>
-            Rating for product
-          </Text>
-          <AirbnbRating
-            // ratingBackgroundColor=
-            showRating
-            count={5}
-            reviews={["Terrible", "Bad", "Meh", "OK", "Good"]}
-            size={20}
-            defaultRating={rated}
-            onFinishRating={(val) => postRatingProduct(medicine, nhathuoc, val)}
-          />
-        </View>
-
-        {/* COMMENTS */}
-        <View style={{ paddingHorizontal: 10 }}>
-          <View style={{ alignItems: "center" }}>
-            <Text style={[style.headerText, { marginTop: 30 }]}>Comments</Text>
+          {/* RATINGS */}
+          <View style={{ paddingHorizontal: 10, alignItems: "center" }}>
+            <Text style={[style.headerText, { marginTop: 30 }]}>
+              Rating for product
+            </Text>
+            <AirbnbRating
+              // ratingBackgroundColor=
+              showRating
+              count={5}
+              reviews={["Terrible", "Bad", "Meh", "OK", "Good"]}
+              size={20}
+              defaultRating={rated}
+              onFinishRating={(val) =>
+                postRatingProduct(medicine, nhathuoc, val)
+              }
+            />
           </View>
-          <FlatList
-            data={comments}
-            renderItem={renderComment}
-            contentContainerStyle={style.commentsContainer}
-            // keyExtractor={(e) => e.id.toString()}
-          />
 
-          {/* MODAL */}
-          <View>
-            <Modal
-              animationType="slide"
-              transparent
-              visible={isModalVisible}
-              presentationStyle="overFullScreen"
-              onDismiss={toggleModalVisibility}
-            >
-              <View style={style.viewWrapper}>
-                <View style={style.modalView}>
-                  <TextInput
-                    placeholder="Enter something..."
-                    value={inputValue}
-                    style={style.textInput}
-                    onChangeText={(value) => setInputValue(value)}
-                  />
+          {/* COMMENTS */}
+          <View style={{ paddingHorizontal: 10 }}>
+            <View style={{ alignItems: "center" }}>
+              <Text style={[style.headerText, { marginTop: 30 }]}>
+                Comments
+              </Text>
+            </View>
+            <FlatList
+              data={comments}
+              renderItem={ ({item}) => renderComment(item, navigation)}
+              contentContainerStyle={style.commentsContainer}
+              // keyExtractor={(e) => e.id.toString()}
+            />
 
-                  {/** This button is responsible to close the modal */}
-                  <View style={{ flexDirection: "row" }}>
-                    <Pressable
-                      onPress={() =>
-                        addComment(medicine, nhathuoc, inputValue, getDate())
-                      }
-                      style={[style.button, style.buttonOpen, { margin: 10 }]}
-                    >
-                      <Text style={{ color: COLORS.white }}>Comment</Text>
-                    </Pressable>
-                    <Pressable
-                      onPress={toggleModalVisibility}
-                      style={[style.button, style.buttonClose, { margin: 10 }]}
-                    >
-                      <Text style={{ color: COLORS.white }}>Cancel</Text>
-                    </Pressable>
+            {/* MODAL */}
+            <View>
+              <Modal
+                animationType="slide"
+                transparent
+                visible={isModalVisible}
+                presentationStyle="overFullScreen"
+                onDismiss={toggleModalVisibility}
+              >
+                <View style={style.viewWrapper}>
+                  <View style={style.modalView}>
+                    <TextInput
+                      placeholder="Enter something..."
+                      value={inputValue}
+                      style={style.textInput}
+                      onChangeText={(value) => setInputValue(value)}
+                    />
+
+                    {/** This button is responsible to close the modal */}
+                    <View style={{ flexDirection: "row" }}>
+                      <Pressable
+                        onPress={() =>
+                          addComment(medicine, nhathuoc, inputValue, getDate())
+                        }
+                        style={[style.button, style.buttonOpen, { margin: 10 }]}
+                      >
+                        <Text style={{ color: COLORS.white }}>Comment</Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={toggleModalVisibility}
+                        style={[
+                          style.button,
+                          style.buttonClose,
+                          { margin: 10 },
+                        ]}
+                      >
+                        <Text style={{ color: COLORS.white }}>Cancel</Text>
+                      </Pressable>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </Modal>
-          </View>
-          {/* <Pressable
+              </Modal>
+            </View>
+            {/* <Pressable
             onPress={toggleModalVisibility}
             style={[style.button, style.buttonClose, { alignItems: "center" }]}
           >
             <Text style={{ color: COLORS.white }}>Pop Up</Text>
           </Pressable> */}
 
-          <View style={{ alignItems: "center" }}>
-            <TouchableOpacity onPress={toggleModalVisibility}>
-              <Ionicons name="add-circle-outline" style={{ fontSize: 50 }} />
-            </TouchableOpacity>
+            <View style={{ alignItems: "center" }}>
+              <TouchableOpacity onPress={toggleModalVisibility}>
+                <Ionicons name="add-circle-outline" style={{ fontSize: 50 }} />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
       </View>
     );
 };

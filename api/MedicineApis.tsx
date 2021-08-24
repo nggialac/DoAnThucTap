@@ -40,3 +40,7 @@ export function deleteCategoryMedicine(id) {
 export function getListCategoryMedicine() {
   return InstanceApi.get("danhmuc");
 }
+
+export function getLastCategoryMedicine() {
+  return InstanceApi.get("danhmuc/last");
+}

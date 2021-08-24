@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Platform,
   Alert,
+  LogBox,
 } from "react-native";
 
 import { useTheme } from "react-native-paper";
@@ -19,6 +20,9 @@ import firebase from "firebase";
 import { getListCategoryMedicine, postMedicine } from "../../../api/MedicineApis";
 import { color } from "react-native-reanimated";
 // import { color } from "react-native-reanimated";
+import uuid from 'react-native-uuid';
+
+LogBox.ignoreAllLogs();
 
 const firebaseConfig = {
   apiKey: "AIzaSyCB7cILNrc15QrwrSfHAQz9_AL1uZYBeDw",
@@ -143,7 +147,7 @@ const AddMedicineScreen = ({route}) => {
 
       <Formik
         initialValues={{
-          masp: "",
+          // masp: "",
           dongia: "",
           khuyenmai: "",
           mota_chitiet: "",
@@ -154,7 +158,7 @@ const AddMedicineScreen = ({route}) => {
         onSubmit={async (values) => {
           const errors = {};
           if (
-            !values.masp ||
+            // !values.masp ||
             !values.dongia ||
             !values.khuyenmai ||
             !values.mota_chitiet ||
@@ -164,7 +168,7 @@ const AddMedicineScreen = ({route}) => {
             !image
             // danhmuc
           ) {
-            errors.masp = "Required";
+            // errors.masp = "Required";
             errors.dongia = "Required";
             errors.khuyenmai = "Required";
             errors.mota_ngan = "Required";
@@ -176,18 +180,15 @@ const AddMedicineScreen = ({route}) => {
             ]);
           } else {
             //Upload image
-            await uploadImage(image, values.masp, "/ProductImages/")
+            // await uploadImage(image, values.masp, "/ProductImages/")
+            await uploadImage(image, uuid.v4(), "/ProductImages/")
               .then((res) => {
-                // Alert.alert("Submit Success!", res, [
-                //   { text: "ok" },
-                // ]);
                 values.photo = res;
               })
               .catch((e) => {
                 Alert.alert("Submit Failed", e, [{ text: "ok" }]);
               });
             // //
-            // let danhmucthuoc = dm.find(x=>x.madm===selectedDm);
 
             addMedicine({
               danhmuc: 
@@ -197,7 +198,7 @@ const AddMedicineScreen = ({route}) => {
               },
               dongia: parseFloat(values.dongia),
               khuyenmai: parseFloat(values.khuyenmai),
-              masp: values.masp,
+              // masp: values.masp,
               mota_chitiet: values.mota_chitiet,
               mota_ngan: values.mota_ngan,
               photo: values.photo,
@@ -226,8 +227,7 @@ const AddMedicineScreen = ({route}) => {
                 editable={false}
               />
             </View>
-            <View style={styles.action}>
-              {/* <FontAwesome name="user-o" color={colors.text} size={20} /> */}
+            {/* <View style={styles.action}>
               <TextInput
                 placeholder="Mã SP"
                 placeholderTextColor="#666666"
@@ -241,7 +241,7 @@ const AddMedicineScreen = ({route}) => {
                 onChangeText={handleChange("masp")}
                 value={values.masp}
               />
-            </View>
+            </View> */}
             <View style={styles.action}>
               {/* <FontAwesome name="user-o" color={colors.text} size={20} /> */}
               <TextInput

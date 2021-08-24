@@ -168,10 +168,13 @@ function AdminTabHomeNavigator({ navigation }) {
           headerBackTitleVisible: false,
         })}
       />
+
+      {/* CATEGORY */}
       <TabAdminHomeStack.Screen
         name="TabAdminHomeProduct"
         component={TabAdminHomeProduct}
         options={() => ({
+          // madm: route.params.madm;
           headerBackTitleVisible: false,
           // headerShown: false,
           headerRight: () => (

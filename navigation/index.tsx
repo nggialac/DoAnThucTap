@@ -3,6 +3,8 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
+ import 'react-native-get-random-values';
+ 
 import {
   NavigationContainer,
   DefaultTheme,

@@ -60,38 +60,44 @@ const DetailProductScreen = ({ navigation, route }) => {
     wait(4000).then(() => setRefreshing(false));
   }, []);
 
-  const renderComment = ( item, navigation ) => {
+  const renderComment = (item, navigation) => {
     return (
       // console.log("CHECK")
       // console.log(item, index)
-      <View style={{ marginBottom: 20 }}>
-        {/* {navigation ? console.log(navigation):null} */}
-        {item.nhathuoc.manhathuoc === nhathuoc.manhathuoc ? (
-          <TouchableOpacity onPress={() => deleteMyComment(item.id)}>
-            <Icon
-              name="delete"
-              style={{ fontSize: 20, justifyContent: "flex-end" }}
-            />
+      <ScrollView>
+        <View style={{ marginBottom: 20 }}>
+          {/* {navigation ? console.log(navigation):null} */}
+          {item.nhathuoc.manhathuoc === nhathuoc.manhathuoc ? (
+            <TouchableOpacity onPress={() => deleteMyComment(item.id)}>
+              <Icon
+                name="delete"
+                style={{ fontSize: 20, justifyContent: "flex-end" }}
+              />
+            </TouchableOpacity>
+          ) : null}
+          <TouchableOpacity
+            style={[style.card, style.commentCard]}
+            onPress={() => {
+              navigation.navigate("DetailCommentClientScreen", item);
+            }}
+          >
+            <Text>
+              {item.nhathuoc.tennhathuoc}: {item.noidung}
+            </Text>
+            <Text>
+              Mã:{item.id} - Ngày: {item.time}
+            </Text>
           </TouchableOpacity>
-        ) : null}
-        <TouchableOpacity
-          style={[style.card, style.commentCard]}
-          onPress={() => {
-            navigation.navigate("DetailCommentClientScreen", item )}}
-        >
-          <Text>
-            {item.nhathuoc.tennhathuoc}: {item.noidung}
-          </Text>
-          <Text>
-            Mã:{item.id} - Ngày: {item.time}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        </View>
+      </ScrollView>
     );
   };
 
-  const addCart = (manhathuoc: string, masp: string, soluong: number) => {
-    postCart(manhathuoc, masp, soluong)
+  const addCart = async(manhathuoc: string, masp: string, soluong: number) => {
+
+
+
+    await postCart(manhathuoc, masp, soluong)
       .then((res) => {
         Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
       })
@@ -284,7 +290,11 @@ const DetailProductScreen = ({ navigation, route }) => {
               onPress={() => navigation.goBack()}
             />
             <Text style={style.headerText}>Detail Product</Text>
-            <Icon name="shopping-cart" size={28} onPress={() => navigation.navigate("CartScreen")}/>
+            <Icon
+              name="shopping-cart"
+              size={28}
+              onPress={() => navigation.navigate("CartScreen")}
+            />
           </View>
 
           <View style={style.imageContainer}>
@@ -397,7 +407,13 @@ const DetailProductScreen = ({ navigation, route }) => {
                     {count}
                   </Text>
                   {/* CHECK SO LUONG TON */}
-                  <TouchableOpacity onPress={() => medicine.soluong > count ? setCount(count + 1) : setCount(count)}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      medicine.soluong > count
+                        ? setCount(count + 1)
+                        : setCount(count)
+                    }
+                  >
                     <View style={style.borderBtn}>
                       <Text style={style.borderBtnText}>+</Text>
                     </View>
@@ -405,7 +421,11 @@ const DetailProductScreen = ({ navigation, route }) => {
                 </View>
 
                 <TouchableOpacity
-                  onPress={() => count <= medicine.soluong && count !== 0 ? addCart(ma, medicine.masp, count) : Alert.alert("Notice", "Out of quantity this product!")}
+                  onPress={() =>
+                    count <= medicine.soluong && count !== 0
+                      ? addCart(ma, medicine.masp, count)
+                      : Alert.alert("Notice", "Out of quantity this product!")
+                  }
                 >
                   <View style={style.buyBtn}>
                     <Text
@@ -415,7 +435,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                         fontWeight: "bold",
                       }}
                     >
-                      Buy
+                      Add To Cart
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -450,9 +470,9 @@ const DetailProductScreen = ({ navigation, route }) => {
             </View>
             <FlatList
               data={comments}
-              renderItem={ ({item}) => renderComment(item, navigation)}
+              renderItem={({ item }) => renderComment(item, navigation)}
               contentContainerStyle={style.commentsContainer}
-              keyExtractor={(e) => "key"+e.id}
+              keyExtractor={(e) => "key" + e.id}
             />
 
             {/* MODAL */}

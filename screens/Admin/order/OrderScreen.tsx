@@ -21,6 +21,7 @@ import {
   getListOrder,
   putOrder,
 } from "../../../api/OrderApis";
+import { API_URL } from "../../Client/cart/Config";
 // import Animated from "react-native-reanimated";
 
 function OrderScreen({ navigation }) {
@@ -92,7 +93,7 @@ function OrderScreen({ navigation }) {
 
   const detailOrder = (madh) => {
     navigation.navigate("DetailBuyHistoryScreen", { madh });
-  }
+  };
 
   const deleteRow = async (rowMap, rowKey, madh, trangthai) => {
     if (trangthai === 4) {
@@ -113,7 +114,7 @@ function OrderScreen({ navigation }) {
         },
       ]);
     } else {
-      Alert.alert("Notice!", "Delete only with order be canceled!")
+      Alert.alert("Notice!", "Delete only with order be canceled!");
     }
   };
 
@@ -137,14 +138,36 @@ function OrderScreen({ navigation }) {
     console.log("onLeftAction", rowKey);
   };
 
-  const cancelOrderByMadh = (madh: string) => {
+  const doRefund = async (pi: string) => {
+    try {
+      await fetch(`${API_URL}/refund`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          pi,
+        }),
+      });
+      Alert.alert("Success", "Refund Complete !");
+    } catch (e) {
+      Alert.alert("Fail", "" + e);
+    }
+  };
+
+  const cancelOrderByMadh = (
+    madh: string,
+    hinhthucthanhtoan: number,
+    pi: string
+  ) => {
     Alert.alert("Notice!", "Are you want cancel this order?", [
       {
         text: "Approve",
         onPress: () =>
           cancelOrder(madh)
-            .then((res) => {
+            .then(async (res) => {
               console.log(res.data);
+              hinhthucthanhtoan === 2 ? await doRefund(pi) : null;
               Alert.alert("Success!", "Order was canceled");
             })
             .catch((e) => {
@@ -159,16 +182,31 @@ function OrderScreen({ navigation }) {
   };
 
   const updateOrder = (madh: string, params: any) => {
-    Alert.alert("Notice!", "Are you want update status for this order?", [
-      {
-        text: "Approve",
-        onPress: () =>
-          params["trangthai"] < 3 ? getUpdate(madh, params) : cancelOrder(madh),
-      },
-      {
-        text: "Cancel",
-      },
-    ]);
+    // console.log("check params update", params);
+    if (params.trangthai === 4) {
+      Alert.alert("Notice", "This order has been canceled!", [
+        {
+          text: "Ok!",
+        },
+      ]);
+    } else {
+      Alert.alert("Notice!", "Are you want update status for this order?", [
+        {
+          text: "Approve",
+          onPress: () =>
+            params["trangthai"] < 3
+              ? getUpdate(madh, params)
+              : cancelOrderByMadh(
+                  madh,
+                  params.hinhthucthanhtoan,
+                  params.paymentcreated
+                ),
+        },
+        {
+          text: "Cancel",
+        },
+      ]);
+    }
   };
 
   const getUpdate = async (madh: string, params: any) => {
@@ -334,11 +372,7 @@ function OrderScreen({ navigation }) {
                   },
                 ]}
               >
-                <MaterialCommunityIcons
-                  name="details"
-                  size={25}
-                  color="#fff"
-                />
+                <MaterialCommunityIcons name="details" size={25} color="#fff" />
               </Animated.View>
             </TouchableOpacity>
           </Animated.View>
@@ -393,7 +427,7 @@ function OrderScreen({ navigation }) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        keyExtractor={(e)=>"key"+e.madh}
+        keyExtractor={(e) => "key" + e.madh}
       />
     </View>
   );
@@ -449,7 +483,7 @@ const styles = StyleSheet.create({
     paddingRight: 17,
   },
   backRightBtnLeft: {
-    backgroundColor: "#1f65ff",
+    backgroundColor: "red",
     right: 75,
   },
   backRightBtnRight: {

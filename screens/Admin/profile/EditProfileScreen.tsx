@@ -1,204 +1,350 @@
-import React, { useState } from "react";
+import * as React from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  ImageBackground,
-  TextInput,
-  StyleSheet,
   Platform,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  ScrollView,
+  Alert,
 } from "react-native";
 
-import { useTheme } from "react-native-paper";
+import { Text, View } from "../../../components/Themed";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
+import * as Animatable from "react-native-animatable";
+import { FontAwesome } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import { Picker } from "@react-native-picker/picker";
+import { putStaff } from "../../../api/StaffApi";
+import { color } from "react-native-reanimated";
+import { AuthContext } from "../../../components/ContextLogin";
 
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Feather from "@expo/vector-icons/Feather";
+export default function EditStaffScreen() {
+  const context = React.useContext(AuthContext);
+  const itemData = (context.loginState.mnv_mnt);
+  // const itemData = route.params.itemData;
 
-import BottomSheet from "reanimated-bottom-sheet";
-import Animated from "react-native-reanimated";
+  const [sex, setSex] = React.useState(itemData.gioitinh);
+  const [data, setData] = React.useState({
+    username: itemData.taikhoan.username,
+    password: itemData.taikhoan.password,
+    confirmPassword: itemData.taikhoan.password,
+    diachi: itemData.diachi,
+    email: itemData.email,
+    // gioitinh: "",
+    ho: itemData.ho,
+    ten: itemData.ten,
+    sdt: itemData.sdt,
+    check_textInputChange: false,
+    secureTextEntry: true,
+    confirm_secureTextEntry: true,
+  });
 
-import ImagePicker from "react-native-image-crop-picker";
+  const handleSubmit = () => {
+    // Alert.alert("Submit Info", JSON.stringify(data), [{ text: "ok" }]);
+    if (
+      !data.username ||
+      !data.email ||
+      !data.ho ||
+      !data.password ||
+      !data.sdt ||
+      !data.ten ||
+      !data.username
+    ) {
+      Alert.alert("Submit Info", "Invalid data!", [{ text: "ok" }]);
+      return;
+    }
+    const params = {
+      diachi: data.diachi,
+      email: data.email,
+      gioitinh: sex,
+      ho: data.ho,
+      password: data.password,
+      sdt: data.sdt,
+      ten: data.ten,
+      username: data.username,
+    };
+    // console.log(itemData);
+    putStaff(params)
+      .then((res) => {
+        // console.log(res);
+        Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
+      })
+      .catch((e) => {
+        Alert.alert("Submit Info", JSON.stringify(params), [{ text: "ok" }]);
+        // console.log(params);
+        // Alert.alert("Submit Info", "Fail!" + e, [{ text: "ok" }]);
+      });
+  };
 
-const EditProfileScreen = () => {
-  const [image, setImage] = useState(
-    "https://st.gamevui.com/images/image/2020/09/17/AmongUs-Avatar-maker-hd01.jpg"
-  );
-  const { colors } = useTheme();
+  const textInputChange = (val: any) => {
+    if (val.length !== 0) {
+      setData({
+        ...data,
+        username: val,
+        check_textInputChange: true,
+      });
+    } else {
+      setData({
+        ...data,
+        username: val,
+        check_textInputChange: false,
+      });
+    }
+  };
+
+  const handlePasswordChange = (val: any) => {
+    setData({
+      ...data,
+      password: val,
+    });
+  };
+
+  const handleConfirmPasswordChange = (val: any) => {
+    setData({
+      ...data,
+      confirmPassword: val,
+    });
+  };
+
+  const handleAddressChange = (val: any) => {
+    setData({
+      ...data,
+      diachi: val,
+    });
+  };
+
+  const handleEmailChange = (val: any) => {
+    setData({
+      ...data,
+      email: val,
+    });
+  };
+
+  const handleHoChange = (val: any) => {
+    setData({
+      ...data,
+      ho: val,
+    });
+  };
+
+  const handleTenChange = (val: any) => {
+    setData({
+      ...data,
+      ten: val,
+    });
+  };
+
+  const handleSDTChange = (val: any) => {
+    setData({
+      ...data,
+      sdt: val,
+    });
+  };
+
+  const updateSecureTextEntry = () => {
+    setData({
+      ...data,
+      secureTextEntry: !data.secureTextEntry,
+    });
+  };
+
+  const updateConfirmSecureTextEntry = () => {
+    setData({
+      ...data,
+      confirm_secureTextEntry: !data.confirm_secureTextEntry,
+    });
+  };
 
   return (
     <View style={styles.container}>
-      <View style={{ alignItems: "center" }}>
-        <View
-          style={{
-            height: 100,
-            width: 100,
-            borderRadius: 15,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <ImageBackground
-            source={{
-              uri: image,
-            }}
-            style={{ height: 100, width: 100 }}
-            imageStyle={{ borderRadius: 15 }}
-          >
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
+      {/* <StatusBar backgroundColor="#009387" barStyle="light-content" /> */}
+      <View style={styles.header}>
+        <Text style={styles.text_header}>Edit Profile!</Text>
+      </View>
+      <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={styles.text_footer}>Username</Text>
+          <View style={[styles.action, {backgroundColor: "#dddddd"}]}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              editable={false}
+              selectTextOnFocus={false}
+              value={data.username}
+              placeholder="Your Username"
+              style={[styles.textInput, { color: "#05375a"}]}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                textInputChange(val);
               }}
-            ></View>
-          </ImageBackground>
-        </View>
+            />
+            {data.check_textInputChange ? (
+              <Animatable.View animation="bounceIn">
+                <Feather name="check-circle" color="green" size={16} />
+              </Animatable.View>
+            ) : null}
+          </View>
 
-        <Text style={{ marginTop: 10, fontSize: 18, fontWeight: "bold" }}>
-          John Doe
-        </Text>
-      </View>
+          <Text style={[styles.text_footer, { marginTop: 15 }]}>Password</Text>
+          <View style={styles.action}>
+            <FontAwesome name="lock" color="#05375a" size={20} />
+            <TextInput
+              value={data.password}
+              placeholder="Your Password"
+              secureTextEntry={data.secureTextEntry ? true : false}
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => handlePasswordChange(val)}
+            />
+            <TouchableOpacity onPress={updateSecureTextEntry}>
+              {data.secureTextEntry ? (
+                <Feather name="eye-off" color="grey" size={16} />
+              ) : (
+                <Feather name="eye" color="green" size={16} />
+              )}
+            </TouchableOpacity>
+          </View>
 
-      <View style={styles.action}>
-        <FontAwesome name="user-o" color={colors.text} size={20} />
-        <TextInput
-          placeholder="First Name"
-          placeholderTextColor="#666666"
-          autoCorrect={false}
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-      <View style={styles.action}>
-        <FontAwesome name="user-o" color={colors.text} size={20} />
-        <TextInput
-          placeholder="Last Name"
-          placeholderTextColor="#666666"
-          autoCorrect={false}
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-      <View style={styles.action}>
-        <Feather name="phone" color={colors.text} size={20} />
-        <TextInput
-          placeholder="Phone"
-          placeholderTextColor="#666666"
-          keyboardType="number-pad"
-          autoCorrect={false}
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-      <View style={styles.action}>
-        <FontAwesome name="envelope-o" color={colors.text} size={20} />
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#666666"
-          keyboardType="email-address"
-          autoCorrect={false}
-          style={[
-            styles.textInput,
-            {
-              color: colors.text,
-            },
-          ]}
-        />
-      </View>
-      <TouchableOpacity style={styles.commandButton} onPress={() => {}}>
-        <Text style={styles.panelButtonTitle}>Submit</Text>
-      </TouchableOpacity>
+          <Text style={styles.text_footer}>Last Name</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              value={data.ho}
+              placeholder="Last Name"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleHoChange(val);
+              }}
+            />
+          </View>
+          <Text style={styles.text_footer}>First Name</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              value={data.ten}
+              placeholder="First Name"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleTenChange(val);
+              }}
+            />
+          </View>
+          <Text style={styles.text_footer}>Sex</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            {/* <TextInput
+              placeholder="Sex"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleSexChange(val);
+              }}
+            /> */}
+            <Picker
+              style={styles.textInput}
+              numberOfLines={5}
+              selectedValue={sex}
+              onValueChange={(itemValue, itemIndex) => setSex(itemValue)}
+            >
+              <Picker.Item label="Male" value={0} />
+              <Picker.Item label="Female" value={1} />
+            </Picker>
+          </View>
+          <Text style={styles.text_footer}>Email</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              value={data.email}
+              placeholder="Your email"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleEmailChange(val);
+              }}
+            />
+          </View>
+          <Text style={styles.text_footer}>Phone</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              value={data.sdt}
+              placeholder="Your Phone"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleSDTChange(val);
+              }}
+            />
+          </View>
+          <Text style={styles.text_footer}>Address</Text>
+          <View style={styles.action}>
+            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <TextInput
+              value={data.diachi}
+              placeholder="Your Address"
+              style={styles.textInput}
+              autoCapitalize="none"
+              onChangeText={(val) => {
+                handleAddressChange(val);
+              }}
+            />
+          </View>
+
+          <View style={styles.button}>
+            <TouchableOpacity onPress={handleSubmit} style={{ width: "100%" }}>
+              <LinearGradient
+                colors={["#694fad", "#694fad"]}
+                style={styles.signIn}
+              >
+                <Text style={[styles.textSign, { color: "#fff" }]}>Save</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </Animatable.View>
     </View>
   );
-};
-
-export default EditProfileScreen;
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  commandButton: {
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: "#FF6347",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  panel: {
-    padding: 20,
-    backgroundColor: "#FFFFFF",
-    paddingTop: 20,
-    // borderTopLeftRadius: 20,
-    // borderTopRightRadius: 20,
-    // shadowColor: '#000000',
-    // shadowOffset: {width: 0, height: 0},
-    // shadowRadius: 5,
-    // shadowOpacity: 0.4,
+    backgroundColor: "#694fad",
   },
   header: {
-    backgroundColor: "#FFFFFF",
-    shadowColor: "#333333",
-    shadowOffset: { width: -1, height: -3 },
-    shadowRadius: 2,
-    shadowOpacity: 0.4,
-    // elevation: 5,
-    paddingTop: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+    paddingBottom: 50,
+    backgroundColor: "#694fad",
   },
-  panelHeader: {
-    alignItems: "center",
+  footer: {
+    flex: 3,
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
   },
-  panelHandle: {
-    width: 40,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: "#00000040",
-    marginBottom: 10,
-  },
-  panelTitle: {
-    fontSize: 27,
-    height: 35,
-  },
-  panelSubtitle: {
-    fontSize: 14,
-    color: "gray",
-    height: 30,
-    marginBottom: 10,
-  },
-  panelButton: {
-    padding: 13,
-    borderRadius: 10,
-    backgroundColor: "#FF6347",
-    alignItems: "center",
-    marginVertical: 7,
-  },
-  panelButtonTitle: {
-    fontSize: 17,
+  text_header: {
+    color: "#fff",
     fontWeight: "bold",
-    color: "white",
+    fontSize: 30,
+  },
+  text_footer: {
+    color: "#05375a",
+    fontSize: 18,
+    marginTop: 20,
   },
   action: {
     flexDirection: "row",
     marginTop: 10,
-    marginBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#f2f2f2",
-    paddingBottom: 5,
+    paddingBottom: 0,
   },
   actionError: {
     flexDirection: "row",
@@ -209,8 +355,27 @@ const styles = StyleSheet.create({
   },
   textInput: {
     flex: 1,
-    marginTop: Platform.OS === "ios" ? 0 : -12,
+    marginTop: Platform.OS === "ios" ? 0 : 0,
     paddingLeft: 10,
     color: "#05375a",
+  },
+  errorMsg: {
+    color: "#FF0000",
+    fontSize: 14,
+  },
+  button: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  signIn: {
+    width: "100%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  textSign: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

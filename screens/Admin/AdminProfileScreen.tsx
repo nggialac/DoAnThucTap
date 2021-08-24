@@ -27,7 +27,7 @@ export default function AdminProfileScreen({navigation}) {
         <View style={{flexDirection: 'row', marginTop: 15}}>
           <Avatar.Image
             source={{
-              uri: "https://st.gamevui.com/images/image/2020/09/17/AmongUs-Avatar-maker-hd01.jpg",
+              uri: "https://iptc.org/wp-content/uploads/2018/05/avatar-anonymous-300x300.png",
             }}
             size={80}
           />

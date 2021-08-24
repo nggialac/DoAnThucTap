@@ -268,31 +268,31 @@ function StaffScreen({ navigation }) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       > */}
-        <StatusBar barStyle="dark-content" />
-        {/* <StatusBar backgroundColor="#FF6347" barStyle="light-content"/> */}
-        <SwipeListView
-          data={staff}
-          renderItem={renderItem}
-          renderHiddenItem={renderHiddenItem}
-          leftOpenValue={75}
-          rightOpenValue={-150}
-          disableRightSwipe
-          onRowDidOpen={onRowDidOpen}
-          leftActivationValue={100}
-          rightActivationValue={-200}
-          leftActionValue={0}
-          rightActionValue={-500}
-          onLeftAction={onLeftAction}
-          onRightAction={onRightAction}
-          onLeftActionStatusChange={onLeftActionStatusChange}
-          onRightActionStatusChange={onRightActionStatusChange}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        />
+      <StatusBar barStyle="dark-content" />
+      {/* <StatusBar backgroundColor="#FF6347" barStyle="light-content"/> */}
+      <SwipeListView
+        keyExtractor={(item, index) => "key" + item.key}
+        data={staff}
+        renderItem={renderItem}
+        renderHiddenItem={renderHiddenItem}
+        leftOpenValue={75}
+        rightOpenValue={-150}
+        disableRightSwipe
+        onRowDidOpen={onRowDidOpen}
+        leftActivationValue={100}
+        rightActivationValue={-200}
+        leftActionValue={0}
+        rightActionValue={-500}
+        onLeftAction={onLeftAction}
+        onRightAction={onRightAction}
+        onLeftActionStatusChange={onLeftActionStatusChange}
+        onRightActionStatusChange={onRightActionStatusChange}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
       {/* </ScrollView> */}
     </View>
-
   );
 }
 

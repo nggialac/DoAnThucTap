@@ -16,6 +16,8 @@ import { PrimaryButton } from "../../../components/PrimaryButton";
 import { AuthContext } from "../../../components/ContextLogin";
 import { cancelOrder, getListOrderByMaDH } from "../../../api/OrderApis";
 import Button from "../cart/Button";
+import { Dimensions } from "react-native";
+import { API_URL } from "../cart/Config";
 
 const DetailBuyHistoryScreen = ({ navigation, route }) => {
   // const [tk, setTk] = React.useState();
@@ -45,6 +47,23 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
       });
   };
 
+  const doRefund = async (pi: string) => {
+    try {
+      await fetch(`${API_URL}/refund`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          pi,
+        }),
+      });
+      Alert.alert("Success", "Refund Complete !");
+    } catch (e) {
+      Alert.alert("Fail", "" + e);
+    }
+  };
+
   React.useEffect(() => {
     // console.log(JSON.parse(nhathuoc).manhathuoc);
     getData(madh);
@@ -54,11 +73,10 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
     return (
       <View>
         <View style={style.cartCard}>
-          <Image source={{ uri: item.sanpham.photo }} />
-          {console.log(item.sanpham.photo)}
+          {/* {console.log(item.sanpham.photo)} */}
           <View
             style={{
-              height: 100,
+              height: 120,
               marginLeft: 10,
               paddingVertical: 20,
               flex: 1,
@@ -68,13 +86,14 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
               {item.sanpham.masp} - {item.sanpham.tensp}
             </Text>
             <Text style={{ fontSize: 14, color: COLORS.grey }}>
-              Danh mục: {item.sanpham.danhmuc.tendm}
+              DM: {item.sanpham.danhmuc.tendm}
             </Text>
             <Text style={{ fontSize: 14, color: COLORS.grey }}>
               Đơn giá: {item.sanpham.dongia}VND
             </Text>
           </View>
           <View style={{ marginRight: 10 }}>
+            <Image style={style.image} source={{ uri: item.sanpham.photo }} />
             <Text style={{ fontWeight: "300", fontSize: 18 }}>
               Số lượng: {item.soluong}
             </Text>
@@ -84,8 +103,6 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
     );
   };
 
-  
-
   const cancelOrderByMadh = (madh: string) => {
     Alert.alert("Notice!", "Are you want cancel this order?", [
       {
@@ -94,6 +111,9 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
           cancelOrder(madh)
             .then((res) => {
               console.log(res.data);
+              listData.hinhthucthanhtoan !== 1
+                ? doRefund(listData.paymentcreated)
+                : null;
               Alert.alert("Success!", "Order was canceled");
             })
             .catch((e) => {
@@ -125,7 +145,7 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
         ]}
       >
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-          TRẠNG THÁI:  {listTrangthai[listData.trangthai]}
+          TRẠNG THÁI: {listTrangthai[listData.trangthai]}
         </Text>
       </View>
       <FlatList
@@ -174,11 +194,18 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
 
 const style = StyleSheet.create({
   header: {
-    marginTop: 30,
+    marginTop: 20,
     paddingVertical: 20,
     flexDirection: "row",
     // alignItems: "center",
     marginHorizontal: 20,
+  },
+  image: {
+    height: 50,
+    width: 80,
+    alignSelf: "stretch",
+    resizeMode: "cover",
+    marginBottom: 8,
   },
   cartCard: {
     height: 100,

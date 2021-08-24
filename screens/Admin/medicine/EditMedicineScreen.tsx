@@ -8,7 +8,10 @@ import {
   StyleSheet,
   Platform,
   Alert,
+  LogBox,
 } from "react-native";
+
+import uuid from 'react-native-uuid';
 
 import { useTheme } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
@@ -22,6 +25,8 @@ import {
   deleteMedicine,
 } from "../../../api/MedicineApis";
 import { color } from "react-native-reanimated";
+
+LogBox.ignoreAllLogs();
 
 const firebaseConfig = {
   apiKey: "AIzaSyCB7cILNrc15QrwrSfHAQz9_AL1uZYBeDw",
@@ -157,6 +162,7 @@ const EditMedicineScreen = ({ route }) => {
       </View>
 
       <Formik
+        key={itemData.masp}
         initialValues={{
           dongia: itemData.dongia + "",
           khuyenmai: itemData.khuyenmai + "",
@@ -186,7 +192,7 @@ const EditMedicineScreen = ({ route }) => {
             ]);
           } else {
             //Upload image
-            await uploadImage(image, itemData.masp, "/ProductImages/")
+            await uploadImage(image,  uuid.v4(), "/ProductImages/")
               .then((res) => {
                 // Alert.alert("Submit Success!", res, [
                 //   { text: "ok" },
@@ -353,7 +359,7 @@ const EditMedicineScreen = ({ route }) => {
       <View>
         <TouchableOpacity
           style={styles.commandButton}
-          onPress={()=>handleDelete(itemData.masp)}
+          onPress={() => handleDelete(itemData.masp)}
         >
           <Text style={styles.panelButtonTitle}>Delete Medicine</Text>
         </TouchableOpacity>

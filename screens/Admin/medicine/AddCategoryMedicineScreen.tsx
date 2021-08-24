@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,13 +12,14 @@ import {
 
 import { useTheme } from "react-native-paper";
 import { Formik } from "formik";
-import { postCategoryMedicine } from "../../../api/MedicineApis";
+import { getLastCategoryMedicine, postCategoryMedicine } from "../../../api/MedicineApis";
 import Navigation from "../../../navigation";
 
 
-const AddMedicineScreen = ({navigation}) => {
+const AddMedicineScreen = ({navigation, route}) => {
 
   const { colors } = useTheme();
+  const [last, setLast] = useState("");
 
   const addCategoryMedicine = (params:object) => {
     postCategoryMedicine(params)
@@ -40,6 +41,48 @@ const AddMedicineScreen = ({navigation}) => {
     })
   } 
 
+  const getLastDanhMuc = () =>{
+    getLastCategoryMedicine()
+    .then(res=>{
+      console.log(res.data)
+      // setLast(res.data);
+
+      let temp = res.data.madm.slice(2,6);
+      console.log(temp);
+      let temp1 = parseInt(temp);
+      temp1++;
+      console.log(temp1);
+      var str = "" + temp1;
+      while (str.length < 4) {
+        str = "0" + str;
+      }
+      // console.log("DM"+str);
+      setLast("DM"+str);
+      
+    })
+    .catch(e=>{
+      Alert.alert("Failed", "Cannot get data!", [
+        { text: "ok" },
+      ]);
+    })
+  }
+
+  useEffect(()=>{
+    getLastDanhMuc();
+  }, [])
+
+  // function pad(last: any, length: number) {
+  //   let temp = last.madm.slice(2,6);
+  //   // console.log(temp);
+  //   temp = parseInt(temp) + 1;
+  //   var str = "" + temp;
+  //   while (str.length < length) {
+  //     str = "0" + temp;
+  //   }
+  //   console.log("DM"+temp);
+  //   return "DM"+temp;
+  // }
+
   return (
     <View style={styles.container}>
       <Formik
@@ -50,7 +93,7 @@ const AddMedicineScreen = ({navigation}) => {
         onSubmit={async (values) => {
           const errors = {};
           if (
-            !values.madm ||
+            // values.madm ||
             !values.tendm
           ) {
             errors.madm = "Required";
@@ -60,7 +103,7 @@ const AddMedicineScreen = ({navigation}) => {
             ]);
           } else {
             addCategoryMedicine({
-                madm: values.madm,
+                madm: last,
                 tendm: values.tendm
             })
           }
@@ -79,11 +122,14 @@ const AddMedicineScreen = ({navigation}) => {
                 style={[
                   styles.textInput,
                   {
-                    color: colors.text,
+                    color: colors.disabled,
+                    // backgroundColor: colors.disabled
                   },
                 ]}
-                onChangeText={handleChange("madm")}
-                value={values.madm}
+                // onChangeText={handleChange("madm")}
+                // value={values.madm}
+                value={last ? last : ""}
+                editable={false}
               />
             </View>
 
@@ -195,7 +241,7 @@ const styles = StyleSheet.create({
   action: {
     flexDirection: "row",
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#f2f2f2",
     paddingBottom: 5,

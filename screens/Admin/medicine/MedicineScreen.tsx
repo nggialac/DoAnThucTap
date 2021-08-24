@@ -21,10 +21,11 @@ import {
 } from "../../../api/MedicineApis";
 // import StarRating from '../components/StarRating';
 
-const MedicineScreen = ({ navigation }) => {
+const MedicineScreen = ({ navigation, route }) => {
   const theme = useTheme();
   const [listData, setListData] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -46,24 +47,28 @@ const MedicineScreen = ({ navigation }) => {
     deleteCategoryMedicine(madm)
       .then((res) => {
         console.log(res);
-        Alert.alert("Success!", "Deleted");
+        Alert.alert("Success", "Deleted!");
         onRefresh();
       })
       .catch((e) => {
         console.log(e);
-        Alert.alert("Fail!", "Cannot delete");
+        Alert.alert("Fail", "Cannot delete!");
       });
   };
 
-  React.useEffect(() => {
+  const getData = () => {
     getListCategoryMedicine()
       .then((res) => {
         console.log(res.data);
         setListData(res.data);
       })
       .catch((e) => {
-        Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
+        Alert.alert("Fail", "Not found Data!", [{ text: "ok" }]);
       });
+  };
+
+  React.useEffect(() => {
+    getData();
   }, [refreshing]);
 
   return (
@@ -106,7 +111,6 @@ const MedicineScreen = ({ navigation }) => {
         ) : (
           <></>
         )}
-
       </View>
     </ScrollView>
   );

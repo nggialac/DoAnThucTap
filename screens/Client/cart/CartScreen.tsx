@@ -14,7 +14,11 @@ import Icon from "@expo/vector-icons/MaterialIcons";
 import COLORS from "../../../assets/colors/Colors";
 import foods from "../../../navigation/Models/Foods";
 import { PrimaryButton } from "../../../components/PrimaryButton";
-import { deleteCartByMedicineId, getListCart, putNumberOfProduct } from "../../../api/CartApis";
+import {
+  deleteCartByMedicineId,
+  getListCart,
+  putNumberOfProduct,
+} from "../../../api/CartApis";
 import { AuthContext } from "../../../components/ContextLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -69,17 +73,16 @@ const CartScreen = ({ navigation }) => {
       });
   };
 
-  const deleteProductFromCart = (
-    manhathuoc: string,
-    masp: string,
-  ) => {
-    deleteCartByMedicineId(manhathuoc, masp,)
+  const deleteProductFromCart = (manhathuoc: string, masp: string) => {
+    deleteCartByMedicineId(manhathuoc, masp)
       .then((res) => {
         console.log(res.data);
       })
       .catch((e) => {
         console.log(e);
-        Alert.alert("Fail", "Cannot Delete this product from cart!" + e, [{ text: "ok" }]);
+        Alert.alert("Fail", "Cannot Delete this product from cart!" + e, [
+          { text: "ok" },
+        ]);
       });
   };
 
@@ -123,7 +126,12 @@ const CartScreen = ({ navigation }) => {
   const CartCard = ({ item, index }) => {
     return (
       <View style={style.cartCard}>
-        <Image source={{ uri: item.sanpham.photo }} />
+        {/* <View style={{ marginRight: 10, }}>
+          <Text>X</Text>
+        </View> */}
+
+        <Image source={{ uri: item.sanpham.photo }} style={style.image} />
+
         <View
           style={{
             height: 100,
@@ -139,7 +147,7 @@ const CartScreen = ({ navigation }) => {
             {item.sanpham.mota_ngan}
           </Text>
           <Text style={{ fontSize: 17, fontWeight: "bold" }}>
-            ${item.sanpham.dongia}
+            {item.sanpham.dongia}Đ
           </Text>
         </View>
         <View style={{ marginRight: 20, alignItems: "center" }}>
@@ -165,7 +173,7 @@ const CartScreen = ({ navigation }) => {
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>Cart</Text>
       </View>
       <FlatList
-        keyExtractor={(item) => "key"+item.id.masp}
+        keyExtractor={(item) => "key" + item.id.masp}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
         data={listData}
@@ -183,7 +191,7 @@ const CartScreen = ({ navigation }) => {
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                 Total Price
               </Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>{total}</Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>{total} VND</Text>
             </View>
             <View style={{ marginHorizontal: 30 }}>
               <PrimaryButton
@@ -239,6 +247,14 @@ const style = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignContent: "center",
+  },
+  image: {
+    marginTop: 16,
+    height: 70,
+    width: 60,
+    alignSelf: "stretch",
+    resizeMode: "cover",
+    marginBottom: 8,
   },
 });
 

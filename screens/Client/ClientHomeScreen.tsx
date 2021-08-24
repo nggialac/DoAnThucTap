@@ -9,10 +9,10 @@ import {
   Alert,
   RefreshControl,
   LogBox,
+  ScrollView,
 } from "react-native";
 import {
   FlatList,
-  ScrollView,
   TextInput,
   TouchableHighlight,
   TouchableOpacity,
@@ -46,7 +46,7 @@ const HomeScreen = ({ navigation }) => {
   const [categories, setCategories] = useState([]);
   const [medicines, setMedicines] = useState([]);
   const [medicinesChange, setMedicinesChange] = useState();
-  const [textInputValue, setTextInputValue] = React.useState('');
+  const [textInputValue, setTextInputValue] = React.useState("");
 
   LogBox.ignoreAllLogs();
 
@@ -95,11 +95,8 @@ const HomeScreen = ({ navigation }) => {
   }
 
   useEffect(() => {
-    async function fetchMyAPI() {
-      await getCategories();
-      await getMedicines();
-    }
-    fetchMyAPI();
+     getCategories();
+     getMedicines();
   }, [refreshing]);
 
   const ListCategories = () => {
@@ -135,7 +132,7 @@ const HomeScreen = ({ navigation }) => {
                     style={{
                       fontSize: 15,
                       fontWeight: "bold",
-                      marginLeft: 10,
+                      marginLeft: 0,
                       color:
                         selectedCategoryIndex == index
                           ? COLORS.white
@@ -195,6 +192,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
     <View>
+      <ScrollView>
       <View style={style.header}>
         <View>
           <View style={{ flexDirection: "row" }}>
@@ -223,30 +221,32 @@ const HomeScreen = ({ navigation }) => {
           <TextInput
             style={{ flex: 1, fontSize: 18 }}
             placeholder="Search for product"
-            onChangeText={text => setTextInputValue(text)}
+            onChangeText={(text) => setTextInputValue(text)}
             value={textInputValue}
           />
         </View>
         <View style={style.sortBtn}>
-          <TouchableOpacity onPress={()=>getMedicinesSearch(textInputValue)}>
-          <Icon name="tune" size={28} color={COLORS.white} />
+          <TouchableOpacity onPress={() => getMedicinesSearch(textInputValue)}>
+            <Icon name="tune" size={28} color={COLORS.white} />
           </TouchableOpacity>
         </View>
       </View>
 
       <ListCategories />
 
+      
+
       <FlatList
-        keyExtractor={(medicine) => "key"+medicine.masp}
-        
+        keyExtractor={(medicine) => "key" + medicine.masp}
         showsVerticalScrollIndicator={false}
         numColumns={2}
-        data={medicinesChange ? medicinesChange:medicines}
+        data={medicinesChange ? medicinesChange : medicines}
         renderItem={({ item }) => <Card medicine={item} />}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
+      </ScrollView>
     </View>
     // </SafeAreaView>
   );
@@ -284,10 +284,11 @@ const style = StyleSheet.create({
   },
   categoryBtn: {
     height: 45,
-    width: 150,
-    marginRight: 7,
+    width: 200,
+    marginRight: 6,
     borderRadius: 30,
     alignItems: "center",
+    justifyContent:"center",
     paddingHorizontal: 5,
     flexDirection: "row",
   },

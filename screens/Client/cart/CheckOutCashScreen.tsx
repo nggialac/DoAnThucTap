@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Image, StyleSheet, Text, View } from "react-native";
 import Button from "./Button";
-import { postOrder } from "../../../api/OrderApis";
+import { postOrder, postOrderCash } from "../../../api/OrderApis";
 import { AuthContext } from "../../../components/ContextLogin";
 // import Navigation from "../../../navigation";
 
@@ -35,7 +35,7 @@ const CheckOutCashScreen = ({ navigation , route }) => {
   const createOrders = async (manhathuoc: string, hinhthucthanhtoan: number, params) => {
     // const temp = [{params}]
     let check;
-    await postOrder(manhathuoc, hinhthucthanhtoan, params)
+    await postOrderCash(manhathuoc, hinhthucthanhtoan, params)
       .then((res) => {
         console.log(res.data);
         Alert.alert(`Congratulations!`, "Giao dịch thành công" , [{
@@ -46,7 +46,7 @@ const CheckOutCashScreen = ({ navigation , route }) => {
       })
       .catch((e) => {
         console.log(e);
-        Alert.alert(`Error`, e + "");
+        Alert.alert(`Error`, "Cannot create order! Could be not enough quantity for these item" + "");
         check = false;
       });
     return check;

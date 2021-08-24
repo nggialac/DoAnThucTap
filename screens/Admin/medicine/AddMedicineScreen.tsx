@@ -39,6 +39,7 @@ const AddMedicineScreen = ({route}) => {
   // const [dm, setDm] = useState([route.params]);
   const [image, setImage] = useState();
   const danhmuc = route.params.danhmuc;
+  console.log(danhmuc);
   const { colors } = useTheme();
 
   // React.useEffect(() => {
@@ -117,6 +118,7 @@ const AddMedicineScreen = ({route}) => {
             borderRadius: 15,
             justifyContent: "center",
             alignItems: "center",
+            marginTop: 20,
           }}
         >
           <TouchableOpacity onPress={pickImage} style={{backgroundColor: colors.background}}>
@@ -124,7 +126,7 @@ const AddMedicineScreen = ({route}) => {
               source={{
                 uri: image,
               }}
-              style={{ height: 150, width: 150 }}
+              style={{ height: 100, width: 120 }}
               imageStyle={{ borderRadius: 15 }}
             >
               <View
@@ -188,11 +190,11 @@ const AddMedicineScreen = ({route}) => {
             // let danhmucthuoc = dm.find(x=>x.madm===selectedDm);
 
             addMedicine({
-              danhmuc: danhmuc, 
-              // {
-              //   madm: danhmucthuoc.madm,
-              //   tendm: danhmucthuoc.tendm
-              // },
+              danhmuc: 
+              {
+                madm: danhmuc.madm,
+                tendm: danhmuc.tendm
+              },
               dongia: parseFloat(values.dongia),
               khuyenmai: parseFloat(values.khuyenmai),
               masp: values.masp,

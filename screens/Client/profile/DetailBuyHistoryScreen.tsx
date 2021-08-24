@@ -25,6 +25,14 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
   const madh = route.params.madh;
   // console.log(madh);
 
+  var listTrangthai = {
+    0: "Chờ xử lý",
+    1: "Đã duyệt",
+    2: "Đang giao",
+    3: "Giao hàng thành công",
+    4: "Đã hủy",
+  };
+
   const getData = (madh: string) => {
     getListOrderByMaDH(madh)
       .then((res) => {
@@ -76,6 +84,8 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
     );
   };
 
+  
+
   const cancelOrderByMadh = (madh: string) => {
     Alert.alert("Notice!", "Are you want cancel this order?", [
       {
@@ -108,6 +118,16 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
         {/* <Icon name="arrow-back-ios" size={28} onPress={navigation.goBack} /> */}
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>MÃ ĐƠN: {madh}</Text>
       </View>
+      <View
+        style={[
+          style.header,
+          { alignItems: "center", justifyContent: "center", marginTop: 0 },
+        ]}
+      >
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+          TRẠNG THÁI:  {listTrangthai[listData.trangthai]}
+        </Text>
+      </View>
       <FlatList
         keyExtractor={(item) => item.id.masp}
         showsVerticalScrollIndicator={false}
@@ -123,7 +143,9 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
                   variant="primary"
                   loading={false}
                   title="CANCEL THIS ORDER"
-                  onPress={() => {cancelOrderByMadh(listData.madh)}}
+                  onPress={() => {
+                    cancelOrderByMadh(listData.madh);
+                  }}
                 />
               </View>
             ) : null}

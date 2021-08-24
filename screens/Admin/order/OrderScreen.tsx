@@ -10,7 +10,7 @@ import {
   Animated,
   RefreshControl,
   Alert,
-  LogBox
+  LogBox,
 } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 import Orders from "../../../navigation/Models/ListOrder";
@@ -24,7 +24,6 @@ import {
 // import Animated from "react-native-reanimated";
 
 function OrderScreen({ navigation }) {
-
   LogBox.ignoreAllLogs();
 
   var listTrangthai = {
@@ -32,8 +31,8 @@ function OrderScreen({ navigation }) {
     1: "Đã duyệt",
     2: "Đang giao",
     3: "Giao hàng thành công",
-    4: "Đã hủy"
-  }
+    4: "Đã hủy",
+  };
 
   const [orders, setOrders] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
@@ -91,24 +90,31 @@ function OrderScreen({ navigation }) {
     cancelOrderByMadh(order.madh);
   };
 
-  const deleteRow = async (rowMap, rowKey, madh) => {
-    Alert.alert("Notice!", "Are you want update status for this order?", [
-      {
-        text: "Approve",
-        onPress: async() => {
-          closeRow(rowMap, rowKey);
-          await deleteOrderID(madh);
-          const newData = [...orders];
-          const prevIndex = orders.findIndex((item) => item.key === rowKey);
-          newData.splice(prevIndex, 1);
-          setOrders(newData);
-        },
-      },
-      {
-        text: "Cancel",
-      },
-    ]);
+  const detailOrder = (madh) => {
+    navigation.navigate("DetailBuyHistoryScreen", { madh });
+  }
 
+  const deleteRow = async (rowMap, rowKey, madh, trangthai) => {
+    if (trangthai === 4) {
+      Alert.alert("Notice!", "Are you want delete this order?", [
+        {
+          text: "Approve",
+          onPress: async () => {
+            closeRow(rowMap, rowKey);
+            await deleteOrderID(madh);
+            const newData = [...orders];
+            const prevIndex = orders.findIndex((item) => item.key === rowKey);
+            newData.splice(prevIndex, 1);
+            setOrders(newData);
+          },
+        },
+        {
+          text: "Cancel",
+        },
+      ]);
+    } else {
+      Alert.alert("Notice!", "Delete only with order be canceled!")
+    }
   };
 
   const onRowDidOpen = (rowKey) => {
@@ -156,7 +162,8 @@ function OrderScreen({ navigation }) {
     Alert.alert("Notice!", "Are you want update status for this order?", [
       {
         text: "Approve",
-        onPress: () => getUpdate(madh, params),
+        onPress: () =>
+          params["trangthai"] < 3 ? getUpdate(madh, params) : cancelOrder(madh),
       },
       {
         text: "Cancel",
@@ -167,10 +174,13 @@ function OrderScreen({ navigation }) {
   const getUpdate = async (madh: string, params: any) => {
     let changed;
     // console.log(params.trangthai);
-    params["trangthai"] > 2 
-      ? (changed = 1)
-      : (changed = params["trangthai"] + 1);
+    // params["trangthai"] > 2
+    //   ? (changed = 1)
+    //   : (changed = params["trangthai"] + 1);
     // console.log(changed);
+    params["trangthai"] >= 3
+      ? (changed = 3)
+      : (changed = params["trangthai"] + 1);
     params["trangthai"] = changed;
     console.log(params["trangthai"]);
     await putOrder(params)
@@ -215,12 +225,13 @@ function OrderScreen({ navigation }) {
         {/* {console.log(data.item)} */}
         <TouchableHighlight
           style={styles.rowFrontVisible}
-          onPress={() => updateOrder(data.item.madh, data.item)}
+          onLongPress={() => updateOrder(data.item.madh, data.item)}
           underlayColor={"#aaa"}
         >
           <View>
             <Text style={styles.title} numberOfLines={1}>
-              {data.item.madh} - Trạng thái: {listTrangthai[data.item.trangthai]}
+              {data.item.madh} - Trạng thái:{" "}
+              {listTrangthai[data.item.trangthai]}
             </Text>
             <Text style={styles.details} numberOfLines={1}>
               Ngày đặt: {data.item.ngaydat.slice(0, 10)}, Tổng tiền:{" "}
@@ -244,7 +255,8 @@ function OrderScreen({ navigation }) {
         rowHeightAnimatedValue={rowHeightAnimatedValue}
         removeRow={() =>
           // deleteRow(rowMap, data.item.key)
-          deleteRow(rowMap, data.item.key, data.item.madh)
+          // deleteRow(rowMap, data.item.key, data.item.madh, data.item.trangthai)
+          detailOrder(data.item.madh)
         }
       />
     );
@@ -323,7 +335,7 @@ function OrderScreen({ navigation }) {
                 ]}
               >
                 <MaterialCommunityIcons
-                  name="trash-can-outline"
+                  name="details"
                   size={25}
                   color="#fff"
                 />
@@ -351,7 +363,8 @@ function OrderScreen({ navigation }) {
         }
         onDelete={() =>
           // deleteRow(rowMap, data.item.key)
-          deleteRow(rowMap, data.item.key, data.item.madh)
+          // deleteRow(rowMap, data.item.key, data.item.madh, data.item.trangthai)
+          detailOrder(data.item.madh)
         }
       />
     );
@@ -380,6 +393,7 @@ function OrderScreen({ navigation }) {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        keyExtractor={(e)=>"key"+e.madh}
       />
     </View>
   );
@@ -439,7 +453,7 @@ const styles = StyleSheet.create({
     right: 75,
   },
   backRightBtnRight: {
-    backgroundColor: "red",
+    backgroundColor: "green",
     right: 0,
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,

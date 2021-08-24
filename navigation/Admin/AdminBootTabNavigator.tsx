@@ -40,6 +40,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "react-native-paper";
 import { View } from "react-native";
 import DetailProductScreen from "../../screens/Client/product/DetailProductScreen";
+import DetailBuyHistoryScreen from "../../screens/Client/profile/DetailBuyHistoryScreen";
 
 // const BottomTab = createBottomTabNavigator<BottomTabAdminParamList>();
 const BottomTab = createMaterialBottomTabNavigator<BottomTabAdminParamList>();
@@ -127,6 +128,16 @@ function AdminTabHomeNavigator({ navigation }) {
       <TabAdminHomeStack.Screen
         name="TabAdminHomeOrder"
         component={TabAdminHomeOrder}
+      />
+            <TabAdminHomeStack.Screen
+        name="DetailBuyHistoryScreen"
+        component={DetailBuyHistoryScreen}
+        options={({ route }) => ({
+          madh: route.params.madh,
+          headerBackTitleVisible: false,
+          title: "Buy History Screen",
+          headerShown: true,
+        })}
       />
       <TabAdminHomeStack.Screen
         name="TabAdminHomeStaff"

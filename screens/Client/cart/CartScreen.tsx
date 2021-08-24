@@ -14,7 +14,7 @@ import Icon from "@expo/vector-icons/MaterialIcons";
 import COLORS from "../../../assets/colors/Colors";
 import foods from "../../../navigation/Models/Foods";
 import { PrimaryButton } from "../../../components/PrimaryButton";
-import { getListCart, putNumberOfProduct } from "../../../api/CartApis";
+import { deleteCartByMedicineId, getListCart, putNumberOfProduct } from "../../../api/CartApis";
 import { AuthContext } from "../../../components/ContextLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -69,6 +69,20 @@ const CartScreen = ({ navigation }) => {
       });
   };
 
+  const deleteProductFromCart = (
+    manhathuoc: string,
+    masp: string,
+  ) => {
+    deleteCartByMedicineId(manhathuoc, masp,)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Fail", "Cannot Delete this product from cart!" + e, [{ text: "ok" }]);
+      });
+  };
+
   React.useEffect(() => {
     // console.log(JSON.parse(nhathuoc).manhathuoc);
     getCart(nhathuoc.manhathuoc);
@@ -93,6 +107,7 @@ const CartScreen = ({ navigation }) => {
       setDataCart([...dataCar]);
       setTotal(totalPrice(dataCart));
     } else if (type == false && cantd == 1) {
+      deleteProductFromCart(nhathuoc.manhathuoc, dataCar[i].id.masp);
       dataCar.splice(i, 1);
       setDataCart([...dataCar]);
       setTotal(totalPrice(dataCart));
@@ -150,7 +165,7 @@ const CartScreen = ({ navigation }) => {
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>Cart</Text>
       </View>
       <FlatList
-        keyExtractor={(item) => item.id.masp}
+        keyExtractor={(item) => "key"+item.id.masp}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
         data={listData}
@@ -176,7 +191,7 @@ const CartScreen = ({ navigation }) => {
                 onPress={() => {
                   // total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
                   total && dataCart
-                    ? navigation.navigate("CheckOutCashScreen", {
+                    ? navigation.navigate("CheckOutMethodScreen", {
                         total,
                         dataCart,
                       })

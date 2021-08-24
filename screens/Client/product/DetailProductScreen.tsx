@@ -283,8 +283,8 @@ const DetailProductScreen = ({ navigation, route }) => {
               size={28}
               onPress={() => navigation.goBack()}
             />
-            <Text style={style.headerText}>Hello</Text>
-            <Icon name="shopping-cart" size={28} />
+            <Text style={style.headerText}>Detail Product</Text>
+            <Icon name="shopping-cart" size={28} onPress={() => navigation.navigate("CartScreen")}/>
           </View>
 
           <View style={style.imageContainer}>
@@ -355,6 +355,16 @@ const DetailProductScreen = ({ navigation, route }) => {
               >
                 {medicine.mota_chitiet}
               </Text>
+              <Text
+                style={{
+                  color: "grey",
+                  fontSize: 16,
+                  lineHeight: 22,
+                  marginTop: 10,
+                }}
+              >
+                Số lượng tồn: {medicine.soluong}
+              </Text>
               <View
                 style={{
                   marginTop: 20,
@@ -387,7 +397,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                     {count}
                   </Text>
                   {/* CHECK SO LUONG TON */}
-                  <TouchableOpacity onPress={() => setCount(count + 1)}>
+                  <TouchableOpacity onPress={() => medicine.soluong > count ? setCount(count + 1) : setCount(count)}>
                     <View style={style.borderBtn}>
                       <Text style={style.borderBtnText}>+</Text>
                     </View>
@@ -395,7 +405,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                 </View>
 
                 <TouchableOpacity
-                  onPress={() => addCart(ma, medicine.masp, count)}
+                  onPress={() => count <= medicine.soluong && count !== 0 ? addCart(ma, medicine.masp, count) : Alert.alert("Notice", "Out of quantity this product!")}
                 >
                   <View style={style.buyBtn}>
                     <Text
@@ -442,7 +452,7 @@ const DetailProductScreen = ({ navigation, route }) => {
               data={comments}
               renderItem={ ({item}) => renderComment(item, navigation)}
               contentContainerStyle={style.commentsContainer}
-              // keyExtractor={(e) => e.id.toString()}
+              keyExtractor={(e) => "key"+e.id}
             />
 
             {/* MODAL */}

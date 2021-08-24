@@ -53,6 +53,9 @@ export type TabAdminHomeParamList = {
   TabAdminHomeScreen: undefined;
   TabAdminHomeOrder: undefined;
   ListOrderNTScreen: undefined;
+  DetailBuyHistoryScreen: {
+    madh: string
+  }
   //
   TabAdminHomeStaff: undefined;
   TabAdminHomeAddStaff: undefined;
@@ -102,6 +105,11 @@ export type TabClientHomeParamList = {
   TabClientHomeScreen: undefined;
   DetailProductScreen: undefined;
   CartScreen: undefined;
+  CheckOutMethodScreen: {
+    total: number;
+    dataCart: [];
+  }
+
   CheckOutScreen: {
     total: number;
     dataCart: [];

@@ -28,7 +28,7 @@ const Card = ({ itemData, onPress }) => {
 
           <Text numberOfLines={1} style={styles.cardDetails}>
             HTTT:
-            {itemData.hinhthucthanhtoan === 1 ? (
+            {itemData.hinhthucthanhtoan !== 1 ? (
               <Text> Online</Text>
             ) : (
               <Text> Tiền mặt</Text>

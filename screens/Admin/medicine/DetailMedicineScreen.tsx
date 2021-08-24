@@ -53,7 +53,7 @@ const DetailMedicineScreen = ({ route }) => {
           >
             <Text style={styles.mota_ngan}>Overview</Text>
             <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
-              <FontAwesome name="star" size={16} color="#FF6347" />
+              {/* <FontAwesome name="star" size={16} color="#FF6347" /> */}
               {/* <Text style={{ marginHorizontal: 2 }}>{itemData.rating}</Text>
               <Text>({itemData.reviews})</Text> */}
             </View>

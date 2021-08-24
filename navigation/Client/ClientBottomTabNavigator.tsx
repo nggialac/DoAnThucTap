@@ -32,6 +32,7 @@ import {
 import DetailCommentsScreen from "../../screens/Admin/comment/DetailCommentsScreen";
 import DetailCommentClientScreen from "../../screens/Client/comment/DetailCommentClientScreen";
 import ClientCommentsScreen from "../../screens/Client/ClientCommentsScreen";
+import CheckOutMethodScreen from "../../screens/Client/cart/CheckOutMethodScreen";
 
 const BottomTab = createBottomTabNavigator<BottomTabClientParamList>();
 
@@ -120,6 +121,17 @@ function ClientTabHomeNavigator() {
         component={CartScreen}
         options={{ headerTitle: "Client Cart Title", headerShown: false }}
       /> */}
+            <TabClientHomeStack.Screen
+        name="CheckOutMethodScreen"
+        component={CheckOutMethodScreen}
+        options={({ route }) => ({
+          total: route.params.total,
+          dataCart: route.params.dataCart,
+          headerBackTitleVisible: false,
+          headerShown: true,
+        })}
+      />
+
       <TabClientHomeStack.Screen
         name="CheckOutScreen"
         component={CheckOutScreen}

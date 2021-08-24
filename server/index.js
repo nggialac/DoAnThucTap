@@ -171,7 +171,8 @@ app.post("/pay-without-webhooks", async (req, res) => {
     email
   } = req.body;
 
-  const orderAmount = calculateOrderAmount(items);
+  // const orderAmount = calculateOrderAmount(items);
+  const orderAmount = items;
   const { secret_key } = getKeys();
 
   const stripe = new Stripe(secret_key, {
@@ -450,34 +451,75 @@ app.post("/payment-sheet", async (req, res) => {
     currency: "vnd",
     customer: customer.id
   });
+
+  // const paymentMethods = await stripe.paymentMethods.list({
+  //   customer: customer.id,
+  //   type: "card"
+  // });
   // console.log(paymentIntent);
+  // console.log(paymentIntent.created);
   res.json({
     paymentIntent: paymentIntent.client_secret,
     ephemeralKey: ephemeralKey.secret,
-    customer: customer.id
+    customer: customer.id,
+    paymentIntentId: paymentIntent.id,
+    paymentIntentCreated: paymentIntent.created,
   });
 });
 
 app.post("/pi/cancel", async (req, res) => {
-
   const {
     pi,
   } = req.body;
-  const { secret_key } = getKeys('');
+  console.log(pi);
+  const { secret_key } = getKeys();
 
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
     typescript: true
   });
-  
+
+  const paymentIntent = await stripe.paymentIntents.cancel(
+    pi
+  );
+})
+
+app.post("/refund", async(req, res)=> {
+  const {
+    // created,
+    pi
+  } = req.body;
   console.log(pi);
-  // To create a PaymentIntent, see our guide at: https://stripe.com/docs/payments/payment-intents/creating-payment-intents#creating-for-automatic
-  // const paymentIntent = await stripe.paymentIntents.cancel(
-  //   pi
-  // );
-  // res.json({
-  //   paymentIntent
+  const { secret_key } = getKeys();
+
+  const stripe = new Stripe(secret_key, {
+    apiVersion: "2020-08-27",
+    typescript: true
+  });
+
+  // const paymentIntents = await stripe.paymentIntents.list({
+  //   created: created,
+  //   // created: {
+  //   //   gte: 1629711812
+  //   // }
   // });
+
+  const paymentIntents = await stripe.paymentIntents.retrieve(
+    pi
+  );
+
+    // console.log(paymentIntents);
+  const charges = await stripe.charges.list({
+    payment_intent: paymentIntents.id,
+  });
+  // console.log(charges);
+
+  const refund = await stripe.refunds.create({
+    charge: charges.data[0].id,
+    // payment_intent: pi,
+  });
+
+  res.status(200);
 })
 
 app.listen(3000, () => console.log(`Node server listening on port 3000!`));

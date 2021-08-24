@@ -5,7 +5,7 @@ import Button from "./Button";
 import PaymentScreen from "./PaymentScreen";
 import { API_URL } from "./Config";
 //
-import { postOrder } from "../../../api/OrderApis";
+import { cancelOrder, deleteOrderById, postOrder } from "../../../api/OrderApis";
 import { AuthContext } from "../../../components/ContextLogin";
 const colors = {
   blurple: "#635BFF",
@@ -16,13 +16,16 @@ const colors = {
   slate: "#0A2540",
 };
 
-export default function PaymentsUICustomScreen({ route }) {
+export default function PaymentsUICustomScreen({ navigation, route }) {
   const context = React.useContext(AuthContext);
   const nhathuoc = context.loginState.mnv_mnt;
+  const [madh, setMadh] = useState();
+  const [createdTime, setCreatedTime] = useState(0);
   // console.log(nhathuoc);
 
   const { initPaymentSheet, presentPaymentSheet, confirmPaymentSheetPayment } =
     useStripe();
+
   const [paymentSheetEnabled, setPaymentSheetEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<{
@@ -32,7 +35,7 @@ export default function PaymentsUICustomScreen({ route }) {
 
   const totalPrice = route.params.total;
   const dataCart = route.params.dataCart;
-  var payment_intent_fetched;
+  const [payment_intent_fetched, setPayment_intent_fetched] = useState("");
   // console.log(route.params.);
 
   const fetchPaymentSheetParams = async () => {
@@ -47,32 +50,83 @@ export default function PaymentsUICustomScreen({ route }) {
         // request_three_d_secure: 'any',
       }),
     });
-    const { paymentIntent, ephemeralKey, customer } = await response.json();
+    const { paymentIntent, ephemeralKey, customer, paymentIntentId, paymentIntentCreated } =
+      await response.json();
 
-    payment_intent_fetched = paymentIntent;
+    // payment_intent_fetched = paymentIntent;
+    // console.log(payment_intent_fetched);
 
     return {
       paymentIntent,
       ephemeralKey,
       customer,
+      paymentIntentId,
+      paymentIntentCreated,
     };
   };
 
-  const createOrders = async (manhathuoc: string, params) => {
+  const callNoWebhookPayEndpoint = async (
+    data:
+      | {
+          useStripeSdk: boolean;
+          paymentMethodId: string;
+          currency: string;
+          items: { id: string }[];
+        }
+      | { paymentIntentId: string }
+  ) => {
+    const response = await fetch(`${API_URL}/pay-without-webhooks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return await response.json();
+  };
+
+  const createOrders = async (manhathuoc: string, params, pi: string) => {
     // const temp = [{params}]
+    // console.log(created)
+    // let hinhthucthanhtoan = created;
     let check;
-    await postOrder(manhathuoc, params)
+    await postOrder(manhathuoc, 2, params, pi)
       .then((res) => {
         console.log(res.data);
+        setMadh(res.data);
         check = true;
       })
       .catch((e) => {
+        console.log(manhathuoc, params, pi);
         console.log(e);
-        Alert.alert(`Error`, e + "");
+        // Alert.alert(`Error`, e + "");
         check = false;
       });
     return check;
   };
+
+  const cancelPayment = (madh) => {
+    cancelOrder(madh)
+    .then(async (res) => {
+      console.log(res.data);
+      await deleteOrderById(madh);
+    })
+    .catch((e) => {
+      console.log(e);
+      Alert.alert("Failed!", "Cannot cancel");
+    })
+  }
+
+  const deleteAOrder = (madh: string) => {
+    deleteOrderById(madh)
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((e) => {
+      console.log(e);
+      Alert.alert(`Error`, e + "");
+    });
+  }
 
   function requestData(dataCart) {
     const newArray = dataCart.map(function (v) {
@@ -89,8 +143,12 @@ export default function PaymentsUICustomScreen({ route }) {
     setLoading(true);
 
     try {
-      const { paymentIntent, ephemeralKey, customer } =
+      const { paymentIntent, ephemeralKey, customer, paymentIntentId, paymentIntentCreated } =
         await fetchPaymentSheetParams();
+
+      setPayment_intent_fetched(paymentIntentId);
+      setCreatedTime(paymentIntentCreated);
+      // console.log(payment_intent_fetched);
 
       const { error, paymentOption } = await initPaymentSheet({
         customerId: customer,
@@ -99,7 +157,7 @@ export default function PaymentsUICustomScreen({ route }) {
         customFlow: true,
         merchantDisplayName: "Medical Ecom Inc.",
         applePay: true,
-        merchantCountryCode: "US",
+        merchantCountryCode: "VN",
         style: "alwaysDark",
         googlePay: true,
         testEnv: true,
@@ -137,49 +195,81 @@ export default function PaymentsUICustomScreen({ route }) {
     }
   };
 
-  const onPressBuy = async () => {
+  const onPressBuyTest = async () => {
     setLoading(true);
-    const { error } = await confirmPaymentSheetPayment();
+    const {
+      clientSecret,
+      error: paymentIntentError,
+      requiresAction,
+    } = await callNoWebhookPayEndpoint({
+      paymentIntentId: payment_intent_fetched,
+    });
 
-    if (error) {
-      Alert.alert(`Error code: ${error.code}`, error.message);
-    } else {
+    if (paymentIntentError) {
+      // Error during creating or confirming Intent
+      Alert.alert("Error", paymentIntentError);
+      return;
+    }
+
+    if (clientSecret && !requiresAction) {
+      // Payment succedeed
       Alert.alert("Success", "The payment was confirmed successfully!");
-      // setPaymentSheetEnabled(false);
-
-      //CreateOrder
-      const data = requestData(dataCart);
-      let check = await createOrders(nhathuoc.manhathuoc, data);
-      // if(check === false) {
-      //   // refundPayment
-      // }
-
-      setLoading(false);
     }
   };
 
-  const doRefund = async (pi: string) =>{
-    const response = await fetch(`${API_URL}/pi/cancel`, {
+  const onPressBuy = async () => {
+    setLoading(true);
+    const data = requestData(dataCart);
+    let check = await createOrders(nhathuoc.manhathuoc, data, payment_intent_fetched);
+    // const check = true;
+    if(check === false) {
+      Alert.alert("Error", "We are not enough quantity of this product!");
+    } else {
+    const { error } = await confirmPaymentSheetPayment();
+    if (error) {
+      Alert.alert(`Error code: ${error.code}`, error.message);
+      // await cancelPaymentIntent
+      cancelPayment(madh);
+    } else {
+      Alert.alert("Success", "The payment was confirmed successfully!");
+      // setPaymentSheetEnabled(false);
+      setLoading(false);
+      navigation.navigate("TabClientHomeScreen");
+    }
+  }
+  };
+
+  const doRefund = async (pi: string) => {
+    try{
+    const response = await fetch(`${API_URL}/refund`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        pi: pi,
+        // created: created,
+        pi
+        
         // request_three_d_secure: 'any',
       }),
     });
-    const { paymentIntent } = await response.json();
-
-    return {
-      paymentIntent
-    };
-  
+    // const { status } = await response.json();
   }
+  catch(e){
+    Alert.alert("Fail", ""+ e);
+  }
+
+  Alert.alert("Success", "Refund Complete !");
+    
+
+    // return {
+    //   status,
+    // };
+  };
 
   const refundButton = () => {
-
-  }
+    doRefund(payment_intent_fetched);
+  };
 
   useEffect(() => {
     // In your app’s checkout, make a network request to the backend and initialize PaymentSheet.

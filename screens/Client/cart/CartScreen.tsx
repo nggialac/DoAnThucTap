@@ -8,6 +8,8 @@ import {
   Alert,
   TouchableOpacity,
   Button,
+  ScrollView,
+  RefreshControl,
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "@expo/vector-icons/MaterialIcons";
@@ -26,9 +28,20 @@ const CartScreen = ({ navigation }) => {
   // const [tk, setTk] = React.useState();
   const [listData, setListData] = React.useState([]);
   const [dataCart, setDataCart] = React.useState([]);
+  const [limit, setLimit] = React.useState(false);
   const [total, setTotal] = React.useState(0);
   const context = React.useContext(AuthContext);
   const nhathuoc = context.loginState.mnv_mnt;
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(1000).then(() => setRefreshing(false));
+  }, []);
   // console.log(nhathuoc);
 
   // const getData = async () => {
@@ -58,62 +71,108 @@ const CartScreen = ({ navigation }) => {
       });
   };
 
-  const changeNumberOfProduct = (
+  const changeNumberOfProduct = async (
     manhathuoc: string,
     masp: string,
     soluong: number
   ) => {
-    putNumberOfProduct(manhathuoc, masp, soluong)
+    let check: boolean = false;
+    await putNumberOfProduct(manhathuoc, masp, soluong)
       .then((res) => {
         console.log(res.data);
+        check = true;
       })
       .catch((e) => {
         console.log(e);
-        Alert.alert("Submit Info", "Fail!" + e, [{ text: "ok" }]);
-      });
-  };
-
-  const deleteProductFromCart = (manhathuoc: string, masp: string) => {
-    deleteCartByMedicineId(manhathuoc, masp)
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-        Alert.alert("Fail", "Cannot Delete this product from cart!" + e, [
+        Alert.alert("Failed", "This product not enough quantity!", [
           { text: "ok" },
         ]);
+        // setLimit(true);
+        check = false;
       });
+    return check;
+  };
+
+  const deleteProductFromCart = async (manhathuoc: string, masp: string) => {
+    var check = false;
+    Alert.alert("Notice", "Really want to delete this product from cart?", [
+      {
+        text: "Yes",
+        onPress: async () => {
+          await deleteCartByMedicineId(manhathuoc, masp)
+            .then((res) => {
+              console.log(res.data);
+              check = true;
+            })
+            .catch((e) => {
+              console.log(e);
+              Alert.alert("Fail", "Cannot Delete this product from cart!" + e, [
+                { text: "ok" },
+              ]);
+              check = false;
+            });
+            onRefresh();
+        },
+      },
+      {
+        text: "Cancel",
+        onPress: () => {},
+      },
+    ]);
+
+    return check;
   };
 
   React.useEffect(() => {
     // console.log(JSON.parse(nhathuoc).manhathuoc);
     getCart(nhathuoc.manhathuoc);
-  }, []);
+  }, [refreshing]);
 
   const onChangeQual = async (i, type) => {
     const dataCar = dataCart;
     let cantd = dataCar[i].soluong;
+    let check: boolean = false;
 
     if (type) {
       cantd = cantd + 1;
       dataCar[i].soluong = cantd;
+      check = await changeNumberOfProduct(
+        nhathuoc.manhathuoc,
+        dataCar[i].id.masp,
+        cantd
+      );
 
-      changeNumberOfProduct(nhathuoc.manhathuoc, dataCar[i].id.masp, cantd);
-      setDataCart([...dataCar]);
-      setTotal(totalPrice(dataCart));
+      if (check === true) {
+        setDataCart([...dataCar]);
+        setTotal(totalPrice(dataCart));
+        setLimit(false);
+      } else {
+        setLimit(true);
+        onRefresh();
+      }
     } else if (type == false && cantd >= 2) {
       cantd = cantd - 1;
       dataCar[i].soluong = cantd;
-
-      changeNumberOfProduct(nhathuoc.manhathuoc, dataCar[i].id.masp, cantd);
+      setLimit(false);
+      await changeNumberOfProduct(
+        nhathuoc.manhathuoc,
+        dataCar[i].id.masp,
+        cantd
+      );
       setDataCart([...dataCar]);
       setTotal(totalPrice(dataCart));
     } else if (type == false && cantd == 1) {
-      deleteProductFromCart(nhathuoc.manhathuoc, dataCar[i].id.masp);
-      dataCar.splice(i, 1);
-      setDataCart([...dataCar]);
-      setTotal(totalPrice(dataCart));
+      setLimit(false);
+      let isDelete = await deleteProductFromCart(
+        nhathuoc.manhathuoc,
+        dataCar[i].id.masp
+      );
+      console.log(isDelete);
+      if (isDelete) {
+        dataCar.splice(i, 1);
+        setDataCart([...dataCar]);
+        setTotal(totalPrice(dataCart));
+      }
     }
   };
 
@@ -158,7 +217,13 @@ const CartScreen = ({ navigation }) => {
             <TouchableOpacity onPress={() => onChangeQual(index, false)}>
               <Icon name="remove" size={25} color={COLORS.white} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => onChangeQual(index, true)}>
+            <TouchableOpacity
+              onPress={() =>
+                limit === false
+                  ? onChangeQual(index, true)
+                  : Alert.alert("Notice", "Not enough quantity!")
+              }
+            >
               <Icon name="add" size={25} color={COLORS.white} />
             </TouchableOpacity>
           </View>
@@ -167,7 +232,12 @@ const CartScreen = ({ navigation }) => {
     );
   };
   return (
-    <SafeAreaView style={{ backgroundColor: COLORS.white, flex: 1 }}>
+    <ScrollView
+      style={{ backgroundColor: COLORS.white, flex: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={style.header}>
         <Icon name="arrow-back-ios" size={28} onPress={navigation.goBack} />
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>Cart</Text>
@@ -191,7 +261,9 @@ const CartScreen = ({ navigation }) => {
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                 Total Price
               </Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>{total} VND</Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                {total} VND
+              </Text>
             </View>
             <View style={{ marginHorizontal: 30 }}>
               <PrimaryButton
@@ -213,7 +285,7 @@ const CartScreen = ({ navigation }) => {
       {/* <View style={style.header}>
         <Button variant="primary" title="Hủy đơn" onPress={() => {}} />
       </View> */}
-    </SafeAreaView>
+    </ScrollView>
   );
 };
 const style = StyleSheet.create({

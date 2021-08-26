@@ -321,7 +321,7 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
           onPress={onPressBuy}
         />
       </View>
-      <View style={styles.section}>
+      {/* <View style={styles.section}>
         <Button
           variant="primary"
           loading={loading}
@@ -329,7 +329,7 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
           title="Refund"
           onPress={refundButton}
         />
-      </View>
+      </View> */}
     </PaymentScreen>
   );
 }

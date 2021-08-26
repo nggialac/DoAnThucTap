@@ -33,11 +33,17 @@ import DetailCommentsScreen from "../../screens/Admin/comment/DetailCommentsScre
 import DetailCommentClientScreen from "../../screens/Client/comment/DetailCommentClientScreen";
 import ClientCommentsScreen from "../../screens/Client/ClientCommentsScreen";
 import CheckOutMethodScreen from "../../screens/Client/cart/CheckOutMethodScreen";
+import { AuthContext } from "../../components/ContextLogin";
+import { useContext } from "react";
+import { LoginStackNavigator } from "..";
+import BlankScreen from "../BlankScreen";
 
 const BottomTab = createBottomTabNavigator<BottomTabClientParamList>();
 
 export default function AdminBottomTabNavigator() {
   const colorScheme = useColorScheme();
+  const context = useContext(AuthContext);
+  const nhathuoc = context.loginState.mnv_mnt;
 
   return (
     <BottomTab.Navigator
@@ -53,7 +59,7 @@ export default function AdminBottomTabNavigator() {
           ),
         }}
       />
-      <BottomTab.Screen
+      {nhathuoc !== null ? <BottomTab.Screen
         name="Comments"
         component={ClientCommentsNavigator}
         options={{
@@ -61,7 +67,8 @@ export default function AdminBottomTabNavigator() {
             <TabBarIcon name="chatbox-ellipses" color={color} />
           ),
         }}
-      />
+      />: <BottomTab.Screen name="BlankScreen" component={BlankScreen}/>}
+
       <BottomTab.Screen
         name="Profile"
         component={ClientTabProfileNavigator}
@@ -113,6 +120,7 @@ function ClientTabHomeNavigator() {
           comments: route.params,
           headerBackTitleVisible: false,
           headerShown: true,
+          headerTitle: "Comment Detail"
         })}
       />
 
@@ -129,6 +137,7 @@ function ClientTabHomeNavigator() {
           dataCart: route.params.dataCart,
           headerBackTitleVisible: false,
           headerShown: true,
+          headerTitle: "CheckOut Method"
         })}
       />
 
@@ -140,6 +149,7 @@ function ClientTabHomeNavigator() {
           dataCart: route.params.dataCart,
           headerBackTitleVisible: false,
           headerShown: true,
+          headerTitle: "CheckOut With Stripe"
         })}
       />
       <TabClientHomeStack.Screen
@@ -150,6 +160,7 @@ function ClientTabHomeNavigator() {
           dataCart: route.params.dataCart,
           headerBackTitleVisible: false,
           headerShown: true,
+          headerTitle: "CheckOut With Cash"
         })}
       />
     </TabClientHomeStack.Navigator>
@@ -158,14 +169,16 @@ function ClientTabHomeNavigator() {
 
 const TabClientCategoriesStack =
   createStackNavigator<TabClientCategoriesParamList>();
+  
 
 function ClientCommentsNavigator() {
   return (
     <TabClientCategoriesStack.Navigator>
+      {}
       <TabClientCategoriesStack.Screen
         name="ClientCommentsScreen"
         component={ClientCommentsScreen}
-        options={{ headerTitle: "Tab Client Categories Title" }}
+        options={{ headerTitle: "Comments" }}
       />
       <TabClientHomeStack.Screen
         name="DetailCommentClientScreenN"
@@ -174,6 +187,7 @@ function ClientCommentsNavigator() {
           comments: route.params,
           headerBackTitleVisible: false,
           headerShown: true,
+          headerTitle: "Comment Detail"
         })}
       />
     </TabClientCategoriesStack.Navigator>
@@ -196,7 +210,7 @@ function ClientTabProfileNavigator({ navigation }) {
         name="ClientProfileScreen"
         component={ClientProfileScreen}
         options={{
-          headerTitle: "Tab Profile Home Title",
+          headerTitle: "Profile",
           headerRight: () => (
             <MaterialCommunityIcons.Button
               name="account-edit"
@@ -214,7 +228,7 @@ function ClientTabProfileNavigator({ navigation }) {
         options={({ route }) => ({
           // nhathuoc: route.params.nhathuoc,
           headerBackTitleVisible: false,
-          title: "Client Edit Profile Screen",
+          title: "Edit Profile",
           headerShown: false,
         })}
       />
@@ -222,7 +236,7 @@ function ClientTabProfileNavigator({ navigation }) {
         name="BuyHistoryScreen"
         component={BuyHistoryScreen}
         options={{
-          title: "Buy History Screen",
+          title: "Buy History List",
         }}
       />
       <TabClientProfileStack.Screen
@@ -231,7 +245,7 @@ function ClientTabProfileNavigator({ navigation }) {
         options={({ route }) => ({
           madh: route.params.madh,
           headerBackTitleVisible: false,
-          title: "Buy History Screen",
+          title: "Buy History Detail",
           headerShown: true,
         })}
       />

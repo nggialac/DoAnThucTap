@@ -95,8 +95,8 @@ const HomeScreen = ({ navigation }) => {
   }
 
   useEffect(() => {
-     getCategories();
-     getMedicines();
+    getCategories();
+    getMedicines();
   }, [refreshing]);
 
   const ListCategories = () => {
@@ -179,7 +179,7 @@ const HomeScreen = ({ navigation }) => {
             }}
           >
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-              ${medicine.dongia}
+              {medicine.dongia}VND
             </Text>
             {/* <View style={style.addToCartBtn}>
               <Icon name="add" size={20} color={COLORS.white} />
@@ -192,60 +192,70 @@ const HomeScreen = ({ navigation }) => {
   return (
     // <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
     <View>
-      <ScrollView>
-      <View style={style.header}>
-        <View>
-          <View style={{ flexDirection: "row" }}>
-            {/* <Text style={{fontSize: 28}}>Medical Supplies</Text> */}
-            <Text style={{ fontSize: 28, fontWeight: "bold", marginLeft: 10 }}>
-              Medical Supplies
-            </Text>
-          </View>
-          <Text style={{ marginTop: 5, fontSize: 22, color: COLORS.grey }}>
-            Shopping everything!
-          </Text>
-        </View>
-        <TouchableOpacity onPress={() => navigation.navigate("CartScreen")}>
-          <Icon name="shopping-cart" size={28} />
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          marginTop: 40,
-          flexDirection: "row",
-          paddingHorizontal: 20,
-        }}
-      >
-        <View style={style.inputContainer}>
-          <Icon name="search" size={28} />
-          <TextInput
-            style={{ flex: 1, fontSize: 18 }}
-            placeholder="Search for product"
-            onChangeText={(text) => setTextInputValue(text)}
-            value={textInputValue}
-          />
-        </View>
-        <View style={style.sortBtn}>
-          <TouchableOpacity onPress={() => getMedicinesSearch(textInputValue)}>
-            <Icon name="tune" size={28} color={COLORS.white} />
-          </TouchableOpacity>
-        </View>
-      </View>
-
-      <ListCategories />
-
-      
-
-      <FlatList
-        keyExtractor={(medicine) => "key" + medicine.masp}
-        showsVerticalScrollIndicator={false}
-        numColumns={2}
-        data={medicinesChange ? medicinesChange : medicines}
-        renderItem={({ item }) => <Card medicine={item} />}
+      <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      />
+      >
+        <View style={style.header}>
+          <View>
+            <View style={{ flexDirection: "row" }}>
+              {/* <Text style={{fontSize: 28}}>Medical Supplies</Text> */}
+              <Text
+                style={{ fontSize: 28, fontWeight: "bold", marginLeft: 10 }}
+              >
+                Medical Supplies
+              </Text>
+            </View>
+            <Text
+              style={{
+                marginTop: 5,
+                fontSize: 22,
+                marginLeft: 10,
+                color: COLORS.grey,
+              }}
+            >
+              Shopping everything!
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => navigation.navigate("CartScreen")}>
+            <Icon name="shopping-cart" size={28} />
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            marginTop: 40,
+            flexDirection: "row",
+            paddingHorizontal: 20,
+          }}
+        >
+          <View style={style.inputContainer}>
+            <Icon name="search" size={28} />
+            <TextInput
+              style={{ flex: 1, fontSize: 18 }}
+              placeholder="Search for product"
+              onChangeText={(text) => setTextInputValue(text)}
+              value={textInputValue}
+            />
+          </View>
+          <View style={style.sortBtn}>
+            <TouchableOpacity
+              onPress={() => getMedicinesSearch(textInputValue)}
+            >
+              <Icon name="tune" size={28} color={COLORS.white} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <ListCategories />
+
+        <FlatList
+          keyExtractor={(medicine) => "key" + medicine.masp}
+          showsVerticalScrollIndicator={false}
+          numColumns={2}
+          data={medicinesChange ? medicinesChange : medicines}
+          renderItem={({ item }) => <Card medicine={item} />}
+        />
       </ScrollView>
     </View>
     // </SafeAreaView>
@@ -288,7 +298,7 @@ const style = StyleSheet.create({
     marginRight: 6,
     borderRadius: 30,
     alignItems: "center",
-    justifyContent:"center",
+    justifyContent: "center",
     paddingHorizontal: 5,
     flexDirection: "row",
   },
@@ -304,8 +314,8 @@ const style = StyleSheet.create({
     height: 220,
     width: cardWidth,
     marginHorizontal: 10,
-    marginBottom: 20,
-    marginTop: 50,
+    marginBottom: 10,
+    marginTop: 20,
     borderRadius: 15,
     elevation: 13,
     backgroundColor: COLORS.white,

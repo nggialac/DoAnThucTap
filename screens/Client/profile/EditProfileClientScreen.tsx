@@ -177,6 +177,7 @@ export default function SignUpScreen({ navigation }) {
                 textInputChange(val);
               }}
               value={data.username}
+              editable={false}
             />
             {data.check_textInputChange ? (
               <Animatable.View animation="bounceIn">

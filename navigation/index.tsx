@@ -264,6 +264,7 @@ export default function Navigation({
   // } else {
   return (
     <AuthContext.Provider value={{ authContext, loginState }}>
+      
       <NavigationContainer
         linking={LinkingConfiguration}
         // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
@@ -281,8 +282,9 @@ export default function Navigation({
             <ClientBottomTabNavigator />
           )
         ) : (
-          // <AdminBottomTabNavigator/>
+          // // <AdminBottomTabNavigator/>
           <LoginStackNavigator />
+          // <ClientBottomTabNavigator />
         )}
       </NavigationContainer>
     </AuthContext.Provider>
@@ -309,7 +311,7 @@ export default function Navigation({
 
 const LoginStack = createStackNavigator<LoginStackParamList>();
 
-function LoginStackNavigator() {
+export function LoginStackNavigator() {
   return (
     <LoginStack.Navigator screenOptions={{ headerShown: false }}>
       <LoginStack.Screen name="SplashScreen" component={SplashScreen} />

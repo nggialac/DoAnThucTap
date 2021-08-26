@@ -62,6 +62,12 @@ export type TabAdminHomeParamList = {
   TabAdminHomeEditStaff: {
     itemData: object;
   };
+
+  TabAdminHomeClient: undefined;
+  TabAdminHomeAddClient: undefined;
+  TabAdminHomeEditClient: {
+    itemData: object;
+  };
   //
   TabAdminHomeProduct: {
     danhmuc: object;

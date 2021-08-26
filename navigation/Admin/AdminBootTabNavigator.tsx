@@ -41,6 +41,9 @@ import { useTheme } from "react-native-paper";
 import { View } from "react-native";
 import DetailProductScreen from "../../screens/Client/product/DetailProductScreen";
 import DetailBuyHistoryScreen from "../../screens/Client/profile/DetailBuyHistoryScreen";
+import ClientsScreen from "../../screens/Admin/client/ClientsScreen";
+import ClientAddScreen from "../../screens/Admin/client/ClientAddScreen";
+import ClientEditScreen from "../../screens/Admin/client/ClientEditScreen";
 
 // const BottomTab = createBottomTabNavigator<BottomTabAdminParamList>();
 const BottomTab = createMaterialBottomTabNavigator<BottomTabAdminParamList>();
@@ -139,6 +142,8 @@ function AdminTabHomeNavigator({ navigation }) {
           headerShown: true,
         })}
       />
+
+      {/* STAFF */}
       <TabAdminHomeStack.Screen
         name="TabAdminHomeStaff"
         component={TabAdminHomeStaff}
@@ -168,6 +173,43 @@ function AdminTabHomeNavigator({ navigation }) {
           headerBackTitleVisible: false,
         })}
       />
+
+      {/* CLIENTS */}
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeClient"
+        component={ClientsScreen}
+        options={() => ({
+          headerBackTitleVisible: false,
+          // headerShown: false,
+          headerRight: () => (
+            <MaterialCommunityIcons.Button
+              name="plus-box-multiple-outline"
+              size={25}
+              backgroundColor={colors.surface}
+              color={colors.text}
+              onPress={() => navigation.navigate("TabAdminHomeAddClient")}
+            />
+          ),
+        })}
+      />
+
+<TabAdminHomeStack.Screen
+        name="TabAdminHomeAddClient"
+        component={ClientAddScreen}
+        options={({route}) => ({
+          headerShown: false,
+        })}
+      />
+      <TabAdminHomeStack.Screen
+        name="TabAdminHomeEditClient"
+        component={ClientEditScreen}
+        options={({ route }) => ({
+          itemData: route.params.itemData,
+          headerBackTitleVisible: false,
+          headerShown: false,
+        })}
+      />
+
 
       {/* CATEGORY */}
       <TabAdminHomeStack.Screen

@@ -203,7 +203,7 @@ export default function SignUpScreen({ navigation }) {
               )}
             </TouchableOpacity>
           </View>
-          <Text style={[styles.text_footer, { marginTop: 15 }]}>
+          {/* <Text style={[styles.text_footer, { marginTop: 15 }]}>
             Confirm Password
           </Text>
           <View style={styles.action}>
@@ -222,7 +222,7 @@ export default function SignUpScreen({ navigation }) {
                 <Feather name="eye" color="green" size={16} />
               )}
             </TouchableOpacity> */}
-          </View>
+          {/* </View>  */}
 
           <Text style={styles.text_footer}>Last Name</Text>
           <View style={styles.action}>

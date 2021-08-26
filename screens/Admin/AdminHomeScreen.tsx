@@ -32,6 +32,15 @@ export default function AdminHomeScreen({ navigation }) {
                 </View>
                 <View style={styles.circular}></View>
               </TouchableOpacity>
+              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('TabAdminHomeClient')}>
+                <View style={styles.itemLeft}>
+                  <View style={styles.square}>
+                    <Icon name="account-box" color="#FF6347" size={25} />
+                  </View>
+                  <Text style={styles.itemText}>CLIENTS</Text>
+                </View>
+                <View style={styles.circular}></View>
+              </TouchableOpacity>
               <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('TabAdminHomeStaff')}>
                 <View style={styles.itemLeft}>
                   <View style={styles.square}>

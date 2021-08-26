@@ -35,7 +35,7 @@ const CheckOutCashScreen = ({ navigation , route }) => {
   const createOrders = async (manhathuoc: string, hinhthucthanhtoan: number, params) => {
     // const temp = [{params}]
     let check;
-    await postOrderCash(manhathuoc, hinhthucthanhtoan, params)
+    await postOrder(manhathuoc, hinhthucthanhtoan, params, "")
       .then((res) => {
         console.log(res.data);
         Alert.alert(`Congratulations!`, "Giao dịch thành công" , [{
@@ -54,7 +54,7 @@ const CheckOutCashScreen = ({ navigation , route }) => {
 
   const onPressBuy=async()=>{
     const data = requestData(dataCart);
-    let check = await createOrders(nhathuoc.manhathuoc, 1, data);
+    await createOrders(nhathuoc.manhathuoc, 1, data);
   }
 
   return (

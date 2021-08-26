@@ -16,6 +16,9 @@ export default function AdminProfileScreen({navigation}) {
 
   const signOut = React.useContext(AuthContext);
 
+  const context = React.useContext(AuthContext);
+  const nhanvien = context.loginState.mnv_mnt;
+
   const logoutHandle = () => {
     signOut.authContext.signOut();
   }
@@ -33,7 +36,7 @@ export default function AdminProfileScreen({navigation}) {
           />
           <View style={{marginLeft: 20}}>
             <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>Lac Nguyen</Title>
-            <Caption style={styles.caption}>Lac Nguyen</Caption>
+            <Caption style={styles.caption}>{nhanvien.manv}</Caption>
           </View>
         </View>
       </View>
@@ -41,15 +44,15 @@ export default function AdminProfileScreen({navigation}) {
       <View style={styles.userInfoSection}>
         <View style={styles.row}>
             <Icon name="map-marker-radius" size={20} color="#777777"/>
-            <Text style={styles.infoLocation}>Tp.HCM, VietNam</Text>
+            <Text style={styles.infoLocation}>{nhanvien.diachi}</Text>
         </View>
         <View style={styles.row}>
             <Icon name="phone" size={20} color="#777777"/>
-            <Text style={styles.infoLocation}>+83 856696690</Text>
+            <Text style={styles.infoLocation}>{nhanvien.sdt}</Text>
         </View>
         <View style={styles.row}>
             <Icon name="email" size={20} color="#777777"/>
-            <Text style={styles.infoLocation}>nggialac99@gmail.com</Text>
+            <Text style={styles.infoLocation}>{nhanvien.email}</Text>
         </View>
       </View>
 

@@ -42,6 +42,9 @@ const MedicineListScreen = ({ navigation }) => {
 
   const context = React.useContext(AuthContext);
   const nhathuoc = context.loginState.mnv_mnt;
+  nhathuoc === null ? (
+    navigation.navigate("SignInScreen")
+  ) : null;
 
   const getData = (manhathuoc: string) => {
     getListReplyByNhathuoc(manhathuoc)
@@ -168,7 +171,7 @@ const MedicineListScreen = ({ navigation }) => {
       <FlatList
         data={listComment}
         renderItem={({ item }) => renderItem(item)}
-        keyExtractor={(item) => "key" + item.id}
+        keyExtractor={({item}) => "key" + item.id}
       />
     </ScrollView>
   );

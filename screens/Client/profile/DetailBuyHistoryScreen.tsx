@@ -179,7 +179,7 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
             >
               <Text style={{ fontSize: 14, fontWeight: "bold" }}>
                 Hình thức thanh toán:{" "}
-                {listData.hinhthucthanhtoan === 1 ? "Online" : "Tiền mặt"}
+                {listData.hinhthucthanhtoan === 2 ? "Online" : "Tiền mặt"}
               </Text>
               <Text style={{ fontSize: 18, fontWeight: "bold" }}>
                 Total Price: {listData.tongtien}VND

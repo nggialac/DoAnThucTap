@@ -15,21 +15,21 @@ import { MaterialIcons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
-import { postRegisterStaff } from "../../../api/LoginApis";
+import { postRegisterNT } from "../../../api/LoginApis";
+import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
 
-export default function AddStaffScreen({ navigation }) {
-  const [sex, setSex] = React.useState(0);
+export default function ClientEditScreen({ navigation, route }) {
+  const itemData = route.params.itemData;
+  console.log(itemData);
   const [data, setData] = React.useState({
-    username: "",
-    password: "",
-    confirmPassword: "",
-    diachi: "",
-    email: "",
+    username: itemData.taikhoan.username,
+    password: itemData.taikhoan.password,
+    confirmPassword: itemData.taikhoan.password,
+    diachi: itemData.diachi,
+    email: itemData.email,
     // gioitinh: "",
-    ho: "",
-    ten: "",
-    sdt: "",
+    tennhathuoc: itemData.tennhathuoc,
+    sdt: itemData.sdt,
     check_textInputChange: false,
     secureTextEntry: true,
     confirm_secureTextEntry: true,
@@ -40,10 +40,9 @@ export default function AddStaffScreen({ navigation }) {
     if (
       !data.username ||
       !data.email ||
-      !data.ho ||
       !data.password ||
       !data.sdt ||
-      !data.ten ||
+      !data.tennhathuoc ||
       !data.username
     ) {
       Alert.alert("Submit Info", "Invalid data!", [{ text: "ok" }]);
@@ -53,15 +52,13 @@ export default function AddStaffScreen({ navigation }) {
     const params = {
       diachi: data.diachi,
       email: data.email,
-      gioitinh: sex,
-      ho: data.ho,
       password: data.password,
       sdt: data.sdt,
-      ten: data.ten,
+      tennhathuoc: data.tennhathuoc,
       username: data.username,
     };
 
-    postRegisterStaff(params)
+    postRegisterNT(params)
       .then((res) => {
         // console.log(res);
         Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
@@ -69,7 +66,7 @@ export default function AddStaffScreen({ navigation }) {
       .catch((e) => {
         // Alert.alert("Submit Info", e+"", [{ text: "ok" }]);
         // console.log(params);
-        Alert.alert("Submit Info", "Cannot Sign up!", [{ text: "ok" }]);
+        Alert.alert("Submit Info", "Cannot Sign up!" + e, [{ text: "ok" }]);
       });
   };
 
@@ -96,12 +93,12 @@ export default function AddStaffScreen({ navigation }) {
     });
   };
 
-  // const handleConfirmPasswordChange = (val: any) => {
-  //   setData({
-  //     ...data,
-  //     confirmPassword: val,
-  //   });
-  // };
+  const handleConfirmPasswordChange = (val: any) => {
+    setData({
+      ...data,
+      confirmPassword: val,
+    });
+  };
 
   const handleAddressChange = (val: any) => {
     setData({
@@ -117,17 +114,10 @@ export default function AddStaffScreen({ navigation }) {
     });
   };
 
-  const handleHoChange = (val: any) => {
-    setData({
-      ...data,
-      ho: val,
-    });
-  };
-
   const handleTenChange = (val: any) => {
     setData({
       ...data,
-      ten: val,
+      tennhathuoc: val,
     });
   };
 
@@ -154,9 +144,9 @@ export default function AddStaffScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* <StatusBar backgroundColor="#009387" barStyle="light-content" /> */}
+      <StatusBar backgroundColor="#694fad" barStyle="light-content" />
       <View style={styles.header}>
-        <Text style={styles.text_header}>Add Staff!</Text>
+        <Text style={styles.text_header}>Edit Client Account!</Text>
       </View>
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -170,6 +160,7 @@ export default function AddStaffScreen({ navigation }) {
               onChangeText={(val) => {
                 textInputChange(val);
               }}
+              value={data.username}
             />
             {data.check_textInputChange ? (
               <Animatable.View animation="bounceIn">
@@ -187,6 +178,7 @@ export default function AddStaffScreen({ navigation }) {
               style={styles.textInput}
               autoCapitalize="none"
               onChangeText={(val) => handlePasswordChange(val)}
+              value={data.password}
             />
             <TouchableOpacity onPress={updateSecureTextEntry}>
               {data.secureTextEntry ? (
@@ -208,28 +200,9 @@ export default function AddStaffScreen({ navigation }) {
               autoCapitalize="none"
               onChangeText={(val) => handleConfirmPasswordChange(val)}
             />
-            <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
-              {data.confirm_secureTextEntry ? (
-                <Feather name="eye-off" color="grey" size={16} />
-              ) : (
-                <Feather name="eye" color="green" size={16} />
-              )}
-            </TouchableOpacity>
           </View> */}
 
-          <Text style={styles.text_footer}>Last Name</Text>
-          <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
-            <TextInput
-              placeholder="Last Name"
-              style={styles.textInput}
-              autoCapitalize="none"
-              onChangeText={(val) => {
-                handleHoChange(val);
-              }}
-            />
-          </View>
-          <Text style={styles.text_footer}>First Name</Text>
+          <Text style={styles.text_footer}>Drugstore Name</Text>
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
@@ -239,29 +212,10 @@ export default function AddStaffScreen({ navigation }) {
               onChangeText={(val) => {
                 handleTenChange(val);
               }}
+              value={data.tennhathuoc}
             />
           </View>
-          <Text style={styles.text_footer}>Sex</Text>
-          <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
-            {/* <TextInput
-              placeholder="Sex"
-              style={styles.textInput}
-              autoCapitalize="none"
-              onChangeText={(val) => {
-                handleSexChange(val);
-              }}
-            /> */}
-            <Picker
-              style={styles.textInput}
-              numberOfLines={5}
-              selectedValue={sex}
-              onValueChange={(itemValue, itemIndex) => setSex(itemValue)}
-            >
-              <Picker.Item label="Male" value={0} />
-              <Picker.Item label="Female" value={1} />
-            </Picker>
-          </View>
+
           <Text style={styles.text_footer}>Email</Text>
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
@@ -272,6 +226,7 @@ export default function AddStaffScreen({ navigation }) {
               onChangeText={(val) => {
                 handleEmailChange(val);
               }}
+              value={data.email}
             />
           </View>
           <Text style={styles.text_footer}>Phone</Text>
@@ -284,6 +239,7 @@ export default function AddStaffScreen({ navigation }) {
               onChangeText={(val) => {
                 handleSDTChange(val);
               }}
+              value={data.sdt}
             />
           </View>
           <Text style={styles.text_footer}>Address</Text>
@@ -296,6 +252,7 @@ export default function AddStaffScreen({ navigation }) {
               onChangeText={(val) => {
                 handleAddressChange(val);
               }}
+              value={data.diachi}
             />
           </View>
 
@@ -309,6 +266,28 @@ export default function AddStaffScreen({ navigation }) {
                   Save
                 </Text>
               </LinearGradient>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={[
+                styles.signIn,
+                {
+                  borderColor: "#694fad",
+                  borderWidth: 1,
+                  marginTop: 15,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.textSign,
+                  {
+                    color: "#694fad",
+                  },
+                ]}
+              >
+                Back
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

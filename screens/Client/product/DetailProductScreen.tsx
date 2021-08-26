@@ -103,7 +103,7 @@ const DetailProductScreen = ({ navigation, route }) => {
       })
       .catch((e) => {
         console.log(e);
-        Alert.alert("Submit Info", "Fail!" + e, [{ text: "ok" }]);
+        Alert.alert("Failed", "this Product not enough quantity!", [{ text: "ok" }]);
       });
   };
 

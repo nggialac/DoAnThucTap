@@ -91,6 +91,8 @@ export type TabAdminHomeParamList = {
 
 export type TabAdminStatisticParamList = {
   TabAdminStatisticScreen: undefined;
+  StatisticByMonthScreen: undefined;
+  DateToDateScreen: undefined;
 };
 
 export type TabAdminCommentsParamList = {

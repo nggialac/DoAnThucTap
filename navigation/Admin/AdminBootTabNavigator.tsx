@@ -44,6 +44,8 @@ import DetailBuyHistoryScreen from "../../screens/Client/profile/DetailBuyHistor
 import ClientsScreen from "../../screens/Admin/client/ClientsScreen";
 import ClientAddScreen from "../../screens/Admin/client/ClientAddScreen";
 import ClientEditScreen from "../../screens/Admin/client/ClientEditScreen";
+import DateToDateScreen from "../../screens/Admin/statistic/DateToDateScreen";
+import StatisticByMonthScreen from "../../screens/Admin/statistic/StatisticByMonthScreen";
 
 // const BottomTab = createBottomTabNavigator<BottomTabAdminParamList>();
 const BottomTab = createMaterialBottomTabNavigator<BottomTabAdminParamList>();
@@ -316,7 +318,17 @@ function AdminTabStatisticNavigator() {
       <TabAdminStatisticStack.Screen
         name="TabAdminStatisticScreen"
         component={TabAdminStatisticScreen}
-        options={{ headerTitle: "Tab Statistic Home Title" }}
+        options={{ headerTitle: "Statistic functions screen" }}
+      />
+            <TabAdminStatisticStack.Screen
+        name="DateToDateScreen"
+        component={DateToDateScreen}
+        options={{ headerTitle: "Statistic By Day" }}
+      />
+            <TabAdminStatisticStack.Screen
+        name="StatisticByMonthScreen"
+        component={StatisticByMonthScreen}
+        options={{ headerTitle: "Statistic By Month" }}
       />
     </TabAdminStatisticStack.Navigator>
   );

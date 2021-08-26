@@ -171,7 +171,7 @@ const MedicineListScreen = ({ navigation }) => {
       <FlatList
         data={listComment}
         renderItem={({ item }) => renderItem(item)}
-        keyExtractor={({item}) => "key" + item.id}
+        keyExtractor={(item) => "key" + item.id}
       />
     </ScrollView>
   );

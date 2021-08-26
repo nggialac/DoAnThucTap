@@ -1,157 +1,127 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Alert, Text } from "react-native";
+import * as React from "react";
 import {
-  VictoryBar,
-  VictoryChart,
-  VictoryTheme,
-  VictoryAxis,
-  VictoryStack,
-  VictoryPie,
-  VictoryTooltip,
-} from "victory-native";
-import { getRevenue } from "../../api/StatisticApis";
-import { Picker } from "@react-native-picker/picker";
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 
-const data = [
-  { quarter: 1, earnings: 13000 },
-  { quarter: 2, earnings: 16500 },
-  { quarter: 3, earnings: 14250 },
-  // { quarter: 4, earnings: 19000 },
-  // { quarter: 5, earnings: 19000 },
-  // { quarter: 6, earnings: 19000 },
-  // { quarter: 7, earnings: 19000 },
-  // { quarter: 8, earnings: 19000 },
-  // { quarter: 9, earnings: 19000 },
-  // { quarter: 10, earnings: 19000 },
-  // { quarter: 11, earnings: 19000 },
-  // { quarter: 12, earnings: 19000 },
-];
-
-export default function AdminStatisticScreen() {
-  const [selectedQuarter, setSelectedQuarter] = useState(0);
-  const [revenue, setRevenue] = useState([]);
-
-  const getRevenueOfMonth = () => {
-    getRevenue()
-      .then((res) => {
-        console.log(res.data);
-        setRevenue(res.data);
-        // test(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-        Alert.alert("Fail!", "Cannot fetch data");
-      });
-  };
-
-  useEffect(() => {
-    getRevenueOfMonth();
-  }, []);
-
-  function columnQuarter(selectedQuarter: number) {
-    switch (selectedQuarter) {
-      case 1:
-        return [1, 2, 3];
-      case 2:
-        return [4, 5, 6];
-      case 3:
-        return [7, 8, 9];
-      case 4:
-        return [10, 11, 12];
-      default:
-        return [1, 2, 3];
-    }
-  }
-
-  function columnName(selectedQuarter: number) {
-    switch (selectedQuarter) {
-      case 1:
-        return ["Tháng 1", "Tháng 2", "Tháng 3"];
-      case 2:
-        return ["Tháng 4", "Tháng 5", "Tháng 6"];
-      case 3:
-        return ["Tháng 7", "Tháng 8", "Tháng 9"];
-      case 4:
-        return ["Tháng 10", "Tháng 11", "Tháng 12"];
-      default:
-        return ["Tháng 1", "Tháng 2", "Tháng 3"];
-    }
-  }
-
-  function compare(a, b) {
-    const temp1 = parseInt(a.thang);
-    const temp2 = parseInt(b.thang);
-    if (temp1 < temp2) {
-      return -1;
-    }
-    if (temp1 > temp2) {
-      return 1;
-    }
-    return 0;
-  }
+export default function AdminStatisticScreen({ navigation }) {
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.pickerWrap}>
-        <Text style={styles.textTitle}>
-          Doanh thu hàng tháng năm {new Date().getFullYear()}
-        </Text>
-        {/* <Picker
-          selectedValue={selectedQuarter}
-          onValueChange={(itemValue, itemIndex) =>
-            setSelectedQuarter(itemValue)
-          }
-        >
-          <Picker.Item label="Quý 1" value={1} />
-          <Picker.Item label="Quý 2" value={2} />
-          <Picker.Item label="Quý 3" value={3} />
-          <Picker.Item label="Quý 4" value={4} />
-        </Picker> */}
-      </View>
-
       <View style={styles.container}>
-        <VictoryChart
-          // domainPadding will add space to each side of VictoryBar to
-          // prevent it from overlapping the axis
-          domainPadding={50}
-          theme={VictoryTheme.material}
-          // animate={{duration: 500}}
+        {/* Added this scroll view to enable scrolling when list gets longer than the page */}
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+          }}
+          keyboardShouldPersistTaps="handled"
         >
-          <VictoryAxis
-            // tickValues specifies both the number of ticks and where
-            // they are placed on the axis
-            // tickValues={columnQuarter(selectedQuarter)}
-            // tickValues={monthOfQuarter[selectedQuarter]}
-            tickFormat={(x) => `Tháng ${x}`}
-          />
-          <VictoryAxis
-            dependentAxis
-            // tickFormat specifies how ticks should be displayed
-            tickFormat={(x) => `$${x / 1000000}tr`}
-          />
-          <VictoryBar data={revenue.sort(compare)} x="thang" y="tien" />
-        </VictoryChart>
-
+          {/* Today's Tasks */}
+          <View style={styles.tasksWrapper}>
+            <Text style={styles.sectionTitle}>Statistic's Functions</Text>
+            <View style={styles.items}>
+              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('DateToDateScreen')}>
+                <View style={styles.itemLeft}>
+                  <View style={styles.square}>
+                    <Icon name="file-alert-outline" color="#FF6347" size={25} />
+                  </View>
+                  <Text style={styles.itemText}>From Date To Date</Text>
+                </View>
+                <View style={styles.circular}></View>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('StatisticByMonthScreen')}>
+                <View style={styles.itemLeft}>
+                  <View style={styles.square}>
+                    <Icon name="file-cabinet" color="#FF6347" size={25} />
+                  </View>
+                  <Text style={styles.itemText}>By Month</Text>
+                </View>
+                <View style={styles.circular}></View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
       </View>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f5fcff",
-    paddingLeft: 20,
+    flex: 1,
+    backgroundColor: "#E8EAED",
   },
-  pickerWrap: {
-    marginHorizontal: 16,
-    marginBottom: 20,
+  tasksWrapper: {
+    paddingTop: 80,
+    paddingHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+  },
+  items: {
     marginTop: 30,
   },
-  textTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginLeft: 8,
+  writeTaskWrapper: {
+    position: "absolute",
+    bottom: 60,
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+  },
+  input: {
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    backgroundColor: "#FFF",
+    borderRadius: 60,
+    borderColor: "#C0C0C0",
+    borderWidth: 1,
+    width: 250,
+  },
+  addWrapper: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#FFF",
+    borderRadius: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    borderColor: "#C0C0C0",
+    borderWidth: 1,
+  },
+  addText: {},
+  item: {
+    backgroundColor: "#FFF",
+    padding: 15,
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  itemLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  square: {
+    width: 36,
+    height: 36,
+    // backgroundColor: "#55BCF6",
+    opacity: 0.4,
+    borderRadius: 5,
+    marginRight: 15,
+  },
+  itemText: {
+    maxWidth: "80%",
+  },
+  circular: {
+    width: 12,
+    height: 12,
+    borderColor: "#55BCF6",
+    borderWidth: 2,
+    borderRadius: 5,
   },
 });

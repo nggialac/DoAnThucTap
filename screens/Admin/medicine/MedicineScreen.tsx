@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
   Alert,
   FlatList,
   RefreshControl,
+  Button,
+  TextInput,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,12 +22,13 @@ import {
   deleteCategoryMedicine,
 } from "../../../api/MedicineApis";
 // import StarRating from '../components/StarRating';
+import Modal from "react-native-modal";
+import COLORS from "../../../assets/colors/Colors";
 
 const MedicineScreen = ({ navigation, route }) => {
   const theme = useTheme();
   const [listData, setListData] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
-  
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -67,9 +70,33 @@ const MedicineScreen = ({ navigation, route }) => {
       });
   };
 
+  const putDM = (params) => {
+    putCategoryMedicine(params)
+      .then((res) => {
+        console.log(res);
+        Alert.alert("Success", "Edited!");
+        onRefresh();
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Fail", "Cannot Edited!");
+      });
+  };
+
   React.useEffect(() => {
     getData();
   }, [refreshing]);
+
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [madm, setMadm] = useState();
+  const [textChange, setTextChange] = useState();
+
+  const toggleModal = (item) => {
+    setModalVisible(!isModalVisible);
+    setMadm(item.madm);
+    setTextChange(item.tendm);
+    // console.log(item);
+  };
 
   return (
     <ScrollView
@@ -97,11 +124,13 @@ const MedicineScreen = ({ navigation, route }) => {
               >
                 <View style={styles.itemLeft}>
                   <View style={styles.square}>
-                    <Ionicons
-                      name="medical-outline"
-                      color="#FF6347"
-                      size={30}
-                    />
+                    <TouchableOpacity onPress={() => toggleModal(item)}>
+                      <Ionicons
+                        name="medical-outline"
+                        color="#FF6347"
+                        size={30}
+                      />
+                    </TouchableOpacity>
                   </View>
                   <Text style={styles.itemText}>{item.tendm}</Text>
                 </View>
@@ -111,6 +140,25 @@ const MedicineScreen = ({ navigation, route }) => {
         ) : (
           <></>
         )}
+      </View>
+      <View>
+        <Modal isVisible={isModalVisible}>
+          <View style={{ flex: 1, justifyContent:"center"}}>
+            <Text style={{color: COLORS.white, fontSize: 20, textAlign:"center", marginBottom: 30, fontWeight: "bold"}}>Edit Category</Text>
+            <TextInput
+              style={{ color: COLORS.white }}
+              value={madm}
+              editable={false}
+            />
+            <TextInput
+              style={{ color: COLORS.white, marginBottom: 20 }}
+              value={textChange}
+              onChangeText={(e) => setTextChange(e)}
+            />
+            <Button title="Change" color={"#3e2465"} onPress={() => putDM({madm: madm, tendm: textChange})} />
+            <Button title="Hide modal" color={"#694fad"} onPress={() => setModalVisible(!isModalVisible)} />
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );

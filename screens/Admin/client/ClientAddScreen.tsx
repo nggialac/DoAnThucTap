@@ -199,7 +199,7 @@ export default function ClientAddScreen({ navigation }) {
 
           <Text style={styles.text_footer}>Drugstore Name</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="stack-overflow" color="#05375a" size={20} />
             <TextInput
               placeholder="First Name"
               style={styles.textInput}
@@ -212,7 +212,7 @@ export default function ClientAddScreen({ navigation }) {
 
           <Text style={styles.text_footer}>Email</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="send-o" color="#05375a" size={20} />
             <TextInput
               placeholder="Your email"
               style={styles.textInput}
@@ -224,7 +224,7 @@ export default function ClientAddScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Phone</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="phone" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Phone"
               style={styles.textInput}
@@ -236,7 +236,7 @@ export default function ClientAddScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Address</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="address-book-o" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Address"
               style={styles.textInput}

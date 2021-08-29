@@ -8,7 +8,10 @@ import {
   StatusBar,
   Platform,
 } from "react-native";
-import { ImageHeaderScrollView, TriggeringView } from 'react-native-image-header-scroll-view';
+import {
+  ImageHeaderScrollView,
+  TriggeringView,
+} from "react-native-image-header-scroll-view";
 
 import * as Animatable from "react-native-animatable";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -30,7 +33,7 @@ const DetailMedicineScreen = ({ route }) => {
         maxOverlayOpacity={0.6}
         minOverlayOpacity={0.3}
         renderHeader={() => (
-          <Image source={{uri: itemData.photo}} style={styles.image} />
+          <Image source={{ uri: itemData.photo }} style={styles.image} />
         )}
         renderForeground={() => (
           <View style={styles.titleContainer}>
@@ -51,7 +54,8 @@ const DetailMedicineScreen = ({ route }) => {
           <View
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
-            <Text style={styles.mota_ngan}>Overview</Text>
+            <Text style={styles.mota_ngan}>Mã thuốc: {itemData.masp}</Text>
+
             <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
               {/* <FontAwesome name="star" size={16} color="#FF6347" /> */}
               {/* <Text style={{ marginHorizontal: 2 }}>{itemData.rating}</Text>
@@ -60,6 +64,8 @@ const DetailMedicineScreen = ({ route }) => {
           </View>
         </TriggeringView>
         <View style={[styles.section, styles.sectionLarge]}>
+          <Text style={styles.mota_ngan}>{itemData.tensp}</Text>
+          <Text style={styles.sectionContent}>{itemData.mota_ngan}</Text>
           <Text style={styles.sectionContent}>{itemData.mota_chitiet}</Text>
         </View>
 
@@ -156,5 +162,9 @@ const styles = StyleSheet.create({
   },
   sectionLarge: {
     minHeight: 300,
+  },
+  mota_ngan: {
+    fontWeight: "bold",
+    fontSize: 20,
   },
 });

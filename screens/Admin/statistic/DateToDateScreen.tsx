@@ -22,7 +22,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 export default function DateToDateScreen() {
   // const [selectedQuarter, setSelectedQuarter] = useState(0);
-  const [revenue, setRevenue] = useState([]);
+  const [revenue, setRevenue] = useState();
   const [refreshing, setRefreshing] = React.useState(false);
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -58,18 +58,18 @@ export default function DateToDateScreen() {
     setShowTo(true);
   };
 
-  const getRevenueOfMonth = () => {
-    getRevenue()
-      .then((res) => {
-        console.log(res.data);
-        setRevenue(res.data);
-        // test(res.data);
-      })
-      .catch((e) => {
-        console.log(e);
-        Alert.alert("Fail!", "Cannot fetch data");
-      });
-  };
+  // const getRevenueOfMonth = () => {
+  //   getRevenue()
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       setRevenue(res.data);
+  //       // test(res.data);
+  //     })
+  //     .catch((e) => {
+  //       console.log(e);
+  //       Alert.alert("Fail!", "Cannot fetch data");
+  //     });
+  // };
 
   const getRevenueFromTo = (from: string, to: string) => {
     getRevenueByFromTo(from, to)
@@ -85,7 +85,7 @@ export default function DateToDateScreen() {
   };
 
   useEffect(() => {
-    getRevenueOfMonth();
+    // getRevenueOfMonth();
     // getRevenueFromTo("2021-08-24", "2021-08-26");
   }, [refreshing]);
 
@@ -98,7 +98,15 @@ export default function DateToDateScreen() {
       }
     >
       <View style={{ flex: 1 }}>
-        <View style={{ marginHorizontal: 20, marginTop: 30, flex: 1 }}>
+        <View
+          style={{
+            marginHorizontal: 20,
+            marginTop: 30,
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
           <View style={styles.datePicker}>
             <TouchableOpacity
               onPress={showModeFrom}
@@ -136,19 +144,37 @@ export default function DateToDateScreen() {
               onChange={onChangeTo}
             />
           )}
+        </View>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginHorizontal: 20,
+            margin: 30,
+          }}
+        >
+          <Text style={{ fontWeight: "bold", color: "#999", fontSize: 14 }}>
+            Từ ngày: {dateFrom.getDate()}/{dateFrom.getMonth() + 1}/
+            {dateFrom.getFullYear()}
+          </Text>
+          <Text style={{ fontWeight: "bold", color: "#999", fontSize: 14 }}>
+            Đến ngày: {dateTo.getDate()}/{dateTo.getMonth() + 1}/
+            {dateTo.getFullYear()}
+          </Text>
+        </View>
 
-          <View>
-            <Text style={{ fontWeight: "bold", color: "#999", fontSize: 14 }}>
-              Từ ngày: {dateFrom.getDate()}/{dateFrom.getMonth() + 1}/
-              {dateFrom.getFullYear()}
-            </Text>
-            <Text style={{ fontWeight: "bold", color: "#999", fontSize: 14 }}>
-              Đến ngày: {dateTo.getDate()}/{dateTo.getMonth() + 1}/
-              {dateTo.getFullYear()}
-            </Text>
-          </View>
-
-          <View style={styles.datePicker}>
+        <View>
+          <View
+            style={{
+              height: 32,
+              flex: 1,
+              backgroundColor: "#694fad",
+              marginHorizontal: 30,
+              alignContent: "center",
+              marginRight: 42,
+            }}
+          >
             <TouchableOpacity
               onPress={() =>
                 getRevenueFromTo(
@@ -161,7 +187,7 @@ export default function DateToDateScreen() {
                     "-" +
                     (dateTo.getMonth() + 1).toString() +
                     "-" +
-                    dateTo.getDate().toString()
+                    (dateTo.getDate() + 1).toString()
                 )
               }
               style={{ alignItems: "center" }}
@@ -171,29 +197,33 @@ export default function DateToDateScreen() {
           </View>
         </View>
 
-        <View>
-          <View style={styles.pickerWrap}>
-            <Text style={styles.textTitle}>Doanh thu theo ngày</Text>
+        {revenueDay !== [] || revenueDay !== null ? (
+          <View>
+            <View style={styles.pickerWrap}>
+              <Text style={styles.textTitle}>Doanh thu theo ngày</Text>
+            </View>
+            <View style={styles.container}>
+              <VictoryChart
+                domainPadding={50}
+                theme={VictoryTheme.material}
+                // animate={{duration: 500}}
+              >
+                <VictoryAxis
+                  // tickValues={monthOfQuarter[selectedQuarter]}
+                  tickFormat={(x) => `${x}`}
+                />
+                <VictoryAxis
+                  dependentAxis
+                  // tickFormat specifies how ticks should be displayed
+                  tickFormat={(x) => `${x / 1000000}tr`}
+                />
+                <VictoryBar data={revenueDay} x="ngay" y="tien" />
+              </VictoryChart>
+            </View>
           </View>
-          <View style={styles.container}>
-            <VictoryChart
-              domainPadding={50}
-              theme={VictoryTheme.material}
-              // animate={{duration: 500}}
-            >
-              <VictoryAxis
-                // tickValues={monthOfQuarter[selectedQuarter]}
-                tickFormat={(x) => `Ngày ${x}`}
-              />
-              <VictoryAxis
-                dependentAxis
-                // tickFormat specifies how ticks should be displayed
-                tickFormat={(x) => `$${x / 1000000}tr`}
-              />
-              <VictoryBar data={revenueDay} x="ngay" y="tien" />
-            </VictoryChart>
-          </View>
-        </View>
+        ) : (
+          <Text style={styles.textTitle}>Không có dữ liệu</Text>
+        )}
       </View>
     </ScrollView>
   );
@@ -219,8 +249,10 @@ const styles = StyleSheet.create({
   datePicker: {
     backgroundColor: "#694fad",
     height: 50,
-    marginBottom: 20,
+    width: 100,
+    marginBottom: 0,
     justifyContent: "center",
+    marginRight: 16,
   },
   pickerText: { fontSize: 20, color: "#fff" },
 });

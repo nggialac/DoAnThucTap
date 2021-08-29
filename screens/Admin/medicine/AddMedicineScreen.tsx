@@ -114,7 +114,7 @@ const AddMedicineScreen = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ alignItems: "center" }}>
+      <View style={{ alignItems: "center", marginBottom: 20 }}>
         <View
           style={{
             height: 100,
@@ -160,7 +160,7 @@ const AddMedicineScreen = ({route}) => {
           if (
             // !values.masp ||
             !values.dongia ||
-            !values.khuyenmai ||
+            // !values.khuyenmai ||
             !values.mota_chitiet ||
             !values.mota_ngan ||
             !values.soluong ||
@@ -170,7 +170,7 @@ const AddMedicineScreen = ({route}) => {
           ) {
             // errors.masp = "Required";
             errors.dongia = "Required";
-            errors.khuyenmai = "Required";
+            // errors.khuyenmai = "Required";
             errors.mota_ngan = "Required";
             errors.mota_chitiet = "Required";
             errors.soluong = "Required";
@@ -197,7 +197,8 @@ const AddMedicineScreen = ({route}) => {
                 tendm: danhmuc.tendm
               },
               dongia: parseFloat(values.dongia),
-              khuyenmai: parseFloat(values.khuyenmai),
+              // khuyenmai: parseFloat(values.khuyenmai),
+              khuyenmai: 0,
               // masp: values.masp,
               mota_chitiet: values.mota_chitiet,
               mota_ngan: values.mota_ngan,
@@ -324,8 +325,7 @@ const AddMedicineScreen = ({route}) => {
                 value={values.dongia}
               />
             </View>
-            <View style={styles.action}>
-              {/* <Feather name="phone" color={colors.text} size={20} /> */}
+            {/* <View style={styles.action}>
               <TextInput
                 placeholder="Khuyến mãi"
                 placeholderTextColor="#666666"
@@ -340,7 +340,7 @@ const AddMedicineScreen = ({route}) => {
                 onChangeText={handleChange("khuyenmai")}
                 value={values.khuyenmai}
               />
-            </View>
+            </View> */}
             <TouchableOpacity
               style={styles.commandButton}
               onPress={handleSubmit}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   LogBox,
   RefreshControl,
@@ -17,12 +17,18 @@ import {
   TextInput,
   Dimensions,
 } from "react-native";
+import { SearchBar } from "react-native-elements";
 import {
   deleteComment,
   getListComment,
   getListCommentOfNhathuoc,
 } from "../../api/RatingCommentApis";
-import { getListReply, getListReplyByNhathuoc, postReply } from "../../api/ReplyApis";
+import {
+  getListReply,
+  getListReplyByNhathuoc,
+  postReply,
+} from "../../api/ReplyApis";
+import COLORS from "../../assets/colors/Colors";
 import { AuthContext } from "../../components/ContextLogin";
 
 const MedicineListScreen = ({ navigation }) => {
@@ -42,9 +48,7 @@ const MedicineListScreen = ({ navigation }) => {
 
   const context = React.useContext(AuthContext);
   const nhathuoc = context.loginState.mnv_mnt;
-  nhathuoc === null ? (
-    navigation.navigate("SignInScreen")
-  ) : null;
+  nhathuoc === null ? navigation.navigate("SignInScreen") : null;
 
   const getData = (manhathuoc: string) => {
     getListReplyByNhathuoc(manhathuoc)
@@ -62,6 +66,7 @@ const MedicineListScreen = ({ navigation }) => {
       .then((res) => {
         // console.log(res.data);
         setListComment(res.data.reverse());
+        setDataTemp(res.data);
       })
       .catch((e) => {
         Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
@@ -74,7 +79,7 @@ const MedicineListScreen = ({ navigation }) => {
       await getComments(nhathuoc.manhathuoc);
     }
     use();
-    
+
     console.log(nhathuoc.manhathuoc);
   }, [refreshing]);
 
@@ -136,16 +141,17 @@ const MedicineListScreen = ({ navigation }) => {
             // console.log("TESSSSSSSSSSSSSSSSSSSSSSS");
             // setTemp({item, nhanvien});
             // setModalVisible(!modalVisible);
-            navigation.navigate("DetailCommentClientScreenN", item)
+            navigation.navigate("DetailCommentClientScreenN", item);
           }}
-          onLongPress={()=>doDeleteComment(item.id)}
+          onLongPress={() => doDeleteComment(item.id)}
         >
-          {console.log(item)}
           <View style={styles.card}>
             <View style={styles.cardInfo}>
               <Text style={styles.cardTitle}>
-                Mã NT: {item.nhathuoc.manhathuoc} - ID:{item.id} - 
-                {listData.some(rep => rep.binhluan.id === item.id) === true ? "Replied" : "Waiting"}
+                Mã NT: {item.nhathuoc.manhathuoc} - ID:{item.id} -
+                {listData.some((rep) => rep.binhluan.id === item.id) === true
+                  ? "Replied"
+                  : "Waiting"}
               </Text>
               <Text style={styles.cardTitle}>
                 Sản phẩm: {item.sanpham.masp} - {item.sanpham.tensp}
@@ -161,18 +167,43 @@ const MedicineListScreen = ({ navigation }) => {
     );
   };
 
+  const [dataTemp, setDataTemp] = useState([]);
+  const [text, setText] = useState("");
+
+  const searchFilterFunction = (text) => {
+    setText(text);
+    // console.log(dataTemp[0]);
+    // text.trim()
+    const newData = dataTemp.filter((item) => {
+      const itemData = `${item.id.toUpperCase()} ${item.sanpham.masp.toUpperCase()} ${item.sanpham.tensp.toUpperCase()} ${item.noidung.toUpperCase()}`;
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setListData(newData);
+  };
+
   return (
     <ScrollView
-      style={styles.container}
+      style={{}}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <FlatList
-        data={listComment}
-        renderItem={({ item }) => renderItem(item)}
-        keyExtractor={(item) => "key" + item.id}
+      <SearchBar
+        placeholder="Type Here..."
+        style={{ color: COLORS.light }}
+        onChangeText={(text) => searchFilterFunction(text)}
+        autoCorrect={false}
+        value={text}
+        autoFocus={true}
       />
+      <View style={styles.container}>
+        <FlatList
+          data={listComment}
+          renderItem={({ item }) => renderItem(item)}
+          keyExtractor={(item) => "key" + item.id}
+        />
+      </View>
     </ScrollView>
   );
 };

@@ -1,7 +1,7 @@
 import InstanceApi from "./InstanceApi";
 
-export function getRevenue() {
-    return InstanceApi.get("doanhthu");
+export function getRevenue(year: number) {
+    return InstanceApi.get(`doanhthu/${year}`);
 }
 
 export function getRevenueByFromTo(from: string, to: string) {

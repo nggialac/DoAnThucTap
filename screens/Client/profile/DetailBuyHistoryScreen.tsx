@@ -27,6 +27,10 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
   const madh = route.params.madh;
   // console.log(madh);
 
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
+
   var listTrangthai = {
     0: "Chờ xử lý",
     1: "Đã duyệt",
@@ -86,15 +90,16 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
               {item.sanpham.masp} - {item.sanpham.tensp}
             </Text>
             <Text style={{ fontSize: 14, color: COLORS.grey }}>
-              DM: {item.sanpham.danhmuc.tendm}
+              {item.sanpham.danhmuc.tendm}
             </Text>
             <Text style={{ fontSize: 14, color: COLORS.grey }}>
-              Đơn giá: {item.sanpham.dongia}VND
+              Đơn giá: {currencyFormat(item.sanpham.dongia)}
+              {/* console.log(item.sanpham); */}
             </Text>
           </View>
           <View style={{ marginRight: 10 }}>
             <Image style={style.image} source={{ uri: item.sanpham.photo }} />
-            <Text style={{ fontWeight: "300", fontSize: 18 }}>
+            <Text style={{ fontWeight: "300", fontSize: 16 }}>
               Số lượng: {item.soluong}
             </Text>
           </View>
@@ -144,8 +149,9 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
           { alignItems: "center", justifyContent: "center", marginTop: 0 },
         ]}
       >
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>TRẠNG THÁI: </Text>
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-          TRẠNG THÁI: {listTrangthai[listData.trangthai]}
+          {listTrangthai[listData.trangthai]}
         </Text>
       </View>
       <FlatList
@@ -157,7 +163,7 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
         ListFooterComponentStyle={{ paddingHorizontal: 20, marginTop: 20 }}
         ListFooterComponent={() => (
           <View>
-            {listData.trangthai === 0 ? (
+            {listData.trangthai === 0 || listData.trangthai === 1 ? (
               <View style={{ marginHorizontal: 20 }}>
                 <Button
                   variant="primary"
@@ -173,16 +179,17 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
             <View
               style={{
                 flexDirection: "column",
-                justifyContent: "space-between",
+                justifyContent: "space-evenly",
                 marginVertical: 15,
               }}
             >
-              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                Hình thức thanh toán:{" "}
-                {listData.hinhthucthanhtoan === 2 ? "Online" : "Tiền mặt"}
+              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                Tổng giá trị: {currencyFormat(parseFloat(listData.tongtien))}
+                {/* console.log(listData.tongtien); */}
               </Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                Total Price: {listData.tongtien}VND
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                Hình Thức Thanh Toán:{" "}
+                {listData.hinhthucthanhtoan === 2 ? "Online" : "Tiền mặt"}
               </Text>
             </View>
           </View>

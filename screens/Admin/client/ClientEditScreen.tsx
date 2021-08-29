@@ -17,6 +17,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { postRegisterNT } from "../../../api/LoginApis";
 import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
+import { putNT } from "../../../api/ClientApis";
 
 export default function ClientEditScreen({ navigation, route }) {
   const itemData = route.params.itemData;
@@ -58,7 +59,7 @@ export default function ClientEditScreen({ navigation, route }) {
       username: data.username,
     };
 
-    postRegisterNT(params)
+    putNT(params)
       .then((res) => {
         // console.log(res);
         Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
@@ -161,6 +162,7 @@ export default function ClientEditScreen({ navigation, route }) {
                 textInputChange(val);
               }}
               value={data.username}
+              editable={false}
             />
             {data.check_textInputChange ? (
               <Animatable.View animation="bounceIn">
@@ -204,10 +206,10 @@ export default function ClientEditScreen({ navigation, route }) {
 
           <Text style={styles.text_footer}>Drugstore Name</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="stack-overflow" color="#05375a" size={20} />
             <TextInput
               placeholder="First Name"
-              style={styles.textInput}
+              style={[styles.textInput]}
               autoCapitalize="none"
               onChangeText={(val) => {
                 handleTenChange(val);
@@ -218,7 +220,7 @@ export default function ClientEditScreen({ navigation, route }) {
 
           <Text style={styles.text_footer}>Email</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="send-o" color="#05375a" size={20} />
             <TextInput
               placeholder="Your email"
               style={styles.textInput}
@@ -227,11 +229,13 @@ export default function ClientEditScreen({ navigation, route }) {
                 handleEmailChange(val);
               }}
               value={data.email}
+              editable={false}
+              
             />
           </View>
           <Text style={styles.text_footer}>Phone</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="phone" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Phone"
               style={styles.textInput}
@@ -244,7 +248,7 @@ export default function ClientEditScreen({ navigation, route }) {
           </View>
           <Text style={styles.text_footer}>Address</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="address-book-o" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Address"
               style={styles.textInput}

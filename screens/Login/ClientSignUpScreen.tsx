@@ -63,7 +63,10 @@ export default function ClientSignUpScreen({ navigation }) {
       .catch((e) => {
         // Alert.alert("Submit Info", e+"", [{ text: "ok" }]);
         // console.log(params);
-        Alert.alert("Submit Info", "Cannot Sign up!" + e, [{ text: "ok" }]);
+        console.log(e.response);
+        if (e.response) {
+        Alert.alert("Submit Info", "Cannot Sign up! " + e.response.data, [{ text: "ok" }]);
+        }
       });
   };
 
@@ -183,7 +186,7 @@ export default function ClientSignUpScreen({ navigation }) {
               )}
             </TouchableOpacity>
           </View>
-          <Text style={[styles.text_footer, { marginTop: 15 }]}>
+          {/* <Text style={[styles.text_footer, { marginTop: 15 }]}>
             Confirm Password
           </Text>
           <View style={styles.action}>
@@ -194,7 +197,7 @@ export default function ClientSignUpScreen({ navigation }) {
               style={styles.textInput}
               autoCapitalize="none"
               onChangeText={(val) => handleConfirmPasswordChange(val)}
-            />
+            /> */}
             {/* <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
               {data.confirm_secureTextEntry ? (
                 <Feather name="eye-off" color="grey" size={16} />
@@ -202,7 +205,7 @@ export default function ClientSignUpScreen({ navigation }) {
                 <Feather name="eye" color="green" size={16} />
               )}
             </TouchableOpacity> */}
-          </View>
+          {/* </View> */}
 
           <Text style={styles.text_footer}>Drugstore Name</Text>
           <View style={styles.action}>

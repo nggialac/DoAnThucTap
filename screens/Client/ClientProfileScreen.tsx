@@ -16,7 +16,6 @@ export default function ClientProfileScreen({ navigation }) {
   const context = React.useContext(AuthContext);
   // const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
   const nhathuoc = context.loginState.mnv_mnt;
-  console.log(nhathuoc);
   // console.log(context.loginState);
 
   const signOut = React.useContext(AuthContext);
@@ -39,9 +38,11 @@ export default function ClientProfileScreen({ navigation }) {
             />
             <View style={{ marginLeft: 20 }}>
               <Title style={[styles.title, { marginTop: 15, marginBottom: 5 }]}>
-                {nhathuoc.tennhathuoc}
+                {nhathuoc !== null ? nhathuoc.tennhathuoc : "Guest"}
               </Title>
-              <Caption style={styles.caption}>{nhathuoc.manhathuoc}</Caption>
+              <Caption style={styles.caption}>
+                {nhathuoc !== null ? nhathuoc.manhathuoc : ""}
+              </Caption>
             </View>
           </View>
         </View>
@@ -49,15 +50,21 @@ export default function ClientProfileScreen({ navigation }) {
         <View style={styles.userInfoSection}>
           <View style={styles.row}>
             <Icon name="map-marker-radius" size={20} color="#777777" />
-            <Text style={styles.infoLocation}>{nhathuoc.diachi}</Text>
+            <Text style={styles.infoLocation}>
+              {nhathuoc !== null ? nhathuoc.diachi : ""}
+            </Text>
           </View>
           <View style={styles.row}>
             <Icon name="phone" size={20} color="#777777" />
-            <Text style={styles.infoLocation}>{nhathuoc.sdt}</Text>
+            <Text style={styles.infoLocation}>
+              {nhathuoc !== null ? nhathuoc.sdt : ""}
+            </Text>
           </View>
           <View style={styles.row}>
             <Icon name="email" size={20} color="#777777" />
-            <Text style={styles.infoLocation}>{nhathuoc.email}</Text>
+            <Text style={styles.infoLocation}>
+              {nhathuoc !== null ? nhathuoc.email : ""}
+            </Text>
           </View>
         </View>
 
@@ -76,46 +83,49 @@ export default function ClientProfileScreen({ navigation }) {
         </View>
 
         <View style={styles.menuWrapper}>
-          <TouchableRipple onPress={() => navigation.navigate("CartScreen")}>
-            <View style={styles.menuItem}>
-              <Icon name="cart-outline" color="#FF6347" size={25} />
-              <Text style={styles.menuItemText}>Your Cart</Text>
+          {nhathuoc !== null ? (
+            <View>
+              <TouchableRipple
+                onPress={() => navigation.navigate("CartScreen")}
+              >
+                <View style={styles.menuItem}>
+                  <Icon name="cart-outline" color="#FF6347" size={25} />
+                  <Text style={styles.menuItemText}>Your Cart</Text>
+                </View>
+              </TouchableRipple>
+              <TouchableRipple
+                onPress={() => {
+                  navigation.navigate("BuyHistoryScreen");
+                }}
+              >
+                <View style={styles.menuItem}>
+                  <Icon name="history" color="#FF6347" size={25} />
+                  <Text style={styles.menuItemText}>Buy History</Text>
+                </View>
+              </TouchableRipple>
             </View>
-          </TouchableRipple>
-          <TouchableRipple
-            onPress={() => {
-              navigation.navigate("BuyHistoryScreen");
-            }}
-          >
-            <View style={styles.menuItem}>
-              <Icon name="history" color="#FF6347" size={25} />
-              <Text style={styles.menuItemText}>Buy History</Text>
-            </View>
-          </TouchableRipple>
-          {/* <TouchableRipple onPress={()=>navigation.navigate('TabAdminProfilePaymentScreen')}>
-          <View style={styles.menuItem}>
-            <Icon name="credit-card" color="#FF6347" size={25}/>
-            <Text style={styles.menuItemText}>Payment</Text>
-          </View>
-        </TouchableRipple> */}
-          {/* <TouchableRipple onPress={myCustomShare}>
-          <View style={styles.menuItem}>
-            <Icon name="share-outline" color="#FF6347" size={25}/>
-            <Text style={styles.menuItemText}>Share your friends</Text>
-          </View>
-        </TouchableRipple> */}
+          ) : null}
           <TouchableRipple onPress={() => {}}>
             <View style={styles.menuItem}>
               <Icon name="account-check-outline" color="#FF6347" size={25} />
               <Text style={styles.menuItemText}>Support</Text>
             </View>
           </TouchableRipple>
-          <TouchableRipple onPress={logoutHandle}>
-            <View style={styles.menuItem}>
-              <Icon name="file-settings-outline" color="#FF6347" size={25} />
-              <Text style={styles.menuItemText}>Sign Out</Text>
-            </View>
-          </TouchableRipple>
+          {nhathuoc !== null ? (
+            <TouchableRipple onPress={logoutHandle}>
+              <View style={styles.menuItem}>
+                <Icon name="file-settings-outline" color="#FF6347" size={25} />
+                <Text style={styles.menuItemText}>Sign Out</Text>
+              </View>
+            </TouchableRipple>
+          ) : (
+            <TouchableRipple onPress={()=>navigation.navigate("SplashScreen")}>
+              <View style={styles.menuItem}>
+                <Icon name="file-settings-outline" color="#FF6347" size={25} />
+                <Text style={styles.menuItemText}>Sign In</Text>
+              </View>
+            </TouchableRipple>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -165,7 +165,7 @@ const EditMedicineScreen = ({ route }) => {
         key={itemData.masp}
         initialValues={{
           dongia: itemData.dongia + "",
-          khuyenmai: itemData.khuyenmai + "",
+          // khuyenmai: itemData.khuyenmai + "",
           mota_chitiet: itemData.mota_chitiet,
           mota_ngan: itemData.mota_ngan,
           soluong: itemData.soluong + "",
@@ -175,14 +175,14 @@ const EditMedicineScreen = ({ route }) => {
           const errors = {};
           if (
             !values.dongia ||
-            !values.khuyenmai ||
+            // !values.khuyenmai ||
             !values.mota_chitiet ||
             !values.mota_ngan ||
             !values.soluong ||
             !values.tensp
           ) {
             errors.dongia = "Required";
-            errors.khuyenmai = "Required";
+            // errors.khuyenmai = "Required";
             errors.mota_ngan = "Required";
             errors.mota_chitiet = "Required";
             errors.soluong = "Required";
@@ -214,7 +214,8 @@ const EditMedicineScreen = ({ route }) => {
                 tendm: danhmucthuoc.tendm,
               },
               dongia: parseFloat(values.dongia),
-              khuyenmai: parseFloat(values.khuyenmai),
+              // khuyenmai: parseFloat(values.khuyenmai),
+              khuyenmai: 0,
               masp: itemData.masp,
               mota_chitiet: values.mota_chitiet,
               mota_ngan: values.mota_ngan,
@@ -330,8 +331,7 @@ const EditMedicineScreen = ({ route }) => {
                 value={values.dongia}
               />
             </View>
-            <View style={styles.action}>
-              {/* <Feather name="phone" color={colors.text} size={20} /> */}
+            {/* <View style={styles.action}>
               <TextInput
                 placeholder="Khuyến mãi"
                 placeholderTextColor="#666666"
@@ -346,7 +346,7 @@ const EditMedicineScreen = ({ route }) => {
                 onChangeText={handleChange("khuyenmai")}
                 value={values.khuyenmai}
               />
-            </View>
+            </View> */}
             <TouchableOpacity
               style={styles.commandButton}
               onPress={handleSubmit}

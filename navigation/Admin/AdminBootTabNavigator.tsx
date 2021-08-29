@@ -46,6 +46,8 @@ import ClientAddScreen from "../../screens/Admin/client/ClientAddScreen";
 import ClientEditScreen from "../../screens/Admin/client/ClientEditScreen";
 import DateToDateScreen from "../../screens/Admin/statistic/DateToDateScreen";
 import StatisticByMonthScreen from "../../screens/Admin/statistic/StatisticByMonthScreen";
+import OrderStatisticScreen from "../../screens/Admin/statistic/OrderStatisticScreen";
+import StockQuantityScreen from "../../screens/Admin/statistic/StockQuantityScreen";
 
 // const BottomTab = createBottomTabNavigator<BottomTabAdminParamList>();
 const BottomTab = createMaterialBottomTabNavigator<BottomTabAdminParamList>();
@@ -118,10 +120,10 @@ function AdminTabHomeNavigator({ navigation }) {
       <TabAdminHomeStack.Screen
         name="TabAdminHomeScreen"
         component={TabAdminHomeScreen}
-        options={{ headerTitle: "Tab Admin Home Title" }}
+        options={{ headerTitle: "Admin Functions" }}
       />
 
-{/* <TabAdminHomeStack.Screen
+      {/* <TabAdminHomeStack.Screen
         name="ListOrderNTScreen"
         component={ListOrderNTScreen}
         options={() => ({
@@ -133,8 +135,9 @@ function AdminTabHomeNavigator({ navigation }) {
       <TabAdminHomeStack.Screen
         name="TabAdminHomeOrder"
         component={TabAdminHomeOrder}
+        options={{ headerTitle: "Orders Screen" }}
       />
-            <TabAdminHomeStack.Screen
+      <TabAdminHomeStack.Screen
         name="DetailBuyHistoryScreen"
         component={DetailBuyHistoryScreen}
         options={({ route }) => ({
@@ -151,6 +154,7 @@ function AdminTabHomeNavigator({ navigation }) {
         component={TabAdminHomeStaff}
         options={() => ({
           headerBackTitleVisible: false,
+          headerTitle: "Staffs Screen",
           // headerShown: false,
           headerRight: () => (
             <MaterialCommunityIcons.Button
@@ -166,11 +170,13 @@ function AdminTabHomeNavigator({ navigation }) {
       <TabAdminHomeStack.Screen
         name="TabAdminHomeAddStaff"
         component={TabAdminHomeAddStaff}
+        options={{ headerTitle: "Add Staff" }}
       />
       <TabAdminHomeStack.Screen
         name="TabAdminHomeEditStaff"
         component={TabAdminHomeEditStaff}
         options={({ route }) => ({
+          headerTitle:"Edit Staff",
           itemData: route.params.itemData,
           headerBackTitleVisible: false,
         })}
@@ -183,6 +189,7 @@ function AdminTabHomeNavigator({ navigation }) {
         options={() => ({
           headerBackTitleVisible: false,
           // headerShown: false,
+          headerTitle: "Clients Screen",
           headerRight: () => (
             <MaterialCommunityIcons.Button
               name="plus-box-multiple-outline"
@@ -195,10 +202,10 @@ function AdminTabHomeNavigator({ navigation }) {
         })}
       />
 
-<TabAdminHomeStack.Screen
+      <TabAdminHomeStack.Screen
         name="TabAdminHomeAddClient"
         component={ClientAddScreen}
-        options={({route}) => ({
+        options={({ route }) => ({
           headerShown: false,
         })}
       />
@@ -212,7 +219,6 @@ function AdminTabHomeNavigator({ navigation }) {
         })}
       />
 
-
       {/* CATEGORY */}
       <TabAdminHomeStack.Screen
         name="TabAdminHomeProduct"
@@ -220,6 +226,7 @@ function AdminTabHomeNavigator({ navigation }) {
         options={() => ({
           // madm: route.params.madm;
           headerBackTitleVisible: false,
+          headerTitle: "Categories",
           // headerShown: false,
           headerRight: () => (
             <MaterialCommunityIcons.Button
@@ -238,6 +245,7 @@ function AdminTabHomeNavigator({ navigation }) {
         options={() => ({
           headerBackTitleVisible: false,
           // headerShown: false,
+          headerTitle:"Product Category"
         })}
       />
       <TabAdminHomeStack.Screen
@@ -253,7 +261,11 @@ function AdminTabHomeNavigator({ navigation }) {
               size={25}
               backgroundColor={colors.surface}
               color={colors.text}
-              onPress={() => navigation.navigate("TabAdminHomeAddProduct", {danhmuc: route.params.danhmuc})}
+              onPress={() =>
+                navigation.navigate("TabAdminHomeAddProduct", {
+                  danhmuc: route.params.danhmuc,
+                })
+              }
             />
           ),
         })}
@@ -262,6 +274,7 @@ function AdminTabHomeNavigator({ navigation }) {
         name="TabAdminHomeProductDetail"
         component={TabAdminHomeProductDetail}
         options={({ route }) => ({
+          headerTitle: "Product Detail",
           itemData: route.params.itemData,
           headerBackTitleVisible: false,
           headerRight: () => (
@@ -292,6 +305,7 @@ function AdminTabHomeNavigator({ navigation }) {
         name="TabAdminHomeEditProduct"
         component={TabAdminHomeEditProduct}
         options={({ route }) => ({
+          headerTitle: "Edit Product",
           itemData: route.params.itemData,
           headerBackTitleVisible: false,
           // headerShown: false,
@@ -320,14 +334,24 @@ function AdminTabStatisticNavigator() {
         component={TabAdminStatisticScreen}
         options={{ headerTitle: "Statistic functions screen" }}
       />
-            <TabAdminStatisticStack.Screen
+      <TabAdminStatisticStack.Screen
         name="DateToDateScreen"
         component={DateToDateScreen}
         options={{ headerTitle: "Statistic By Day" }}
       />
-            <TabAdminStatisticStack.Screen
+      <TabAdminStatisticStack.Screen
         name="StatisticByMonthScreen"
         component={StatisticByMonthScreen}
+        options={{ headerTitle: "Statistic By Month" }}
+      />
+            <TabAdminStatisticStack.Screen
+        name="OrderStatisticScreen"
+        component={OrderStatisticScreen}
+        options={{ headerTitle: "Statistic By Day" }}
+      />
+      <TabAdminStatisticStack.Screen
+        name="StockQuantityScreen"
+        component={StockQuantityScreen}
         options={{ headerTitle: "Statistic By Month" }}
       />
     </TabAdminStatisticStack.Navigator>
@@ -342,12 +366,15 @@ function AdminTabCommentsNavigator() {
       <TabAdminCommentsStack.Screen
         name="TabAdminCommentsScreen"
         component={TabAdminCommentsScreen}
-        options={{ headerTitle: "Tab comments Home Title" }}
+        options={{ headerTitle: "Comments" }}
       />
       <TabAdminCommentsStack.Screen
         name="DetailCommentsScreen"
         component={DetailCommentsScreen}
-        options={{ headerTitle: "Client Detail Product Title", headerShown: false }}
+        options={{
+          headerTitle: "Comment Detail",
+          headerShown: false,
+        }}
       />
     </TabAdminCommentsStack.Navigator>
   );

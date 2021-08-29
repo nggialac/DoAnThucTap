@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -22,10 +22,15 @@ import {
   putOrder,
 } from "../../../api/OrderApis";
 import { API_URL } from "../../Client/cart/Config";
+import { SearchBar } from "react-native-elements";
+import { AuthContext } from "../../../components/ContextLogin";
 // import Animated from "react-native-reanimated";
 
 function OrderScreen({ navigation }) {
   LogBox.ignoreAllLogs();
+
+  const context = React.useContext(AuthContext);
+  const nhanvien = context.loginState.mnv_mnt;
 
   var listTrangthai = {
     0: "Chờ xử lý",
@@ -47,6 +52,10 @@ function OrderScreen({ navigation }) {
     wait(4000).then(() => setRefreshing(false));
   }, []);
 
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
+
   React.useEffect(() => {
     listOrder();
   }, [refreshing]);
@@ -61,6 +70,7 @@ function OrderScreen({ navigation }) {
         const newArr = res.data.map((v, index) => ({ ...v, key: index }));
         console.log(res.data);
         setOrders(newArr);
+        setDataTemp(newArr);
         // setListData(res.data);
       })
       .catch((e) => {
@@ -88,7 +98,11 @@ function OrderScreen({ navigation }) {
   };
 
   const editRow = async (rowMap, rowKey, order) => {
-    cancelOrderByMadh(order.madh);
+    cancelOrderByMadh(
+      order.madh,
+      order.hinhthucthanhtoan,
+      order.paymentcreated
+    );
   };
 
   const detailOrder = (madh) => {
@@ -184,23 +198,32 @@ function OrderScreen({ navigation }) {
   const updateOrder = (madh: string, params: any) => {
     // console.log("check params update", params);
     if (params.trangthai === 4) {
-      Alert.alert("Notice", "This order has been canceled!", [
+      Alert.alert("Notice", "Đơn hàng đã hủy!", [
         {
           text: "Ok!",
         },
       ]);
-    } else {
+    } 
+    else if(params.trangthai === 3) {
+      Alert.alert("Notice", "Đơn hàng đã giao thành công!", [
+        {
+          text: "Ok!",
+        },
+      ]);
+    } 
+    else {
       Alert.alert("Notice!", "Are you want update status for this order?", [
         {
           text: "Approve",
           onPress: () =>
             params["trangthai"] < 3
               ? getUpdate(madh, params)
-              : cancelOrderByMadh(
-                  madh,
-                  params.hinhthucthanhtoan,
-                  params.paymentcreated
-                ),
+              : // : cancelOrderByMadh(
+                //     madh,
+                //     params.hinhthucthanhtoan,
+                //     params.paymentcreated
+                //   ),
+                Alert.alert("Notice", "Đơn hàng đã giao thành công!"),
         },
         {
           text: "Cancel",
@@ -212,25 +235,28 @@ function OrderScreen({ navigation }) {
   const getUpdate = async (madh: string, params: any) => {
     let changed;
     // console.log(params.trangthai);
-    // params["trangthai"] > 2
-    //   ? (changed = 1)
+    // params["trangthai"] >= 3
+    //   ? (changed = 3)
     //   : (changed = params["trangthai"] + 1);
     // console.log(changed);
-    params["trangthai"] >= 3
-      ? (changed = 3)
-      : (changed = params["trangthai"] + 1);
-    params["trangthai"] = changed;
-    console.log(params["trangthai"]);
-    await putOrder(params)
-      .then((res) => {
-        console.log(res.data);
-        Alert.alert("Success!", "Order was updated");
-        onRefresh();
-      })
-      .catch((e) => {
-        console.log(e);
-        Alert.alert("Failed!", "Cannot update");
-      });
+    if (params["trangthai"] >= 3) {
+      Alert.alert("Failed", "Đã giao hàng thành công!");
+    } else {
+      // params["nhanvien"] = nhanvien;
+      changed = params["trangthai"] + 1;
+      params["trangthai"] = changed;
+      // console.log(params["trangthai"]);
+      await putOrder(params)
+        .then((res) => {
+          console.log(res.data);
+          Alert.alert("Success!", "Order was updated!");
+          onRefresh();
+        })
+        .catch((e) => {
+          console.log(e);
+          Alert.alert("Failed!", "Cannot update!");
+        });
+    }
   };
 
   // function getValue(key: number) {
@@ -272,11 +298,11 @@ function OrderScreen({ navigation }) {
               {listTrangthai[data.item.trangthai]}
             </Text>
             <Text style={styles.details} numberOfLines={1}>
-              Ngày đặt: {data.item.ngaydat.slice(0, 10)}, Tổng tiền:{" "}
-              {data.item.tongtien}đ
+              Ngày đặt: {data.item.ngaydat.slice(0, 10)}; Đặt bởi:{" "}
+              {data.item.nhathuoc.tennhathuoc}
             </Text>
             <Text style={styles.details} numberOfLines={1}>
-              Client: {data.item.nhathuoc.tennhathuoc}
+              Giá trị đơn hàng: {currencyFormat(data.item.tongtien)}
             </Text>
           </View>
         </TouchableHighlight>
@@ -393,7 +419,9 @@ function OrderScreen({ navigation }) {
         rowHeightAnimatedValue={rowHeightAnimatedValue}
         onClose={() =>
           // closeRow(rowMap, data.item.key)
-          editRow(rowMap, data.item.key, data.item)
+          data.item.trangthai !== 3 && data.item.trangthai !== 4
+            ? editRow(rowMap, data.item.key, data.item)
+            : Alert.alert("Notice", "Không thể hủy đơn đã ở trạng thái đã giao hoặc đã hủy!")
         }
         onDelete={() =>
           // deleteRow(rowMap, data.item.key)
@@ -404,10 +432,43 @@ function OrderScreen({ navigation }) {
     );
   };
 
+  const [dataTemp, setDataTemp] = useState([]);
+  const [text, setText] = useState("");
+
+  const searchFilterFunction = (text) => {
+    setText(text);
+
+    const newData = dataTemp.filter((item) => {
+      const itemData = `${item.madh.toUpperCase()} ${item.nhathuoc.tennhathuoc.toUpperCase()} ${listTrangthai[
+        item.trangthai
+      ].toUpperCase()} ${item.ngaydat.toUpperCase()}`;
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setOrders(newData);
+  };
+
+  // const renderHeader = () => {
+  //   return (
+
+  //   );
+  // };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       {/* <StatusBar backgroundColor="#FF6347" barStyle="light-content"/> */}
+
+      <SearchBar
+        placeholder="Type Here..."
+        lightTheme
+        round
+        onChangeText={(text) => searchFilterFunction(text)}
+        autoCorrect={false}
+        value={text}
+        autoFocus={true}
+      />
+
       <SwipeListView
         data={orders}
         renderItem={renderItem}
@@ -428,6 +489,7 @@ function OrderScreen({ navigation }) {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         keyExtractor={(e) => "key" + e.madh}
+        // ListHeaderComponent={renderHeader}
       />
     </View>
   );

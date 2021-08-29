@@ -23,6 +23,7 @@ import {
 import { getRevenue, getRevenueByFromTo } from "../../../api/StatisticApis";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import COLORS from "../../../assets/colors/Colors";
 
 export default function StatisticByMonthScreen() {
   const [revenue, setRevenue] = useState([]);
@@ -37,8 +38,8 @@ export default function StatisticByMonthScreen() {
     wait(4000).then(() => setRefreshing(false));
   }, []);
 
-  const getRevenueOfMonth = () => {
-    getRevenue()
+  const getRevenueOfMonth = (year) => {
+    getRevenue(year)
       .then((res) => {
         console.log(res.data);
         setRevenue(res.data);
@@ -51,7 +52,7 @@ export default function StatisticByMonthScreen() {
   };
 
   useEffect(() => {
-    getRevenueOfMonth();
+    // getRevenueOfMonth(2021);
     // getRevenueFromTo("2021-08-24", "2021-08-26");
   }, [refreshing]);
 
@@ -97,6 +98,9 @@ export default function StatisticByMonthScreen() {
     return 0;
   }
 
+  const [show, setShow] = useState(false);
+  const [year, setYear] = useState(new Date().getFullYear());
+
   return (
     <ScrollView
       refreshControl={
@@ -105,29 +109,65 @@ export default function StatisticByMonthScreen() {
     >
       <View style={{ flex: 1 }}>
         <View style={styles.pickerWrap}>
-          <Text style={styles.textTitle}>
-            Doanh thu hàng tháng năm {new Date().getFullYear()}
-          </Text>
+          <Text style={styles.textTitle}>Doanh thu hàng tháng năm</Text>
+          <TextInput
+            value={year}
+            onChangeText={(e) =>
+              e.length < 5
+                ? setYear(e)
+                : Alert.alert(
+                    "Failed",
+                    "Invalid data! Length text < 5"
+                  )
+            }
+            keyboardType={"number-pad"}
+            style={{
+              marginLeft: 10,
+              backgroundColor: COLORS.light,
+              fontSize: 20,
+            }}
+          />
         </View>
 
-        <View style={styles.container}>
-          <VictoryChart
-            domainPadding={50}
-            theme={VictoryTheme.material}
-            // animate={{duration: 500}}
-          >
-            <VictoryAxis
-              // tickValues={monthOfQuarter[selectedQuarter]}
-              tickFormat={(x) => `Tháng ${x}`}
-            />
-            <VictoryAxis
-              dependentAxis
-              // tickFormat specifies how ticks should be displayed
-              tickFormat={(x) => `$${x / 1000000}tr`}
-            />
-            <VictoryBar data={revenue.sort(compare)} x="thang" y="tien" />
-          </VictoryChart>
-        </View>
+        {typeof revenue !== "undefined" && revenue.length > 0 ? (
+          <View style={styles.container}>
+            <VictoryChart
+              domainPadding={50}
+              theme={VictoryTheme.material}
+              // animate={{duration: 500}}
+            >
+              <VictoryAxis
+                // tickValues={monthOfQuarter[selectedQuarter]}
+                tickFormat={(x) => `Tháng ${x}`}
+              />
+              <VictoryAxis
+                dependentAxis
+                // tickFormat specifies how ticks should be displayed
+                tickFormat={(x) => `$${x / 1000000}tr`}
+              />
+              <VictoryBar data={revenue.sort(compare)} x="thang" y="tien" />
+            </VictoryChart>
+          </View>
+        ) : (
+          <View style={styles.container}>
+            <Text style={{ marginTop: 30, fontSize: 20, fontWeight: "bold" }}>
+              EMPTY DATA!
+            </Text>
+          </View>
+        )}
+      </View>
+      <View>
+        <Button
+          onPress={() =>
+            year > 2000 && year < 2100
+              ? getRevenueOfMonth(year)
+              : Alert.alert(
+                  "Failed",
+                  "Invalid data! (year > 2000) and (year < 2100)"
+                )
+          }
+          title="Submit!"
+        />
       </View>
     </ScrollView>
   );
@@ -144,6 +184,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 20,
     marginTop: 30,
+    flex: 1,
+    flexDirection: "row",
   },
   textTitle: {
     fontSize: 20,

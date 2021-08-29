@@ -16,7 +16,7 @@ import * as Animatable from "react-native-animatable";
 import { FontAwesome } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import { postAdmin } from "../../api/LoginApis";
+import { postRegisterNT } from "../../api/LoginApis";
 
 export default function SignUpScreen({ navigation }) {
   const [sex, setSex] = React.useState(0);
@@ -61,7 +61,7 @@ export default function SignUpScreen({ navigation }) {
       username: data.username,
     };
 
-    postAdmin(params)
+    postRegisterNT(params)
       .then((res) => {
         // console.log(res);
         Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import { getMedicineByCategory } from "../../../api/MedicineApis";
 import { Item } from "react-native-paper/lib/typescript/components/List/List";
 import { getListOrderByClient } from "../../../api/OrderApis";
 import { AuthContext } from "../../../components/ContextLogin";
+import { SearchBar } from "react-native-elements";
+import COLORS from "../../../assets/colors/Colors";
 
 const BuyHistoryScreen = ({ navigation, route }) => {
   const [listData, setListData] = React.useState([]);
@@ -34,8 +36,9 @@ const BuyHistoryScreen = ({ navigation, route }) => {
   const getData = (manhathuoc: string) => {
     getListOrderByClient(manhathuoc)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setListData(res.data);
+        setDataTemp(res.data);
       })
       .catch((e) => {
         console.log(e);
@@ -63,6 +66,38 @@ const BuyHistoryScreen = ({ navigation, route }) => {
     );
   };
 
+  const [dataTemp, setDataTemp] = useState([]);
+  const [text, setText] = useState("");
+
+  var listTrangthai = {
+    0: "Chờ xử lý",
+    1: "Đã duyệt",
+    2: "Đang giao",
+    3: "Giao hàng thành công",
+    4: "Đã hủy",
+  };
+
+  var listHTTT = {
+    1: "Tiền mặt",
+    2: "Online",
+  };
+
+  const searchFilterFunction = (text) => {
+    setText(text);
+    // console.log(dataTemp[0]);
+    // text.trim()
+    const newData = dataTemp.filter((item) => {
+      const itemData = `${item.madh.toUpperCase()} ${item.ngaydat.toUpperCase()} ${listTrangthai[
+        item.trangthai
+      ].toUpperCase()} ${item.tongtien} ${listHTTT[
+        item.hinhthucthanhtoan
+      ].toUpperCase()}`;
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setListData(newData);
+  };
+
   return (
     <ScrollView
       style={styles.container}
@@ -70,6 +105,14 @@ const BuyHistoryScreen = ({ navigation, route }) => {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
+      <SearchBar
+        placeholder="Type Here..."
+        style={{ color: COLORS.light }}
+        onChangeText={(text) => searchFilterFunction(text)}
+        autoCorrect={false}
+        value={text}
+        autoFocus={true}
+      />
       <FlatList
         data={listData}
         renderItem={renderItem}

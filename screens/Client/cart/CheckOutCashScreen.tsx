@@ -32,6 +32,10 @@ const CheckOutCashScreen = ({ navigation , route }) => {
     return newArray;
   }
 
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
+
   const createOrders = async (manhathuoc: string, hinhthucthanhtoan: number, params) => {
     // const temp = [{params}]
     let check;
@@ -62,9 +66,9 @@ const CheckOutCashScreen = ({ navigation , route }) => {
       <View style={styles.container}>
         <View style={styles.text}>
           <Text style={styles.content}>Medical Store Payment</Text>
-          <Text style={styles.content}>Payments: Cash</Text>
+          <Text style={styles.content}>Method: Cash</Text>
           <Text style={{ fontSize: 26, fontWeight: "bold", marginTop: 100, marginRight: 20, alignItems: "center", textAlign:"right"}}>
-            Total payment intent: {totalPrice}VND
+            Total payment intent: {currencyFormat(totalPrice)}
           </Text>
           {/* <Text style={{ fontSize: 20 }}>Select your payment information</Text> */}
         </View>

@@ -138,7 +138,7 @@ const DetailCommentClientScreen = ({ navigation, route }) => {
         data={listData}
         renderItem={renderComment}
         contentContainerStyle={style.commentsContainer}
-        // keyExtractor={(e) => e.id.toString()}
+        keyExtractor={(e) => "key"+e.id.toString()}
       />
     </ScrollView>
   );

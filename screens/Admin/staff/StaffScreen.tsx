@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -16,6 +16,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 // import Orders from "../../../navigation/Models/ListOrder";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { getListStaff, deleteStaff } from "../../../api/StaffApi";
+import { SearchBar } from "react-native-elements";
 // import Animated from "react-native-reanimated";
 
 function StaffScreen({ navigation }) {
@@ -40,6 +41,7 @@ function StaffScreen({ navigation }) {
         // res.data.map((obj, index)=> ({ ...obj, key: index}));
         const newArr = res.data.map((v, index) => ({ ...v, key: index }));
         setStaff(newArr);
+        setDataTemp(newArr);
         // setListData(res.data);
       })
       .catch((e) => {
@@ -135,8 +137,11 @@ function StaffScreen({ navigation }) {
             <Text style={styles.title} numberOfLines={1}>
               Mã: {data.item.manv} - Họ Tên: {data.item.ho} {data.item.ten}
             </Text>
+            <Text style={styles.title} numberOfLines={1}>
+            Phone: {data.item.sdt} - Email: {data.item.email}
+            </Text>
             <Text style={styles.details} numberOfLines={1}>
-              Phone: {data.item.sdt}
+              Địa chỉ: {data.item.diachi}
             </Text>
           </View>
         </TouchableHighlight>
@@ -261,6 +266,20 @@ function StaffScreen({ navigation }) {
     );
   };
 
+  const [dataTemp, setDataTemp] = useState([]);
+  const [text, setText] = useState("");
+
+  const searchFilterFunction = (text) => {
+    setText(text);
+    // console.log(dataTemp[0]);
+    const newData = dataTemp.filter((item) => {
+      const itemData = `${item.manv.toUpperCase()} ${item.ten.toUpperCase()} ${item.ho.toUpperCase()} ${item.sdt.toUpperCase()} ${item.email.toUpperCase()}`;
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setStaff(newData);
+  };
+
   return (
     <View style={styles.container}>
       {/* <ScrollView
@@ -270,6 +289,16 @@ function StaffScreen({ navigation }) {
       > */}
       <StatusBar barStyle="dark-content" />
       {/* <StatusBar backgroundColor="#FF6347" barStyle="light-content"/> */}
+      <SearchBar
+        placeholder="Type Here..."
+        lightTheme
+        round
+        onChangeText={(text) => searchFilterFunction(text)}
+        autoCorrect={false}
+        value={text}
+        autoFocus={true}
+      />
+
       <SwipeListView
         keyExtractor={(item, index) => "key" + item.key}
         data={staff}
@@ -309,7 +338,7 @@ const styles = StyleSheet.create({
   rowFront: {
     backgroundColor: "#FFF",
     borderRadius: 5,
-    height: 60,
+    height: 100,
     margin: 5,
     marginBottom: 15,
     shadowColor: "#999",
@@ -321,7 +350,7 @@ const styles = StyleSheet.create({
   rowFrontVisible: {
     backgroundColor: "#FFF",
     borderRadius: 5,
-    height: 60,
+    height: 100,
     padding: 10,
     marginBottom: 15,
   },

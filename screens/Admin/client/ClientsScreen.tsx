@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -17,6 +17,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { getListStaff, deleteStaff } from "../../../api/StaffApi";
 import { deleteNT, getListNT } from "../../../api/ClientApis";
+import { SearchBar } from "react-native-elements";
 // import Animated from "react-native-reanimated";
 
 function ClientsScreen({ navigation }) {
@@ -42,6 +43,7 @@ function ClientsScreen({ navigation }) {
         const newArr = res.data.map((v, index) => ({ ...v, key: index }));
         setStaff(newArr);
         // setListData(res.data);
+        setDataTemp(newArr);
       })
       .catch((e) => {
         Alert.alert("Fail!", "" + e, [{ text: "ok" }]);
@@ -138,7 +140,7 @@ function ClientsScreen({ navigation }) {
               Mã: {data.item.manhathuoc} - Tên: {data.item.tennhathuoc}
             </Text>
             <Text style={styles.title} numberOfLines={1}>
-              Phone: {data.item.sdt}
+              Phone: {data.item.sdt} - Email: {data.item.email}
             </Text>
             <Text style={styles.details} numberOfLines={1}>
               Địa chỉ: {data.item.diachi}
@@ -266,6 +268,20 @@ function ClientsScreen({ navigation }) {
     );
   };
 
+  const [dataTemp, setDataTemp] = useState([]);
+  const [text, setText] = useState("");
+
+  const searchFilterFunction = (text) => {
+    setText(text);
+    // console.log(dataTemp[0]);
+    const newData = dataTemp.filter((item) => {
+      const itemData = `${item.manhathuoc.toUpperCase()} ${item.tennhathuoc.toUpperCase()} ${item.email.toUpperCase()} ${item.sdt.toUpperCase()}`;
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+    setStaff(newData);
+  };
+
   return (
     <View style={styles.container}>
       {/* <ScrollView
@@ -275,6 +291,17 @@ function ClientsScreen({ navigation }) {
       > */}
       <StatusBar barStyle="dark-content" />
       {/* <StatusBar backgroundColor="#FF6347" barStyle="light-content"/> */}
+
+      <SearchBar
+        placeholder="Type Here..."
+        lightTheme
+        round
+        onChangeText={(text) => searchFilterFunction(text)}
+        autoCorrect={false}
+        value={text}
+        autoFocus={true}
+      />
+      
       <SwipeListView
         keyExtractor={(item, index) => "key" + item.key}
         data={staff}

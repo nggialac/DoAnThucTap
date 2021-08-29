@@ -43,7 +43,8 @@ const DetailProductScreen = ({ navigation, route }) => {
   const [count, setCount] = useState(1);
   const context = useContext(AuthContext);
   const nhathuoc = context.loginState.mnv_mnt;
-  const ma = nhathuoc.manhathuoc;
+  var ma;
+  nhathuoc !== null ? (ma = nhathuoc.manhathuoc) : "";
   // console.log(ma);
 
   const [ratings, setRatings] = useState();
@@ -66,8 +67,8 @@ const DetailProductScreen = ({ navigation, route }) => {
       // console.log(item, index)
       <ScrollView>
         <View style={{ marginBottom: 20 }}>
-          {/* {navigation ? console.log(navigation):null} */}
-          {item.nhathuoc.manhathuoc === nhathuoc.manhathuoc ? (
+          {nhathuoc !== null &&
+          item.nhathuoc.manhathuoc === nhathuoc.manhathuoc ? (
             <TouchableOpacity onPress={() => deleteMyComment(item.id)}>
               <Icon
                 name="delete"
@@ -93,17 +94,16 @@ const DetailProductScreen = ({ navigation, route }) => {
     );
   };
 
-  const addCart = async(manhathuoc: string, masp: string, soluong: number) => {
-
-
-
+  const addCart = async (manhathuoc: string, masp: string, soluong: number) => {
     await postCart(manhathuoc, masp, soluong)
       .then((res) => {
         Alert.alert("Submit Info", "Success!", [{ text: "ok" }]);
       })
       .catch((e) => {
         console.log(e);
-        Alert.alert("Failed", "this Product not enough quantity!", [{ text: "ok" }]);
+        Alert.alert("Failed", "this Product not enough quantity!", [
+          { text: "ok" },
+        ]);
       });
   };
 
@@ -237,7 +237,11 @@ const DetailProductScreen = ({ navigation, route }) => {
   useEffect(() => {
     getRatingOfProduct(medicine.masp);
     getCommentsOfProduct(medicine.masp);
-    clientRated(nhathuoc.manhathuoc, medicine.masp);
+    {
+      nhathuoc !== null
+        ? clientRated(nhathuoc.manhathuoc, medicine.masp)
+        : null;
+    }
   }, [refreshing]);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -261,23 +265,25 @@ const DetailProductScreen = ({ navigation, route }) => {
       });
   };
 
-  // const [quantity, setQuantity] = useState(3);
-  // const seeMore = (comments) => {
-  //   comments.slice(0, quantity);
-  //   setQuantity(quantity+3);
-  // }
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
 
-  const format = (value: number) => {
-    let val = value.toLocaleString("it-IT", {
-      style: "currency",
-      currency: "VND",
-    });
-    return val;
+  const [quantity, setQuantity] = useState();
+
+  const changeQuantity = (val: number) => {
+    if (val > medicine.soluong) Alert.alert("Failed, Out of product quantity!");
+    else if(val<1) Alert.alert("Failed, Quantity of product must be more than zero!")
+    else {
+      setCount(val);
+      // setQuantity(val);
+    }
   };
 
   if (medicine)
     return (
       <View>
+        {console.log(count)}
         <ScrollView
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -293,7 +299,11 @@ const DetailProductScreen = ({ navigation, route }) => {
             <Icon
               name="shopping-cart"
               size={28}
-              onPress={() => navigation.navigate("CartScreen")}
+              onPress={() =>
+                nhathuoc !== null
+                  ? navigation.navigate("CartScreen")
+                  : Alert.alert("Notice", "Please, Login!")
+              }
             />
           </View>
 
@@ -347,7 +357,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                     fontSize: 16,
                   }}
                 >
-                  {format(medicine.dongia)}Đ
+                  {currencyFormat(medicine.dongia)}
                 </Text>
               </View>
             </View>
@@ -389,15 +399,21 @@ const DetailProductScreen = ({ navigation, route }) => {
                   }}
                 >
                   <TouchableOpacity
-                    onPress={() =>
-                      count > 0 ? setCount(count - 1) : setCount(count)
-                    }
+                    onPress={() => {
+                      // if (nhathuoc !== null) {
+                      count > 0
+                        ? setCount(parseInt(count) - 1)
+                        : Alert.alert("Failed, Cannot input negative!");
+                      // } else {
+                      //   Alert.alert("Notice", "Please, Login!");
+                      // }
+                    }}
                   >
                     <View style={style.borderBtn}>
                       <Text style={style.borderBtnText}>-</Text>
                     </View>
                   </TouchableOpacity>
-                  <Text
+                  {/* <Text
                     style={{
                       fontSize: 20,
                       marginHorizontal: 10,
@@ -405,14 +421,31 @@ const DetailProductScreen = ({ navigation, route }) => {
                     }}
                   >
                     {count}
-                  </Text>
+                  </Text> */}
+
+                  <TextInput
+                    style={{
+                      fontSize: 20,
+                      marginHorizontal: 10,
+                      fontWeight: "bold",
+                    }}
+                    keyboardType="number-pad"
+                    value={count.toString()}
+                    // onChange={(val) => changeQuantity(val)}
+                    onChangeText={(val) => changeQuantity(val)}
+                  />
+
                   {/* CHECK SO LUONG TON */}
                   <TouchableOpacity
-                    onPress={() =>
+                    onPress={() => {
+                      // if (nhathuoc !== null)
                       medicine.soluong > count
-                        ? setCount(count + 1)
-                        : setCount(count)
-                    }
+                        ? setCount(parseInt(count) + 1)
+                        : Alert.alert("Failed, Out of product quantity!");
+                      // else {
+                      //   Alert.alert("Notice", "Please, Login!");
+                      // }
+                    }}
                   >
                     <View style={style.borderBtn}>
                       <Text style={style.borderBtnText}>+</Text>
@@ -421,11 +454,16 @@ const DetailProductScreen = ({ navigation, route }) => {
                 </View>
 
                 <TouchableOpacity
-                  onPress={() =>
-                    count <= medicine.soluong && count !== 0
-                      ? addCart(ma, medicine.masp, count)
-                      : Alert.alert("Notice", "Out of quantity this product!")
-                  }
+                  onPress={() => {
+                    if (nhathuoc !== null) {
+                      count <= medicine.soluong && count !== 0
+                        ? addCart(ma, medicine.masp, count)
+                        : Alert.alert(
+                            "Notice",
+                            "Out of quantity this product!"
+                          );
+                    } else Alert.alert("Notice", "Please, Login!");
+                  }}
                 >
                   <View style={style.buyBtn}>
                     <Text
@@ -456,7 +494,9 @@ const DetailProductScreen = ({ navigation, route }) => {
               size={20}
               defaultRating={rated}
               onFinishRating={(val) =>
-                postRatingProduct(medicine, nhathuoc, val)
+                nhathuoc !== null
+                  ? postRatingProduct(medicine, nhathuoc, val)
+                  : Alert.alert("Notice", "Please, Login!")
               }
             />
           </View>
@@ -497,7 +537,14 @@ const DetailProductScreen = ({ navigation, route }) => {
                     <View style={{ flexDirection: "row" }}>
                       <Pressable
                         onPress={() =>
-                          addComment(medicine, nhathuoc, inputValue, getDate())
+                          nhathuoc !== null
+                            ? addComment(
+                                medicine,
+                                nhathuoc,
+                                inputValue,
+                                getDate()
+                              )
+                            : Alert.alert("Notice", "Please, Login!")
                         }
                         style={[style.button, style.buttonOpen, { margin: 10 }]}
                       >
@@ -526,9 +573,16 @@ const DetailProductScreen = ({ navigation, route }) => {
           </Pressable> */}
 
             <View style={{ alignItems: "center" }}>
-              <TouchableOpacity onPress={toggleModalVisibility}>
-                <Ionicons name="add-circle-outline" style={{ fontSize: 50 }} />
-              </TouchableOpacity>
+              {nhathuoc !== null ? (
+                <TouchableOpacity onPress={toggleModalVisibility}>
+                  <Ionicons
+                    name="add-circle-outline"
+                    style={{ fontSize: 50 }}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <></>
+              )}
             </View>
           </View>
         </ScrollView>

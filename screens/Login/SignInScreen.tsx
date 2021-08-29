@@ -120,6 +120,7 @@ export default function SignInScreen({ navigation }) {
         // console.log("TEST: " + mnv_mnt);
         // console.log(foundUser);
         await signIn.authContext.signIn(foundUser);
+        // navigation.goBack("ClientProfileScreen");
       })
       .catch((e) => {
         console.log(e);

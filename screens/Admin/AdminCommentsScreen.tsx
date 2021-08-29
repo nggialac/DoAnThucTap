@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { LogBox, RefreshControl, ScrollView, Touchable, TouchableOpacity } from "react-native";
 import {
   View,
@@ -11,6 +11,7 @@ import {
   TextInput,
   Dimensions,
 } from "react-native";
+import { SearchBar } from "react-native-elements";
 import { deleteComment, getListComment } from "../../api/RatingCommentApis";
 import { getListReply, postReply } from "../../api/ReplyApis";
 import { AuthContext } from "../../components/ContextLogin";
@@ -53,6 +54,7 @@ const MedicineListScreen = ({ navigation }) => {
       .then((res) => {
         // console.log(res.data);
         setListComment(res.data.reverse());
+        setDataTemp(res.data);
       })
       .catch((e) => {
         Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
@@ -183,10 +185,37 @@ const MedicineListScreen = ({ navigation }) => {
     );
   };
 
+  const [dataTemp, setDataTemp] = useState([]);
+  const [text, setText] = useState("");
+
+  const searchFilterFunction = (text) => {
+    setText(text);
+    // console.log(dataTemp[0]);
+    const newData = dataTemp.filter((item) => {
+      const itemData = `${item.sanpham.masp.toUpperCase()} ${item.sanpham.tensp.toUpperCase()} ${item.nhathuoc.tennhathuoc.toUpperCase()} ${item.nhathuoc.manhathuoc.toUpperCase()}`;
+      // console.log(item);
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
+    });
+
+    setListComment(newData.reverse());
+  };
+
   return (
     <ScrollView style={styles.container} refreshControl={
       <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
     }>
+
+<SearchBar
+        placeholder="Type Here..."
+        lightTheme
+        round
+        onChangeText={(text) => searchFilterFunction(text)}
+        autoCorrect={false}
+        value={text}
+        autoFocus={true}
+      />
+
       <FlatList
         data={listComment}
         renderItem={({ item }) => renderItem(item)}

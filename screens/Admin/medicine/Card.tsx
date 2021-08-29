@@ -2,6 +2,10 @@ import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 const Card = ({ itemData, onPress }) => {
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,') + "đ";
+ }
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.card}>
@@ -15,6 +19,7 @@ const Card = ({ itemData, onPress }) => {
         <View style={styles.cardInfo}>
           <Text style={styles.cardTitle}>{itemData.tensp}</Text>
           <Text style={styles.cardTitle}>Số lượng: {itemData.soluong}</Text>
+          <Text style={styles.cardDetails}>Đơn giá: {currencyFormat(itemData.dongia)}</Text>
           <Text numberOfLines={2} style={styles.cardDetails}>
             {itemData.mota_ngan}
           </Text>
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cardDetails: {
-    marginTop: 10,
+    marginTop: 4,
     fontSize: 12,
     color: "#444",
   },

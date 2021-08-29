@@ -28,7 +28,7 @@ export default function AdminStatisticScreen({ navigation }) {
                   <View style={styles.square}>
                     <Icon name="file-alert-outline" color="#FF6347" size={25} />
                   </View>
-                  <Text style={styles.itemText}>From Date To Date</Text>
+                  <Text style={styles.itemText}>Revenue From Date To Date</Text>
                 </View>
                 <View style={styles.circular}></View>
               </TouchableOpacity>
@@ -37,7 +37,25 @@ export default function AdminStatisticScreen({ navigation }) {
                   <View style={styles.square}>
                     <Icon name="file-cabinet" color="#FF6347" size={25} />
                   </View>
-                  <Text style={styles.itemText}>By Month</Text>
+                  <Text style={styles.itemText}>Revenue Month By Year</Text>
+                </View>
+                <View style={styles.circular}></View>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('OrderStatisticScreen')}>
+                <View style={styles.itemLeft}>
+                  <View style={styles.square}>
+                    <Icon name="file-certificate" color="#FF6347" size={25} />
+                  </View>
+                  <Text style={styles.itemText}>Order Statistic</Text>
+                </View>
+                <View style={styles.circular}></View>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('StockQuantityScreen')}>
+                <View style={styles.itemLeft}>
+                  <View style={styles.square}>
+                    <Icon name="file-chart" color="#FF6347" size={25} />
+                  </View>
+                  <Text style={styles.itemText}>Stock Quantity Statistic</Text>
                 </View>
                 <View style={styles.circular}></View>
               </TouchableOpacity>

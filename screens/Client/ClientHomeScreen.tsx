@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Dimensions,
   Image,
@@ -86,12 +86,19 @@ const HomeScreen = ({ navigation }) => {
   };
 
   function filterMedicine(madm: string, index: any) {
-    const arr = medicines;
-    const temp = arr.filter((item) => item.danhmuc.madm === madm);
-    setMedicinesChange(temp);
-    console.log(temp);
-    // return temp;
-    setSelectedCategoryIndex(index);
+    console.log(test);
+    setPos(test);
+    if (selectedCategoryIndex === index) {
+      setSelectedCategoryIndex(-1);
+      setMedicinesChange(medicines);
+    } else {
+      setSelectedCategoryIndex(index);
+      const arr = medicines;
+      const temp = arr.filter((item) => item.danhmuc.madm === madm);
+      setMedicinesChange(temp);
+      // console.log(temp);
+      // return temp;
+    }
   }
 
   useEffect(() => {
@@ -99,12 +106,29 @@ const HomeScreen = ({ navigation }) => {
     getMedicines();
   }, [refreshing]);
 
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
+
+  const scrollViewRef = useRef();
+
+  const [pos, setPos] = useState(0);
+
+  var test = 0;
+
   const ListCategories = () => {
     return (
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={style.categoriesListContainer}
+        // onScroll={handleScroll}
+        ref={scrollViewRef}
+        onContentSizeChange={()=>scrollViewRef.current.scrollTo({x: pos})}
+        onScroll={(event) => {
+          test = (event.nativeEvent.contentOffset.x);
+        }}
+        scrollEventThrottle={16}
       >
         {categories
           ? categories.map((category, index) => (
@@ -122,12 +146,6 @@ const HomeScreen = ({ navigation }) => {
                     ...style.categoryBtn,
                   }}
                 >
-                  {/* <View style={style.categoryBtnImgCon}>
-                <Image
-                  source={category.image}
-                  style={{ height: 35, width: 35, resizeMode: "cover" }}
-                />
-              </View> */}
                   <Text
                     style={{
                       fontSize: 15,
@@ -179,7 +197,7 @@ const HomeScreen = ({ navigation }) => {
             }}
           >
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-              {medicine.dongia}VND
+              {currencyFormat(medicine.dongia)}
             </Text>
             {/* <View style={style.addToCartBtn}>
               <Icon name="add" size={20} color={COLORS.white} />

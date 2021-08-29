@@ -50,6 +50,7 @@ export default function AdminBottomTabNavigator() {
       initialRouteName="Home"
       tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
     >
+      
       <BottomTab.Screen
         name="Home"
         component={ClientTabHomeNavigator}
@@ -59,15 +60,27 @@ export default function AdminBottomTabNavigator() {
           ),
         }}
       />
-      {nhathuoc !== null ? <BottomTab.Screen
-        name="Comments"
-        component={ClientCommentsNavigator}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="chatbox-ellipses" color={color} />
-          ),
-        }}
-      />: <BottomTab.Screen name="BlankScreen" component={BlankScreen}/>}
+      {nhathuoc !== null ? (
+        <BottomTab.Screen
+          name="Comments"
+          component={ClientCommentsNavigator}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <TabBarIcon name="chatbox-ellipses" color={color} />
+            ),
+          }}
+        />
+      ) : (
+        <BottomTab.Screen
+          name="Comments"
+          component={BlankScreen}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <TabBarIcon name="chatbox-ellipses" color={color} />
+            ),
+          }}
+        />
+      )}
 
       <BottomTab.Screen
         name="Profile"
@@ -113,14 +126,14 @@ function ClientTabHomeNavigator() {
         options={{ headerTitle: "Client Cart Title", headerShown: false }}
       />
 
-<TabClientHomeStack.Screen
+      <TabClientHomeStack.Screen
         name="DetailCommentClientScreen"
         component={DetailCommentClientScreen}
         options={({ route }) => ({
           comments: route.params,
           headerBackTitleVisible: false,
           headerShown: true,
-          headerTitle: "Comment Detail"
+          headerTitle: "Comment Detail",
         })}
       />
 
@@ -129,7 +142,7 @@ function ClientTabHomeNavigator() {
         component={CartScreen}
         options={{ headerTitle: "Client Cart Title", headerShown: false }}
       /> */}
-            <TabClientHomeStack.Screen
+      <TabClientHomeStack.Screen
         name="CheckOutMethodScreen"
         component={CheckOutMethodScreen}
         options={({ route }) => ({
@@ -137,7 +150,7 @@ function ClientTabHomeNavigator() {
           dataCart: route.params.dataCart,
           headerBackTitleVisible: false,
           headerShown: true,
-          headerTitle: "CheckOut Method"
+          headerTitle: "CheckOut Method",
         })}
       />
 
@@ -149,7 +162,7 @@ function ClientTabHomeNavigator() {
           dataCart: route.params.dataCart,
           headerBackTitleVisible: false,
           headerShown: true,
-          headerTitle: "CheckOut With Stripe"
+          headerTitle: "CheckOut With Stripe",
         })}
       />
       <TabClientHomeStack.Screen
@@ -160,7 +173,7 @@ function ClientTabHomeNavigator() {
           dataCart: route.params.dataCart,
           headerBackTitleVisible: false,
           headerShown: true,
-          headerTitle: "CheckOut With Cash"
+          headerTitle: "CheckOut With Cash",
         })}
       />
     </TabClientHomeStack.Navigator>
@@ -169,7 +182,6 @@ function ClientTabHomeNavigator() {
 
 const TabClientCategoriesStack =
   createStackNavigator<TabClientCategoriesParamList>();
-  
 
 function ClientCommentsNavigator() {
   return (
@@ -187,7 +199,7 @@ function ClientCommentsNavigator() {
           comments: route.params,
           headerBackTitleVisible: false,
           headerShown: true,
-          headerTitle: "Comment Detail"
+          headerTitle: "Comment Detail",
         })}
       />
     </TabClientCategoriesStack.Navigator>
@@ -248,6 +260,15 @@ function ClientTabProfileNavigator({ navigation }) {
           title: "Buy History Detail",
           headerShown: true,
         })}
+      />
+    <TabClientProfileStack.Screen
+        name="SplashScreen"
+        component={LoginStackNavigator}
+        options={{
+          // title: "Buy History List",
+          headerShown: false,
+          
+        }}
       />
     </TabClientProfileStack.Navigator>
   );

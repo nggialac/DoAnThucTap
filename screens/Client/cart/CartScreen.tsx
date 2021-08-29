@@ -15,7 +15,10 @@ import { FlatList } from "react-native-gesture-handler";
 import Icon from "@expo/vector-icons/MaterialIcons";
 import COLORS from "../../../assets/colors/Colors";
 import foods from "../../../navigation/Models/Foods";
-import { PrimaryButton } from "../../../components/PrimaryButton";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "../../../components/PrimaryButton";
 import {
   deleteCartByMedicineId,
   getListCart,
@@ -23,6 +26,7 @@ import {
 } from "../../../api/CartApis";
 import { AuthContext } from "../../../components/ContextLogin";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NumberFormat from "react-number-format";
 
 const CartScreen = ({ navigation }) => {
   // const [tk, setTk] = React.useState();
@@ -41,6 +45,7 @@ const CartScreen = ({ navigation }) => {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     wait(1000).then(() => setRefreshing(false));
+    setLimit(false);
   }, []);
   // console.log(nhathuoc);
 
@@ -111,7 +116,7 @@ const CartScreen = ({ navigation }) => {
               ]);
               check = false;
             });
-            onRefresh();
+          onRefresh();
         },
       },
       {
@@ -182,13 +187,13 @@ const CartScreen = ({ navigation }) => {
     }, 0);
   }
 
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
+
   const CartCard = ({ item, index }) => {
     return (
       <View style={style.cartCard}>
-        {/* <View style={{ marginRight: 10, }}>
-          <Text>X</Text>
-        </View> */}
-
         <Image source={{ uri: item.sanpham.photo }} style={style.image} />
 
         <View
@@ -202,17 +207,18 @@ const CartScreen = ({ navigation }) => {
           <Text style={{ fontWeight: "bold", fontSize: 16 }}>
             {item.sanpham.tensp}
           </Text>
-          <Text style={{ fontSize: 13, color: COLORS.grey }}>
+          {/* <Text style={{ fontSize: 13, color: COLORS.grey }}>
             {item.sanpham.mota_ngan}
-          </Text>
+          </Text> */}
           <Text style={{ fontSize: 17, fontWeight: "bold" }}>
-            {item.sanpham.dongia}Đ
+            {currencyFormat(item.sanpham.dongia)}
           </Text>
         </View>
         <View style={{ marginRight: 20, alignItems: "center" }}>
           <Text style={{ fontWeight: "bold", fontSize: 18 }}>
             {item.soluong}
           </Text>
+
           <View style={style.actionBtn}>
             <TouchableOpacity onPress={() => onChangeQual(index, false)}>
               <Icon name="remove" size={25} color={COLORS.white} />
@@ -228,6 +234,16 @@ const CartScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
+        <View style={{ marginRight: 0, marginBottom: 70 }}>
+          <TouchableOpacity
+            onPress={() => {
+              deleteProductFromCart(nhathuoc.manhathuoc, item.sanpham.masp);
+            }}
+          >
+            {/* <Text>X</Text> */}
+            <Icon name="delete-sweep" size={18} color={COLORS.dark} />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -242,49 +258,93 @@ const CartScreen = ({ navigation }) => {
         <Icon name="arrow-back-ios" size={28} onPress={navigation.goBack} />
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>Cart</Text>
       </View>
-      <FlatList
-        keyExtractor={(item) => "key" + item.id.masp}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 80 }}
-        data={listData}
-        renderItem={({ item, index }) => <CartCard item={item} index={index} />}
-        ListFooterComponentStyle={{ paddingHorizontal: 20, marginTop: 20 }}
-        ListFooterComponent={() => (
-          <View>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginVertical: 15,
-              }}
-            >
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                Total Price
+      {typeof listData !== "undefined" && listData.length > 0 ? (
+        <FlatList
+          keyExtractor={(item) => "key" + item.id.masp}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 80 }}
+          data={listData}
+          renderItem={({ item, index }) => (
+            <CartCard item={item} index={index} />
+          )}
+          ListFooterComponentStyle={{ paddingHorizontal: 20, marginTop: 20 }}
+          ListFooterComponent={() => (
+            <View>
+              <Text
+                style={{ fontSize: 18, fontWeight: "bold", marginBottom: 15 }}
+              >
+                Billing Information
               </Text>
-              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                {total} VND
-              </Text>
-            </View>
-            <View style={{ marginHorizontal: 30 }}>
-              <PrimaryButton
-                title="CHECKOUT"
-                onPress={() => {
-                  // total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
-                  total && dataCart
-                    ? navigation.navigate("CheckOutMethodScreen", {
-                        total,
-                        dataCart,
-                      })
-                    : Alert.alert("Fail!", "Cannot checkout without item!");
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  // marginVertical: 15,
                 }}
-              />
+              >
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  Order value:
+                </Text>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  {currencyFormat(total)}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  // marginVertical: 15,
+                  marginBottom: 15,
+                }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>Total:</Text>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  {currencyFormat(total)}
+                </Text>
+              </View>
+
+              <View style={{ marginHorizontal: 30 }}>
+                <PrimaryButton
+                  title="CHECKOUT"
+                  onPress={() => {
+                    // total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
+                    total && dataCart
+                      ? navigation.navigate("CheckOutMethodScreen", {
+                          total,
+                          dataCart,
+                        })
+                      : Alert.alert("Fail!", "Cannot checkout without item!");
+                  }}
+                />
+              </View>
             </View>
+          )}
+        />
+      ) : (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <Image
+            source={{
+              uri: "https://www.seekpng.com/png/detail/117-1170538_404-your-cart-is-empty.png",
+            }}
+            style={{
+              marginTop: 16,
+              height: 200,
+              width: 500,
+              alignSelf: "auto",
+              resizeMode: "contain",
+            }}
+          />
+          <View style={{ marginHorizontal: 30 }}>
+            <SecondaryButton
+              title="BUY SOMETHING !!!"
+              onPress={() => {
+                // total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
+                navigation.goBack();
+              }}
+            />
           </View>
-        )}
-      />
-      {/* <View style={style.header}>
-        <Button variant="primary" title="Hủy đơn" onPress={() => {}} />
-      </View> */}
+        </View>
+      )}
     </ScrollView>
   );
 };

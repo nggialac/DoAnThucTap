@@ -205,7 +205,7 @@ export default function SignUpScreen({ navigation }) {
               )}
             </TouchableOpacity>
           </View>
-          <Text style={[styles.text_footer, { marginTop: 15 }]}>
+          {/* <Text style={[styles.text_footer, { marginTop: 15 }]}>
             Confirm Password
           </Text>
           <View style={styles.action}>
@@ -217,7 +217,7 @@ export default function SignUpScreen({ navigation }) {
               autoCapitalize="none"
               onChangeText={(val) => handleConfirmPasswordChange(val)}
               value={data.confirmPassword}
-            />
+            /> */}
             {/* <TouchableOpacity onPress={updateConfirmSecureTextEntry}>
               {data.confirm_secureTextEntry ? (
                 <Feather name="eye-off" color="grey" size={16} />
@@ -225,10 +225,10 @@ export default function SignUpScreen({ navigation }) {
                 <Feather name="eye" color="green" size={16} />
               )}
             </TouchableOpacity> */}
-          </View>
+          {/* </View> */}
           <Text style={styles.text_footer}>Name</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="tag" color="#05375a" size={20} />
             <TextInput
               placeholder="Name"
               style={styles.textInput}
@@ -242,7 +242,7 @@ export default function SignUpScreen({ navigation }) {
 
           <Text style={styles.text_footer}>Email</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="folder-open" color="#05375a" size={20} />
             <TextInput
               placeholder="Your email"
               style={styles.textInput}
@@ -250,12 +250,13 @@ export default function SignUpScreen({ navigation }) {
               onChangeText={(val) => {
                 handleEmailChange(val);
               }}
+              editable={false}
               value={data.email}
             />
           </View>
           <Text style={styles.text_footer}>Phone</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="phone" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Phone"
               style={styles.textInput}
@@ -268,7 +269,7 @@ export default function SignUpScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Address</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="address-book" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Address"
               style={styles.textInput}

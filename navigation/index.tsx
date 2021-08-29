@@ -264,7 +264,6 @@ export default function Navigation({
   // } else {
   return (
     <AuthContext.Provider value={{ authContext, loginState }}>
-      
       <NavigationContainer
         linking={LinkingConfiguration}
         // theme={colorScheme === "dark" ? DarkTheme : DefaultTheme}
@@ -272,7 +271,6 @@ export default function Navigation({
       >
         {/* {console.log(loginState.userName)} */}
         {/* {console.log(authContext)} */}
-        {console.log(loginState.role)}
         {/* {console.log(loginState.mnv_mnt)} */}
         {loginState.mnv_mnt !== null ? (
           // <RootNavigator role={loginState.role}/>
@@ -282,7 +280,6 @@ export default function Navigation({
             <ClientBottomTabNavigator />
           )
         ) : (
-          // // <AdminBottomTabNavigator/>
           <LoginStackNavigator />
           // <ClientBottomTabNavigator />
         )}

@@ -37,7 +37,7 @@ export default function AdminStatisticScreen({ navigation }) {
                   <View style={styles.square}>
                     <Icon name="file-cabinet" color="#FF6347" size={25} />
                   </View>
-                  <Text style={styles.itemText}>Revenue Month By Year</Text>
+                  <Text style={styles.itemText}>Revenue By Month of Year</Text>
                 </View>
                 <View style={styles.circular}></View>
               </TouchableOpacity>
@@ -46,7 +46,7 @@ export default function AdminStatisticScreen({ navigation }) {
                   <View style={styles.square}>
                     <Icon name="file-certificate" color="#FF6347" size={25} />
                   </View>
-                  <Text style={styles.itemText}>Order Statistic</Text>
+                  <Text style={styles.itemText}>Order Statistic Ratio By Year</Text>
                 </View>
                 <View style={styles.circular}></View>
               </TouchableOpacity>

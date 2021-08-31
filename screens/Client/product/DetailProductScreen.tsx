@@ -30,10 +30,12 @@ import {
   postComment,
   postRating,
   deleteComment,
+  putComment,
 } from "../../../api/RatingCommentApis";
 import { AirbnbRating, Rating } from "react-native-ratings";
 import { Ionicons } from "@expo/vector-icons";
 import { Item } from "react-native-paper/lib/typescript/components/List/List";
+import { getListOrderByClient } from "../../../api/OrderApis";
 const { width } = Dimensions.get("window");
 // import { Image } from "react-native-animatable";
 
@@ -69,12 +71,32 @@ const DetailProductScreen = ({ navigation, route }) => {
         <View style={{ marginBottom: 20 }}>
           {nhathuoc !== null &&
           item.nhathuoc.manhathuoc === nhathuoc.manhathuoc ? (
-            <TouchableOpacity onPress={() => deleteMyComment(item.id)}>
-              <Icon
-                name="delete"
-                style={{ fontSize: 20, justifyContent: "flex-end" }}
-              />
-            </TouchableOpacity>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
+              {/* <TouchableOpacity
+                onPress={() =>
+                  // editComment(medicine, nhathuoc, inputValue, getDate())
+                  editComment(item)
+                }
+              >
+                <Icon
+                  name="edit"
+                  style={{ fontSize: 20, justifyContent: "flex-end" }}
+                />
+              </TouchableOpacity> */}
+
+              <TouchableOpacity onPress={() => deleteMyComment(item.id)}>
+                <Icon
+                  name="delete"
+                  style={{ fontSize: 20, justifyContent: "flex-end" }}
+                />
+              </TouchableOpacity>
+            </View>
           ) : null}
           <TouchableOpacity
             style={[style.card, style.commentCard]}
@@ -85,9 +107,7 @@ const DetailProductScreen = ({ navigation, route }) => {
             <Text>
               {item.nhathuoc.tennhathuoc}: {item.noidung}
             </Text>
-            <Text>
-              Mã:{item.id} - Ngày: {item.time}
-            </Text>
+            <Text style={{ fontSize: 12 }}>Ngày: {item.time}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -107,10 +127,18 @@ const DetailProductScreen = ({ navigation, route }) => {
       });
   };
 
-  const getCommentsOfProduct = (masp: string) => {
+  const [reviewed, setReviewed] = useState(false);
+
+  const getCommentsOfProduct = (masp: string, mant: string) => {
     getListCommentOfProduct(masp)
       .then((res) => {
-        console.log(res.data);
+        // console.log("comments", res.data);
+        const check = res.data.some((e) => {
+          return e.nhathuoc.manhathuoc === mant;
+        });
+        // console.log("check", check);
+        setReviewed(check);
+        if (res.data === []) setReviewed(false);
         setComments(res.data);
       })
       .catch((e) => {
@@ -184,6 +212,30 @@ const DetailProductScreen = ({ navigation, route }) => {
       });
   };
 
+  const [canReview, setCanReview] = useState(false);
+
+  const isOrdered = (mant: string, masp: string) => {
+    getListOrderByClient(mant)
+      .then((res) => {
+        res.data.map((item) => {
+          if (
+            item.listCTDH.filter((e) => {
+              e.sanpham.masp === masp;
+            })
+          ) {
+            // console.log(masp);
+            setCanReview(true);
+          }
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Failed", "Cannot get orders of client! " + e, [
+          { text: "ok" },
+        ]);
+      });
+  };
+
   const postRatingProduct = (
     sanpham: object,
     nhathuoc: object,
@@ -207,6 +259,29 @@ const DetailProductScreen = ({ navigation, route }) => {
         console.log(params);
         console.log(e);
         Alert.alert("Fail", "Cannot get ratings " + e, [{ text: "ok" }]);
+      });
+  };
+
+  const editComment = (
+params
+  ) => {
+    // var params = {
+    //   sanpham,
+    //   nhathuoc,
+    //   noidung,
+    //   time,
+    // };
+    toggleModalVisibility();
+    putComment(params)
+      .then((res) => {
+        // console.log(res.data);
+        // setRatings(res.data.danhgia);
+        Alert.alert("Success", "Comment has Edited ! ", [{ text: "ok" }]);
+      })
+      .catch((e) => {
+        console.log(params);
+        console.log(e);
+        Alert.alert("Failed", "Cannot Edit Comment! " + e, [{ text: "ok" }]);
       });
   };
 
@@ -235,8 +310,9 @@ const DetailProductScreen = ({ navigation, route }) => {
   }
 
   useEffect(() => {
+    isOrdered(nhathuoc.manhathuoc, medicine.masp);
     getRatingOfProduct(medicine.masp);
-    getCommentsOfProduct(medicine.masp);
+    getCommentsOfProduct(medicine.masp, nhathuoc.manhathuoc);
     {
       nhathuoc !== null
         ? clientRated(nhathuoc.manhathuoc, medicine.masp)
@@ -273,7 +349,8 @@ const DetailProductScreen = ({ navigation, route }) => {
 
   const changeQuantity = (val: number) => {
     if (val > medicine.soluong) Alert.alert("Failed, Out of product quantity!");
-    else if(val<1) Alert.alert("Failed, Quantity of product must be more than zero!")
+    else if (val < 1)
+      Alert.alert("Failed, Quantity of product must be more than zero!");
     else {
       setCount(val);
       // setQuantity(val);
@@ -482,31 +559,31 @@ const DetailProductScreen = ({ navigation, route }) => {
           </View>
 
           {/* RATINGS */}
-          <View style={{ paddingHorizontal: 10, alignItems: "center" }}>
-            <Text style={[style.headerText, { marginTop: 30 }]}>
-              Rating for product
-            </Text>
-            <AirbnbRating
-              // ratingBackgroundColor=
-              showRating
-              count={5}
-              reviews={["Terrible", "Bad", "Meh", "OK", "Good"]}
-              size={20}
-              defaultRating={rated}
-              onFinishRating={(val) =>
-                nhathuoc !== null
-                  ? postRatingProduct(medicine, nhathuoc, val)
-                  : Alert.alert("Notice", "Please, Login!")
-              }
-            />
-          </View>
+          {canReview === true ? (
+            <View style={{ paddingHorizontal: 10, alignItems: "center" }}>
+              <Text style={[style.headerText, { marginTop: 30 }]}>
+                Rating for product
+              </Text>
+              <AirbnbRating
+                // ratingBackgroundColor=
+                showRating
+                count={5}
+                reviews={["Terrible", "Bad", "Meh", "OK", "Good"]}
+                size={20}
+                defaultRating={rated}
+                onFinishRating={(val) =>
+                  nhathuoc !== null
+                    ? postRatingProduct(medicine, nhathuoc, val)
+                    : Alert.alert("Notice", "Please, Login!")
+                }
+              />
+            </View>
+          ) : null}
 
           {/* COMMENTS */}
           <View style={{ paddingHorizontal: 10 }}>
             <View style={{ alignItems: "center" }}>
-              <Text style={[style.headerText, { marginTop: 30 }]}>
-                Comments
-              </Text>
+              <Text style={[style.headerText, { marginTop: 30 }]}>Reviews</Text>
             </View>
             <FlatList
               data={comments}
@@ -548,7 +625,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                         }
                         style={[style.button, style.buttonOpen, { margin: 10 }]}
                       >
-                        <Text style={{ color: COLORS.white }}>Comment</Text>
+                        <Text style={{ color: COLORS.white }}>Review</Text>
                       </Pressable>
                       <Pressable
                         onPress={toggleModalVisibility}
@@ -573,7 +650,9 @@ const DetailProductScreen = ({ navigation, route }) => {
           </Pressable> */}
 
             <View style={{ alignItems: "center" }}>
-              {nhathuoc !== null ? (
+              {console.log("canreview", canReview)}
+              {console.log("reviewed", reviewed)}
+              {canReview === true && reviewed === false ? (
                 <TouchableOpacity onPress={toggleModalVisibility}>
                   <Ionicons
                     name="add-circle-outline"

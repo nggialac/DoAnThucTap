@@ -274,7 +274,7 @@ export default function Navigation({
         {/* {console.log(loginState.mnv_mnt)} */}
         {loginState.mnv_mnt !== null ? (
           // <RootNavigator role={loginState.role}/>
-          loginState.role === "1" ? (
+          loginState.role === "1" || loginState.role === "3" ? (
             <AdminBottomTabNavigator />
           ) : (
             <ClientBottomTabNavigator />

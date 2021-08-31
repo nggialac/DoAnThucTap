@@ -4,11 +4,22 @@ export function getListOrder() {
   return InstanceApi.get(`donhang`);
 }
 
-export function postOrder(manhathuoc: string, hinhthucthanhtoan: number, body, paymentCreated: string) {
-  return InstanceApi.post(`donhang/${manhathuoc}/${hinhthucthanhtoan}`, body, {params:{paymentCreated: paymentCreated}});
+export function postOrder(
+  manhathuoc: string,
+  hinhthucthanhtoan: number,
+  body,
+  paymentCreated: string
+) {
+  return InstanceApi.post(`donhang/${manhathuoc}/${hinhthucthanhtoan}`, body, {
+    params: { paymentCreated: paymentCreated },
+  });
 }
 
-export function postOrderCash(manhathuoc: string, hinhthucthanhtoan: number, body) {
+export function postOrderCash(
+  manhathuoc: string,
+  hinhthucthanhtoan: number,
+  body
+) {
   return InstanceApi.post(`donhang/${manhathuoc}/${hinhthucthanhtoan}`, body);
 }
 

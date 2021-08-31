@@ -7,41 +7,55 @@ import {
   View,
 } from "react-native";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import { AuthContext } from "../../components/ContextLogin";
 
 export default function AdminHomeScreen({ navigation }) {
+  const context = React.useContext(AuthContext);
+  const nhanvien = context.loginState.mnv_mnt;
+  console.log(nhanvien);
 
   return (
-      <View style={styles.container}>
-        {/* Added this scroll view to enable scrolling when list gets longer than the page */}
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-          }}
-          keyboardShouldPersistTaps="handled"
-        >
-          {/* Today's Tasks */}
-          <View style={styles.tasksWrapper}>
-            <Text style={styles.sectionTitle}>Admin's Functions</Text>
-            <View style={styles.items}>
-              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('TabAdminHomeOrder')}>
-                <View style={styles.itemLeft}>
-                  <View style={styles.square}>
-                    <Icon name="party-popper" color="#FF6347" size={25} />
-                  </View>
-                  <Text style={styles.itemText}>ORDERS</Text>
+    <View style={styles.container}>
+      {/* Added this scroll view to enable scrolling when list gets longer than the page */}
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Today's Tasks */}
+        <View style={styles.tasksWrapper}>
+          <Text style={styles.sectionTitle}>Admin's Functions</Text>
+          <View style={styles.items}>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => navigation.navigate("TabAdminHomeOrder")}
+            >
+              <View style={styles.itemLeft}>
+                <View style={styles.square}>
+                  <Icon name="party-popper" color="#FF6347" size={25} />
                 </View>
-                <View style={styles.circular}></View>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('TabAdminHomeClient')}>
-                <View style={styles.itemLeft}>
-                  <View style={styles.square}>
-                    <Icon name="account-box" color="#FF6347" size={25} />
-                  </View>
-                  <Text style={styles.itemText}>CLIENTS</Text>
+                <Text style={styles.itemText}>ORDERS</Text>
+              </View>
+              <View style={styles.circular}></View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => navigation.navigate("TabAdminHomeClient")}
+            >
+              <View style={styles.itemLeft}>
+                <View style={styles.square}>
+                  <Icon name="account-box" color="#FF6347" size={25} />
                 </View>
-                <View style={styles.circular}></View>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('TabAdminHomeStaff')}>
+                <Text style={styles.itemText}>CLIENTS</Text>
+              </View>
+              <View style={styles.circular}></View>
+            </TouchableOpacity>
+            {nhanvien.taikhoan.quyen.maquyen == 1 ? (
+              <TouchableOpacity
+                style={styles.item}
+                onPress={() => navigation.navigate("TabAdminHomeStaff")}
+              >
                 <View style={styles.itemLeft}>
                   <View style={styles.square}>
                     <Icon name="account" color="#FF6347" size={25} />
@@ -50,19 +64,23 @@ export default function AdminHomeScreen({ navigation }) {
                 </View>
                 <View style={styles.circular}></View>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('TabAdminHomeProduct')}>
-                <View style={styles.itemLeft}>
-                  <View style={styles.square}>
-                    <Icon name="folder-text" color="#FF6347" size={25} />
-                  </View>
-                  <Text style={styles.itemText}>MEDICINES</Text>
+            ) : null}
+            <TouchableOpacity
+              style={styles.item}
+              onPress={() => navigation.navigate("TabAdminHomeProduct")}
+            >
+              <View style={styles.itemLeft}>
+                <View style={styles.square}>
+                  <Icon name="folder-text" color="#FF6347" size={25} />
                 </View>
-                <View style={styles.circular}></View>
-              </TouchableOpacity>
-            </View>
+                <Text style={styles.itemText}>MEDICINES</Text>
+              </View>
+              <View style={styles.circular}></View>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 

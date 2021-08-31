@@ -23,6 +23,10 @@ const DetailMedicineScreen = ({ route }) => {
   const itemData = route.params.itemData;
   const navTitleView = useRef(null);
 
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
+
   return (
     <View style={styles.container}>
       {/* {console.log(navTitleView)} */}
@@ -64,9 +68,14 @@ const DetailMedicineScreen = ({ route }) => {
           </View>
         </TriggeringView>
         <View style={[styles.section, styles.sectionLarge]}>
-          <Text style={styles.mota_ngan}>{itemData.tensp}</Text>
-          <Text style={styles.sectionContent}>{itemData.mota_ngan}</Text>
-          <Text style={styles.sectionContent}>{itemData.mota_chitiet}</Text>
+          <Text style={styles.mota_ngan}>{itemData.tensp} - {itemData.mota_ngan}</Text>
+          {/* <Text style={styles.sectionContent}></Text> */}
+          
+          <Text style={styles.sectionContent}>Số lượng tồn: {itemData.soluong}</Text>
+          <Text style={styles.sectionContent}>Giá bán: {currencyFormat(itemData.dongia)}</Text>
+          <Text style={styles.sectionContent}>Danh mục: {itemData.danhmuc.tendm}</Text>
+          <Text style={styles.mota_chitiet}>{itemData.mota_chitiet}</Text>
+
         </View>
 
         {/* <View style={styles.section}>
@@ -115,6 +124,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   sectionContent: {
+    fontSize: 16,
+    fontWeight:"600",
+    textAlign: "justify",
+  },
+  mota_chitiet:{
     fontSize: 16,
     textAlign: "justify",
   },

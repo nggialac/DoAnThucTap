@@ -19,6 +19,7 @@ import {
   VictoryStack,
   VictoryPie,
   VictoryTooltip,
+  VictoryLabel,
 } from "victory-native";
 import { getRevenue, getRevenueByFromTo } from "../../../api/StatisticApis";
 import { Picker } from "@react-native-picker/picker";
@@ -41,9 +42,12 @@ export default function StatisticByMonthScreen() {
   const getRevenueOfMonth = (year) => {
     getRevenue(year)
       .then((res) => {
-        console.log(res.data);
-        setRevenue(res.data);
+        // console.log(res.data);
+        // setRevenue(res.data);
+        const temp = res.data.map(obj=> ({ ...obj, label: currencyFormat(obj.tien) }))
         // test(res.data);
+        setRevenue(temp);
+        // console.log(temp);
       })
       .catch((e) => {
         console.log(e);
@@ -98,8 +102,11 @@ export default function StatisticByMonthScreen() {
     return 0;
   }
 
-  const [show, setShow] = useState(false);
   const [year, setYear] = useState(new Date().getFullYear());
+
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
 
   return (
     <ScrollView
@@ -111,14 +118,11 @@ export default function StatisticByMonthScreen() {
         <View style={styles.pickerWrap}>
           <Text style={styles.textTitle}>Doanh thu hàng tháng năm</Text>
           <TextInput
-            value={year}
+            value={year.toString()}
             onChangeText={(e) =>
               e.length < 5
                 ? setYear(e)
-                : Alert.alert(
-                    "Failed",
-                    "Invalid data! Length text < 5"
-                  )
+                : Alert.alert("Failed", "Invalid data! Length text < 5")
             }
             keyboardType={"number-pad"}
             style={{
@@ -134,6 +138,7 @@ export default function StatisticByMonthScreen() {
             <VictoryChart
               domainPadding={50}
               theme={VictoryTheme.material}
+              
               // animate={{duration: 500}}
             >
               <VictoryAxis
@@ -145,7 +150,19 @@ export default function StatisticByMonthScreen() {
                 // tickFormat specifies how ticks should be displayed
                 tickFormat={(x) => `$${x / 1000000}tr`}
               />
-              <VictoryBar data={revenue.sort(compare)} x="thang" y="tien" />
+              <VictoryBar
+                data={revenue.sort(compare)}
+                x="thang"
+                y="tien"
+                
+                labelComponent={
+                  <VictoryLabel
+                    dy={-20}
+                    // backgroundStyle={{ fill: "tomato", opacity: 0.6 }}
+                    backgroundPadding={{ bottom: 5, top: 5 }}
+                  />
+                }
+              />
             </VictoryChart>
           </View>
         ) : (

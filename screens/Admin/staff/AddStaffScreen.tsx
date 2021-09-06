@@ -219,7 +219,7 @@ export default function AddStaffScreen({ navigation }) {
 
           <Text style={styles.text_footer}>Last Name</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="user-circle" color="#05375a" size={20} />
             <TextInput
               placeholder="Last Name"
               style={styles.textInput}
@@ -231,7 +231,7 @@ export default function AddStaffScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>First Name</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="user-circle" color="#05375a" size={20} />
             <TextInput
               placeholder="First Name"
               style={styles.textInput}
@@ -243,7 +243,7 @@ export default function AddStaffScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Sex</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="info" color="#05375a" size={20} />
             {/* <TextInput
               placeholder="Sex"
               style={styles.textInput}
@@ -264,7 +264,7 @@ export default function AddStaffScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Email</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="stack-overflow" color="#05375a" size={20} />
             <TextInput
               placeholder="Your email"
               style={styles.textInput}
@@ -276,7 +276,7 @@ export default function AddStaffScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Phone</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="phone" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Phone"
               style={styles.textInput}
@@ -288,7 +288,7 @@ export default function AddStaffScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Address</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="address-book" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Address"
               style={styles.textInput}

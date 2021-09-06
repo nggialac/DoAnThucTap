@@ -120,9 +120,9 @@ export default function StatisticByMonthScreen() {
           <TextInput
             value={year.toString()}
             onChangeText={(e) =>
-              e.length < 5
+              e.length < 5 && parseInt(e) <= new Date().getFullYear()
                 ? setYear(e)
-                : Alert.alert("Failed", "Invalid data! Length text < 5")
+                : Alert.alert("Failed", "Invalid data! Length text < 5 and must be smaller current year.")
             }
             keyboardType={"number-pad"}
             style={{
@@ -180,7 +180,7 @@ export default function StatisticByMonthScreen() {
               ? getRevenueOfMonth(year)
               : Alert.alert(
                   "Failed",
-                  "Invalid data! (year > 2000) and (year < 2100)"
+                  "Invalid data! (year > 2000)"
                 )
           }
           title="Submit!"

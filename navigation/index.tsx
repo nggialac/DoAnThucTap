@@ -3,8 +3,8 @@
  * https://reactnavigation.org/docs/getting-started
  *
  */
- import 'react-native-get-random-values';
- 
+import "react-native-get-random-values";
+
 import {
   NavigationContainer,
   DefaultTheme,
@@ -112,6 +112,17 @@ export default function Navigation({
           mnv_mnt: null,
           isLoading: false,
         };
+
+      case "CHECK":
+        return {
+          ...prevState,
+          userName: null,
+          role: 0,
+          userToken: null,
+          mnv_mnt: null,
+          isLoading: false,
+        };
+
       case "REGISTER":
         return {
           ...prevState,
@@ -224,6 +235,9 @@ export default function Navigation({
         setIsDarkTheme((isDarkTheme) => !isDarkTheme);
       },
       // getContext: loginState.mnv_mnt
+      check: () => {
+        dispatch({ type: "CHECK" });
+      },
     }),
     []
   );
@@ -272,6 +286,8 @@ export default function Navigation({
         {/* {console.log(loginState.userName)} */}
         {/* {console.log(authContext)} */}
         {/* {console.log(loginState.mnv_mnt)} */}
+        {/* {<LoginStackNavigator />} */}
+        {/* {loginState.role == 0 ? <LoginStackNavigator /> : null} */}
         {loginState.mnv_mnt !== null ? (
           // <RootNavigator role={loginState.role}/>
           loginState.role === "1" || loginState.role === "3" ? (
@@ -279,9 +295,10 @@ export default function Navigation({
           ) : (
             <ClientBottomTabNavigator />
           )
+        ) : loginState.role !== 0 ? (
+          <ClientBottomTabNavigator />
         ) : (
           <LoginStackNavigator />
-          // <ClientBottomTabNavigator />
         )}
       </NavigationContainer>
     </AuthContext.Provider>

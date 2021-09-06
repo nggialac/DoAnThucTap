@@ -156,7 +156,7 @@ const MedicineScreen = ({ navigation, route }) => {
               onChangeText={(e) => setTextChange(e)}
             />
             <Button title="Change" color={"#3e2465"} onPress={() => putDM({madm: madm, tendm: textChange})} />
-            <Button title="Hide modal" color={"#694fad"} onPress={() => setModalVisible(!isModalVisible)} />
+            <Button title="Cancel" color={"#694fad"} onPress={() => setModalVisible(!isModalVisible)} />
           </View>
         </Modal>
       </View>

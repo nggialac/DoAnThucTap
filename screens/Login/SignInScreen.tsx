@@ -101,9 +101,8 @@ export default function SignInScreen({ navigation }) {
       );
       return;
     }
-
-    console.log(userName);
-    console.log(password);
+    // console.log(userName);
+    // console.log(password);
     const params = { password: password, username: userName };
     await postLogin(params)
       .then(async (response) => {
@@ -115,19 +114,13 @@ export default function SignInScreen({ navigation }) {
         const foundUser = await Users.filter((item) => {
           return userName == item.username && password == item.password;
         });
-        // getDataUser(user, mnv_mnt);
-
-        // console.log("TEST: " + mnv_mnt);
-        // console.log(foundUser);
         await signIn.authContext.signIn(foundUser);
-        // navigation.goBack("ClientProfileScreen");
       })
       .catch((e) => {
         console.log(e);
         Alert.alert("Invalid User!", "Username or password is incorrect.", [
           { text: "Okay" },
         ]);
-        // alert(e);
       });
   };
 

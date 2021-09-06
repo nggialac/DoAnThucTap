@@ -163,12 +163,12 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
         ListFooterComponentStyle={{ paddingHorizontal: 20, marginTop: 20 }}
         ListFooterComponent={() => (
           <View>
-            {listData.trangthai === 0 || listData.trangthai === 1 ? (
+            {listData.trangthai === 0 || listData.trangthai === 1 || (listData.trangthai === 2 && nhathuoc.taikhoan.quyen.maquyen !== 2) ? (
               <View style={{ marginHorizontal: 20 }}>
                 <Button
                   variant="primary"
                   loading={false}
-                  title="CANCEL THIS ORDER"
+                  title="CANCEL ORDER"
                   onPress={() => {
                     cancelOrderByMadh(listData.madh);
                   }}

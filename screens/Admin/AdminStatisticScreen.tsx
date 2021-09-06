@@ -46,7 +46,7 @@ export default function AdminStatisticScreen({ navigation }) {
                   <View style={styles.square}>
                     <Icon name="file-certificate" color="#FF6347" size={25} />
                   </View>
-                  <Text style={styles.itemText}>Order Statistic Ratio By Year</Text>
+                  <Text style={styles.itemText}>Order Statistic Ratio By Date</Text>
                 </View>
                 <View style={styles.circular}></View>
               </TouchableOpacity>

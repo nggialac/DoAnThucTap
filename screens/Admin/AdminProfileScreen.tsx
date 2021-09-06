@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import { StyleSheet, View, SafeAreaView, ScrollView, ToastAndroid, Alert } from "react-native";
 import {
   Avatar,
   Caption,
@@ -20,7 +20,25 @@ export default function AdminProfileScreen({navigation}) {
   const nhanvien = context.loginState.mnv_mnt;
 
   const logoutHandle = () => {
-    signOut.authContext.signOut();
+    // signOut.authContext.signOut();
+    Alert.alert("Notice", "You wanna logout ?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          navigation.navigate("TabClientHomeScreen");
+          signOut.authContext.signOut();
+          ToastAndroid.showWithGravity(
+            "You are now logged out!",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+        },
+      },
+      {
+        text: "Ask me later",
+        onPress: () => {},
+      },
+    ]);
   }
 
   return (
@@ -35,7 +53,7 @@ export default function AdminProfileScreen({navigation}) {
             size={80}
           />
           <View style={{marginLeft: 20}}>
-            <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>Lac Nguyen</Title>
+            <Title style={[styles.title, {marginTop: 15, marginBottom: 5}]}>{nhanvien.ten} {nhanvien.ho}</Title>
             <Caption style={styles.caption}>{nhanvien.manv}</Caption>
           </View>
         </View>

@@ -120,7 +120,7 @@ function AdminTabHomeNavigator({ navigation }) {
       <TabAdminHomeStack.Screen
         name="TabAdminHomeScreen"
         component={TabAdminHomeScreen}
-        options={{ headerTitle: "Admin Functions" }}
+        options={{ headerTitle: "Functions Screen" }}
       />
 
       {/* <TabAdminHomeStack.Screen
@@ -317,6 +317,7 @@ function AdminTabHomeNavigator({ navigation }) {
         options={() => ({
           headerBackTitleVisible: false,
           // headerShown: false,
+          headerTitle: "Add Product"
         })}
       />
     </TabAdminHomeStack.Navigator>
@@ -337,22 +338,22 @@ function AdminTabStatisticNavigator() {
       <TabAdminStatisticStack.Screen
         name="DateToDateScreen"
         component={DateToDateScreen}
-        options={{ headerTitle: "Statistic By Day" }}
+        options={{ headerTitle: "Revenue Statistic By Day" }}
       />
       <TabAdminStatisticStack.Screen
         name="StatisticByMonthScreen"
         component={StatisticByMonthScreen}
-        options={{ headerTitle: "Statistic By Month" }}
+        options={{ headerTitle: "Revenue Statistic By Month" }}
       />
             <TabAdminStatisticStack.Screen
         name="OrderStatisticScreen"
         component={OrderStatisticScreen}
-        options={{ headerTitle: "Statistic By Day" }}
+        options={{ headerTitle: "Order Statistic By Day" }}
       />
       <TabAdminStatisticStack.Screen
         name="StockQuantityScreen"
         component={StockQuantityScreen}
-        options={{ headerTitle: "Statistic By Month" }}
+        options={{ headerTitle: "Product Stock Statistic" }}
       />
     </TabAdminStatisticStack.Navigator>
   );
@@ -399,7 +400,7 @@ function AdminTabProfileNavigator({ navigation }) {
         name="TabAdminProfileScreen"
         component={TabAdminProfileScreen}
         options={{
-          headerTitle: "Tab Profile Home Title",
+          headerTitle: "Profile Screen",
           headerRight: () => (
             <MaterialCommunityIcons.Button
               name="account-edit"

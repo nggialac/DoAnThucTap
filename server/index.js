@@ -419,29 +419,21 @@ app.post("/charge-card-off-session", async (req, res) => {
 // Watch this video to get started: https://youtu.be/rPR2aJ6XnAc.
 
 app.post("/payment-sheet", async (req, res) => {
-
   const {
     total,
   } = req.body;
-
   const { secret_key } = getKeys();
-
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
     typescript: true
   });
-
   const customers = await stripe.customers.list();
-
-  // Here, we're getting latest customer only for example purposes.
   const customer = customers.data[0];
-
   if (!customer) {
     res.send({
       error: "You have no customer created"
     });
   }
-
   const ephemeralKey = await stripe.ephemeralKeys.create(
     { customer: customer.id },
     { apiVersion: "2020-08-27" }
@@ -451,13 +443,6 @@ app.post("/payment-sheet", async (req, res) => {
     currency: "vnd",
     customer: customer.id
   });
-
-  // const paymentMethods = await stripe.paymentMethods.list({
-  //   customer: customer.id,
-  //   type: "card"
-  // });
-  // console.log(paymentIntent);
-  // console.log(paymentIntent.created);
   res.json({
     paymentIntent: paymentIntent.client_secret,
     ephemeralKey: ephemeralKey.secret,

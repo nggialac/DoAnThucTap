@@ -46,16 +46,17 @@ export default function OrderStatisticScreen() {
 
   useEffect(() => {
     // listOrder(from);
+    setShowTo(false);
+    setShowFrom(false);
   }, [refreshing]);
 
   const listOrder = async (from: string, to: string) => {
+    console.log(from, to);
     await getDoanhThuByTrangThaiByDate(from, to)
       .then((res) => {
-        // console.log(res.data);
         const total = res.data.reduce(function (acc, obj) {
           return acc + obj.sodon;
         }, 0);
-        // console.log(total);
         const temp = res.data.map((obj) => ({
           ...obj,
           label: listTrangthai[obj.trangthai] + `(${obj.sodon})`,
@@ -75,7 +76,7 @@ export default function OrderStatisticScreen() {
   const [showTo, setShowTo] = useState(false);
 
   const onChangeFrom = (event, selectedDate) => {
-    if (selectedDate.getTime() < new Date().getTime()) {
+    if (selectedDate.getTime() < new Date().getTime() && selectedDate.getTime() <= dateTo.getTime()) {
       const currentDate = selectedDate || dateFrom;
       setShowFrom(Platform.OS === "ios");
       setDateFrom(currentDate);
@@ -86,7 +87,7 @@ export default function OrderStatisticScreen() {
   };
 
   const onChangeTo = (event, selectedDate) => {
-    if (selectedDate.getTime() < new Date().getTime()) {
+    if (selectedDate.getTime() < new Date().getTime() && selectedDate.getTime() >= dateFrom.getTime()) {
       const currentDate = selectedDate || dateTo;
       setShowTo(Platform.OS === "ios");
       setDateTo(currentDate);
@@ -184,19 +185,21 @@ export default function OrderStatisticScreen() {
             }}
           >
             <TouchableOpacity
-              onPress={() =>
-                listOrder(
+              onPress={async() =>
+                {var temp = new Date();
+                  temp.setDate(dateTo.getDate()+1);
+                await listOrder(
                   dateFrom.getFullYear().toString() +
                     "-" +
                     (dateFrom.getMonth() + 1).toString() +
                     "-" +
                     dateFrom.getDate().toString(),
-                  dateTo.getFullYear().toString() +
+                    temp.getFullYear().toString() +
                     "-" +
-                    (dateTo.getMonth() + 1).toString() +
+                    (temp.getMonth() + 1).toString() +
                     "-" +
-                    (dateTo.getDate() + 1).toString()
-                )
+                    (temp.getDate()).toString()
+                )}
               }
               style={{ alignItems: "center" }}
             >

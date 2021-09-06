@@ -158,7 +158,7 @@ export default function EditStaffScreen({ route }) {
     <View style={styles.container}>
       {/* <StatusBar backgroundColor="#009387" barStyle="light-content" /> */}
       <View style={styles.header}>
-        <Text style={styles.text_header}>Add Staff!</Text>
+        <Text style={styles.text_header}>Edit Staff!</Text>
       </View>
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -205,7 +205,7 @@ export default function EditStaffScreen({ route }) {
 
           <Text style={styles.text_footer}>Last Name</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="user-circle" color="#05375a" size={20} />
             <TextInput
               value={data.ho}
               placeholder="Last Name"
@@ -218,7 +218,7 @@ export default function EditStaffScreen({ route }) {
           </View>
           <Text style={styles.text_footer}>First Name</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="user-circle" color="#05375a" size={20} />
             <TextInput
               value={data.ten}
               placeholder="First Name"
@@ -231,7 +231,7 @@ export default function EditStaffScreen({ route }) {
           </View>
           <Text style={styles.text_footer}>Sex</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="info" color="#05375a" size={20} />
             {/* <TextInput
               placeholder="Sex"
               style={styles.textInput}
@@ -252,7 +252,7 @@ export default function EditStaffScreen({ route }) {
           </View>
           <Text style={styles.text_footer}>Email</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="stack-overflow" color="#05375a" size={20} />
             <TextInput
               value={data.email}
               placeholder="Your email"
@@ -265,7 +265,7 @@ export default function EditStaffScreen({ route }) {
           </View>
           <Text style={styles.text_footer}>Phone</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="phone" color="#05375a" size={20} />
             <TextInput
               value={data.sdt}
               placeholder="Your Phone"
@@ -278,7 +278,7 @@ export default function EditStaffScreen({ route }) {
           </View>
           <Text style={styles.text_footer}>Address</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="address-book" color="#05375a" size={20} />
             <TextInput
               value={data.diachi}
               placeholder="Your Address"

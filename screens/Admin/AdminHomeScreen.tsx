@@ -25,7 +25,7 @@ export default function AdminHomeScreen({ navigation }) {
       >
         {/* Today's Tasks */}
         <View style={styles.tasksWrapper}>
-          <Text style={styles.sectionTitle}>Admin's Functions</Text>
+          <Text style={styles.sectionTitle}>{nhanvien.taikhoan.quyen.maquyen == 1 ? "Admin's Functions" : "Staff's Functions"}</Text>
           <View style={styles.items}>
             <TouchableOpacity
               style={styles.item}

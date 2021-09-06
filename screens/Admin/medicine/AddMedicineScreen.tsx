@@ -17,10 +17,13 @@ import * as ImagePicker from "expo-image-picker";
 import { Formik } from "formik";
 // import  firebase  from "../../../assets/firebase/FirebaseConfig";
 import firebase from "firebase";
-import { getListCategoryMedicine, postMedicine } from "../../../api/MedicineApis";
+import {
+  getListCategoryMedicine,
+  postMedicine,
+} from "../../../api/MedicineApis";
 import { color } from "react-native-reanimated";
 // import { color } from "react-native-reanimated";
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 
 LogBox.ignoreAllLogs();
 
@@ -38,7 +41,7 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const AddMedicineScreen = ({route}) => {
+const AddMedicineScreen = ({ route }) => {
   // console.log(route.params);
   // const [dm, setDm] = useState([route.params]);
   const [image, setImage] = useState();
@@ -79,7 +82,11 @@ const AddMedicineScreen = ({route}) => {
     }
   };
 
-  const uploadImage = async (uri: string, name: string, firebasePath: string) => {
+  const uploadImage = async (
+    uri: string,
+    name: string,
+    firebasePath: string
+  ) => {
     const response = await fetch(uri);
     const blob = await response.blob();
     const imageRef = firebase.storage().ref(`${firebasePath}/${name}`);
@@ -92,25 +99,21 @@ const AddMedicineScreen = ({route}) => {
     return url;
   };
 
-  const addMedicine = (params:object) => {
+  const addMedicine = (params: object) => {
     postMedicine(params)
-    .then(res=>{
-      console.log(res);
+      .then((res) => {
+        console.log(res);
 
-      Alert.alert("", "Success!", [
-        { text: "ok" },
-      ]);
-    })
-    .catch(e=>{
-      // Alert.alert("Submit Failed", e+"", [
-      //   { text: "ok" },
-      // ]);
-      Alert.alert("Submit Failed", JSON.stringify(params), [
-        { text: "ok" },
-      ]);
-      console.log(JSON.stringify(params));
-    })
-  } 
+        Alert.alert("", "Success!", [{ text: "ok" }]);
+      })
+      .catch((e) => {
+        // Alert.alert("Submit Failed", e+"", [
+        //   { text: "ok" },
+        // ]);
+        Alert.alert("Submit Failed", JSON.stringify(params), [{ text: "ok" }]);
+        console.log(JSON.stringify(params));
+      });
+  };
 
   return (
     <View style={styles.container}>
@@ -125,7 +128,10 @@ const AddMedicineScreen = ({route}) => {
             marginTop: 20,
           }}
         >
-          <TouchableOpacity onPress={pickImage} style={{backgroundColor: colors.background}}>
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{ backgroundColor: colors.background }}
+          >
             <ImageBackground
               source={{
                 uri: image,
@@ -165,7 +171,10 @@ const AddMedicineScreen = ({route}) => {
             !values.mota_ngan ||
             !values.soluong ||
             !values.tensp ||
-            !image
+            !image ||
+            (parseFloat(values.dongia) >= 1000 &&
+              parseFloat(values.dongia) < 1000000000) ||
+            (parseInt(values.soluong) >= 0 && parseInt(values.soluong) <= 1000000)
             // danhmuc
           ) {
             // errors.masp = "Required";
@@ -175,7 +184,7 @@ const AddMedicineScreen = ({route}) => {
             errors.mota_chitiet = "Required";
             errors.soluong = "Required";
             errors.tensp = "Required";
-            Alert.alert("Submit Failed", "Please insert required data!", [
+            Alert.alert("Submit Failed", "Please insert valid data!", [
               { text: "ok" },
             ]);
           } else {
@@ -191,21 +200,20 @@ const AddMedicineScreen = ({route}) => {
             // //
 
             addMedicine({
-              danhmuc: 
-              {
+              danhmuc: {
                 madm: danhmuc.madm,
-                tendm: danhmuc.tendm
+                tendm: danhmuc.tendm,
               },
               dongia: parseFloat(values.dongia),
               // khuyenmai: parseFloat(values.khuyenmai),
-              khuyenmai: 0,
+              // khuyenmai: 0,
               // masp: values.masp,
               mota_chitiet: values.mota_chitiet,
               mota_ngan: values.mota_ngan,
               photo: values.photo,
               soluong: parseInt(values.soluong),
-              tensp: values.tensp
-            })
+              tensp: values.tensp,
+            });
           }
         }}
       >
@@ -446,5 +454,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     backgroundColor: "#f2f2f2",
-  }
+  },
 });

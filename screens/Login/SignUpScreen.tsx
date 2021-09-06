@@ -50,6 +50,13 @@ export default function SignUpScreen({ navigation }) {
       return;
     }
 
+    if (
+      data.sdt.length !== 10
+    ) {
+      Alert.alert("Submit Info", "Invalid Phone number! (10 numbers)", [{ text: "ok" }]);
+      return;
+    }
+
     const params = {
       diachi: data.diachi,
       email: data.email,
@@ -273,6 +280,7 @@ export default function SignUpScreen({ navigation }) {
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20} />
             <TextInput
+            keyboardType="email-address"
               placeholder="Your email"
               style={styles.textInput}
               autoCapitalize="none"

@@ -171,9 +171,10 @@ const DetailCommentsScreen = ({ navigation, route }) => {
         {/* {console.log(comments)} */}
         <TouchableOpacity style={[style.card, style.commentCard]}>
           <Text>
-            {comments.item.nhathuoc.manhathuoc}: {comments.item.noidung}
+            {comments.item.nhathuoc.manhathuoc}: 
           </Text>
-          <Text>Ngày: {comments.item.time}</Text>
+          <Text>{comments.item.noidung}</Text>
+          <Text style={{fontSize: 10}}>Ngày: {comments.item.time}</Text>
         </TouchableOpacity>
       </View>
       {/* COMMENT OF NV */}
@@ -233,7 +234,7 @@ const DetailCommentsScreen = ({ navigation, route }) => {
         onPress={toggleModalVisibility}
         style={[style.button, style.buttonClose, { alignItems: "center" }]}
       >
-        <Text style={{ color: COLORS.white }}>Add more reply</Text>
+        <Text style={{ color: COLORS.white }}>Add Reply</Text>
       </Pressable>
 
       {/* <View style={{ alignItems: "center" }}>

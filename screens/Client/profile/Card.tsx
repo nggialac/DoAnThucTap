@@ -10,6 +10,10 @@ const Card = ({ itemData, onPress }) => {
     4: "Đã hủy",
   };
 
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
+
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.card}>
@@ -39,7 +43,7 @@ const Card = ({ itemData, onPress }) => {
             {listTrangthai[itemData.trangthai]}
           </Text>
           <Text numberOfLines={1} style={styles.cardDetails}>
-            <Text>Tổng tiền: {itemData.tongtien} VND</Text>
+            <Text>Tổng tiền: {currencyFormat(itemData.tongtien)}</Text>
           </Text>
         </View>
       </View>

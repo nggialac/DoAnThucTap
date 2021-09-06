@@ -46,6 +46,13 @@ export default function ClientSignUpScreen({ navigation }) {
       return;
     }
 
+    if (
+      data.sdt.length !== 10
+    ) {
+      Alert.alert("Submit Info", "Invalid Phone number! (10 numbers)", [{ text: "ok" }]);
+      return;
+    }
+
     const params = {
       diachi: data.diachi,
       email: data.email,
@@ -122,10 +129,10 @@ export default function ClientSignUpScreen({ navigation }) {
   };
 
   const handleSDTChange = (val: any) => {
-    setData({
-      ...data,
-      sdt: val,
-    });
+      setData({
+        ...data,
+        sdt: val,
+      });
   };
 
   const updateSecureTextEntry = () => {
@@ -209,7 +216,7 @@ export default function ClientSignUpScreen({ navigation }) {
 
           <Text style={styles.text_footer}>Drugstore Name</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="circle-o-notch" color="#05375a" size={20} />
             <TextInput
               placeholder="First Name"
               style={styles.textInput}
@@ -222,7 +229,7 @@ export default function ClientSignUpScreen({ navigation }) {
 
           <Text style={styles.text_footer}>Email</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="stack-overflow" color="#05375a" size={20} />
             <TextInput
               placeholder="Your email"
               style={styles.textInput}
@@ -234,7 +241,7 @@ export default function ClientSignUpScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Phone</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="phone" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Phone"
               style={styles.textInput}
@@ -246,7 +253,7 @@ export default function ClientSignUpScreen({ navigation }) {
           </View>
           <Text style={styles.text_footer}>Address</Text>
           <View style={styles.action}>
-            <FontAwesome name="user-o" color="#05375a" size={20} />
+            <FontAwesome name="address-book" color="#05375a" size={20} />
             <TextInput
               placeholder="Your Address"
               style={styles.textInput}

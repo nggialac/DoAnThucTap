@@ -19,6 +19,7 @@ import {
 } from "victory-native";
 import { getRevenue, getRevenueByFromTo } from "../../../api/StatisticApis";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { DataTable } from "react-native-paper";
 
 export default function DateToDateScreen() {
   // const [selectedQuarter, setSelectedQuarter] = useState(0);
@@ -39,15 +40,34 @@ export default function DateToDateScreen() {
   const [showTo, setShowTo] = useState(false);
 
   const onChangeFrom = (event, selectedDate) => {
-    const currentDate = selectedDate || dateFrom;
-    setShowFrom(Platform.OS === "ios");
-    setDateFrom(currentDate);
+    if (
+      selectedDate.getTime() < new Date().getTime() &&
+      selectedDate.getTime() <= dateTo.getTime()
+    ) {
+      const currentDate = selectedDate || dateFrom;
+      setShowFrom(Platform.OS === "ios");
+      setDateFrom(currentDate);
+    } else {
+      Alert.alert("Notice", "Ngày không thể lớn hơn hiện tại và nhỏ hơn 'TO'!");
+      setShowFrom(Platform.OS === "ios");
+    }
   };
 
   const onChangeTo = (event, selectedDate) => {
-    const currentDate = selectedDate || dateTo;
-    setShowTo(Platform.OS === "ios");
-    setDateTo(currentDate);
+    if (
+      selectedDate.getTime() < new Date().getTime() &&
+      selectedDate.getTime() >= dateFrom.getTime()
+    ) {
+      const currentDate = selectedDate || dateTo;
+      setShowTo(Platform.OS === "ios");
+      setDateTo(currentDate);
+    } else {
+      Alert.alert(
+        "Notice",
+        "Ngày không thể lớn hơn hiện tại và lớn hơn 'FROM'!"
+      );
+      setShowFrom(Platform.OS === "ios");
+    }
   };
 
   const showModeFrom = () => {
@@ -87,9 +107,20 @@ export default function DateToDateScreen() {
   useEffect(() => {
     // getRevenueOfMonth();
     // getRevenueFromTo("2021-08-24", "2021-08-26");
+    setShowTo(false);
+    setShowFrom(false);
   }, [refreshing]);
 
   const [revenueDay, setRevenueDay] = useState([]);
+
+  //DATALIST
+  const optionsPerPage = [2, 3, 4];
+  const [page, setPage] = useState<number>(0);
+  const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
+
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
 
   return (
     <ScrollView
@@ -176,20 +207,22 @@ export default function DateToDateScreen() {
             }}
           >
             <TouchableOpacity
-              onPress={() =>
-                getRevenueFromTo(
+              onPress={async () => {
+                var temp = new Date();
+                await temp.setDate(dateTo.getDate() + 1);
+                await getRevenueFromTo(
                   dateFrom.getFullYear().toString() +
                     "-" +
                     (dateFrom.getMonth() + 1).toString() +
                     "-" +
                     dateFrom.getDate().toString(),
-                  dateTo.getFullYear().toString() +
+                  temp.getFullYear().toString() +
                     "-" +
-                    (dateTo.getMonth() + 1).toString() +
+                    (temp.getMonth() + 1).toString() +
                     "-" +
-                    (dateTo.getDate() + 1).toString()
-                )
-              }
+                    (temp.getDate() + 1).toString()
+                );
+              }}
               style={{ alignItems: "center" }}
             >
               <Text style={styles.pickerText}>Submit</Text>
@@ -197,7 +230,7 @@ export default function DateToDateScreen() {
           </View>
         </View>
 
-        {revenueDay !== [] || revenueDay !== null ? (
+        {/* {revenueDay !== [] || revenueDay !== null ? (
           <View>
             <View style={styles.pickerWrap}>
               <Text style={styles.textTitle}>Doanh thu theo ngày</Text>
@@ -223,7 +256,45 @@ export default function DateToDateScreen() {
           </View>
         ) : (
           <Text style={styles.textTitle}>Không có dữ liệu</Text>
-        )}
+        )} */}
+
+        <View style={{ marginTop: 30 }}>
+          <View style={styles.pickerWrap}>
+            <Text style={styles.textTitle}>Doanh Thu Theo Ngày</Text>
+          </View>
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title>Ngày</DataTable.Title>
+              <DataTable.Title numeric>Tiền</DataTable.Title>
+              {/* <DataTable.Title numeric>Fat</DataTable.Title> */}
+            </DataTable.Header>
+            {revenueDay.slice(page * 5, page * 5 + 5).map((repo) => (
+              <DataTable.Row
+                key={repo.ngay.toString()}
+                onPress={() => Alert.alert("Notice", `Ngày ${repo.ngay}`)}
+              >
+                <DataTable.Cell>{repo.ngay}</DataTable.Cell>
+                <DataTable.Cell numeric>
+                  {currencyFormat(repo.tien)}
+                </DataTable.Cell>
+              </DataTable.Row>
+            ))}
+
+            <DataTable.Pagination
+              page={page}
+              numberOfPages={Math.round(revenueDay.length / 5)}
+              onPageChange={(page) => setPage(page)}
+              label={
+                "Page " +
+                (page + 1) +
+                " of " +
+                Math.round(revenueDay.length / 5)
+              }
+              showFastPagination
+              optionsLabel={"Rows per page"}
+            />
+          </DataTable>
+        </View>
       </View>
     </ScrollView>
   );

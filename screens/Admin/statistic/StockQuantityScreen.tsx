@@ -130,6 +130,7 @@ export default function StockQuantityScreen() {
         <View style={{marginTop: 30}}>
           <DataTable>
             <DataTable.Header>
+            {/* <DataTable.Title>Mã sản phẩm</DataTable.Title> */}
               <DataTable.Title>Tên sản phẩm</DataTable.Title>
               <DataTable.Title numeric>Số lượng tồn</DataTable.Title>
               {/* <DataTable.Title numeric>Fat</DataTable.Title> */}
@@ -139,6 +140,7 @@ export default function StockQuantityScreen() {
                 key={repo.tensp.toString()}
                 onPress={() => Alert.alert("Notice", `${repo.tensp}`)}
               >
+                {/* <DataTable.Cell>{repo.masp.substring(1,10)}</DataTable.Cell> */}
                 <DataTable.Cell>{repo.tensp}</DataTable.Cell>
                 <DataTable.Cell numeric>{repo.soluong}</DataTable.Cell>
                 {/* <DataTable.Cell numeric>6.0</DataTable.Cell> */}

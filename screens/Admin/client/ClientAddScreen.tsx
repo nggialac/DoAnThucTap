@@ -46,6 +46,11 @@ export default function ClientAddScreen({ navigation }) {
       return;
     }
 
+    if(data.sdt.length !== 10){
+      Alert.alert("Submit Info", "Invalid phone number! (10 numbers)", [{ text: "ok" }]);
+      return;
+    }
+
     const params = {
       diachi: data.diachi,
       email: data.email,

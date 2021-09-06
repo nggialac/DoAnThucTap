@@ -141,7 +141,6 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
 
   const initialisePaymentSheet = async () => {
     setLoading(true);
-
     try {
       const { paymentIntent, ephemeralKey, customer, paymentIntentId, paymentIntentCreated } =
         await fetchPaymentSheetParams();
@@ -162,9 +161,6 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
         googlePay: true,
         testEnv: true,
       });
-      // console.log("PAYMENT INTENT");
-      // console.log(paymentIntent);
-
       if (!error) {
         setPaymentSheetEnabled(true);
       }

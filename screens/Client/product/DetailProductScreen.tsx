@@ -90,7 +90,19 @@ const DetailProductScreen = ({ navigation, route }) => {
                 />
               </TouchableOpacity> */}
 
-              <TouchableOpacity onPress={() => deleteMyComment(item.id)}>
+              <TouchableOpacity
+                onPress={() => {
+                  Alert.alert("Notice", "You wanna delete your comment ?", [
+                    {
+                      text: "Delete",
+                      onPress: () => deleteMyComment(item.id),
+                    },
+                    {
+                      text: "Cancel",
+                    },
+                  ]);
+                }}
+              >
                 <Icon
                   name="delete"
                   style={{ fontSize: 20, justifyContent: "flex-end" }}
@@ -105,9 +117,10 @@ const DetailProductScreen = ({ navigation, route }) => {
             }}
           >
             <Text>
-              {item.nhathuoc.tennhathuoc}: {item.noidung}
+              {item.nhathuoc.tennhathuoc}: 
             </Text>
-            <Text style={{ fontSize: 12 }}>Ngày: {item.time}</Text>
+            <Text>{item.noidung}</Text>
+            <Text style={{ fontSize: 10 }}>Ngày: {item.time}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -129,6 +142,7 @@ const DetailProductScreen = ({ navigation, route }) => {
 
   const [reviewed, setReviewed] = useState(false);
 
+  //Never Review
   const getCommentsOfProduct = (masp: string, mant: string) => {
     getListCommentOfProduct(masp)
       .then((res) => {
@@ -139,6 +153,19 @@ const DetailProductScreen = ({ navigation, route }) => {
         // console.log("check", check);
         setReviewed(check);
         if (res.data === []) setReviewed(false);
+        setComments(res.data);
+      })
+      .catch((e) => {
+        console.log(e);
+        Alert.alert("Fail", "Cannot get comments " + e, [{ text: "ok" }]);
+      });
+  };
+
+  const getAllCommentOfProduct = (masp: string) => {
+    getListCommentOfProduct(masp)
+      .then((res) => {
+        // console.log("comments", res.data);
+        // console.log("check", check);
         setComments(res.data);
       })
       .catch((e) => {
@@ -262,9 +289,7 @@ const DetailProductScreen = ({ navigation, route }) => {
       });
   };
 
-  const editComment = (
-params
-  ) => {
+  const editComment = (params) => {
     // var params = {
     //   sanpham,
     //   nhathuoc,
@@ -301,7 +326,7 @@ params
       "12",
     ];
     const dateObj = new Date();
-    const month = monthNames[dateObj.getMonth() + 1];
+    const month = monthNames[dateObj.getMonth()];
     const day = String(dateObj.getDate()).padStart(2, "0");
     const year = dateObj.getFullYear();
     const output = year + "-" + month + "-" + day;
@@ -310,13 +335,19 @@ params
   }
 
   useEffect(() => {
-    isOrdered(nhathuoc.manhathuoc, medicine.masp);
-    getRatingOfProduct(medicine.masp);
-    getCommentsOfProduct(medicine.masp, nhathuoc.manhathuoc);
-    {
-      nhathuoc !== null
-        ? clientRated(nhathuoc.manhathuoc, medicine.masp)
-        : null;
+    if (nhathuoc !== null) {
+      isOrdered(nhathuoc.manhathuoc, medicine.masp); //Check user ordered this product
+      getRatingOfProduct(medicine.masp);
+      getAllCommentOfProduct(medicine.masp);
+      getCommentsOfProduct(medicine.masp, nhathuoc.manhathuoc); //Check user commented this product
+      {
+        nhathuoc !== null
+          ? clientRated(nhathuoc.manhathuoc, medicine.masp)
+          : null;
+      }
+    } else {
+      getRatingOfProduct(medicine.masp);
+      getAllCommentOfProduct(medicine.masp);
     }
   }, [refreshing]);
 
@@ -327,18 +358,19 @@ params
     setModalVisible(!isModalVisible);
   };
 
-  const deleteMyComment = (id: number) => {
-    deleteComment(id)
+  const deleteMyComment = async(id: number) => {
+    await deleteComment(id)
       .then((res) => {
         console.log(res.data);
         Alert.alert("Success!", "Comment has deleted", [{ text: "ok" }]);
       })
       .catch((e) => {
         console.log(e);
-        Alert.alert("Fail!", "Cannot delete after admin reply... ", [
+        Alert.alert("Fail!", "Cannot delete!... ", [
           { text: "ok" },
         ]);
       });
+      onRefresh();
   };
 
   function currencyFormat(num) {
@@ -376,10 +408,11 @@ params
             <Icon
               name="shopping-cart"
               size={28}
-              onPress={() =>
-                nhathuoc !== null
-                  ? navigation.navigate("CartScreen")
-                  : Alert.alert("Notice", "Please, Login!")
+              onPress={
+                () =>
+                  // nhathuoc !== null ?
+                  navigation.navigate("CartScreen")
+                // : Alert.alert("Notice", "Please, Login!")
               }
             />
           </View>
@@ -539,7 +572,8 @@ params
                             "Notice",
                             "Out of quantity this product!"
                           );
-                    } else Alert.alert("Notice", "Please, Login!");
+                    } else
+                      Alert.alert("Notice", "Please, login to Add To Cart!");
                   }}
                 >
                   <View style={style.buyBtn}>
@@ -583,7 +617,7 @@ params
           {/* COMMENTS */}
           <View style={{ paddingHorizontal: 10 }}>
             <View style={{ alignItems: "center" }}>
-              <Text style={[style.headerText, { marginTop: 30 }]}>Reviews</Text>
+              <Text style={[style.headerText, { marginTop: 30 }]}>Comments</Text>
             </View>
             <FlatList
               data={comments}
@@ -625,7 +659,7 @@ params
                         }
                         style={[style.button, style.buttonOpen, { margin: 10 }]}
                       >
-                        <Text style={{ color: COLORS.white }}>Review</Text>
+                        <Text style={{ color: COLORS.white }}>Comment</Text>
                       </Pressable>
                       <Pressable
                         onPress={toggleModalVisibility}
@@ -650,18 +684,20 @@ params
           </Pressable> */}
 
             <View style={{ alignItems: "center" }}>
-              {console.log("canreview", canReview)}
-              {console.log("reviewed", reviewed)}
-              {canReview === true && reviewed === false ? (
+              {/* {console.log("canreview", canReview)} */}
+              {/* {console.log("reviewed", reviewed)} */}
+              {/* {canReview === true && reviewed === false ? ( */}
+              {nhathuoc !== null ? (
                 <TouchableOpacity onPress={toggleModalVisibility}>
                   <Ionicons
                     name="add-circle-outline"
                     style={{ fontSize: 50 }}
                   />
                 </TouchableOpacity>
-              ) : (
+              ) : null}
+              {/* ) : (
                 <></>
-              )}
+              )} */}
             </View>
           </View>
         </ScrollView>

@@ -14,9 +14,8 @@ export type RootStackParamList = {
 };
 
 export type BottomTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
-  TabThree: undefined;
+  Home: undefined;
+  Profile: undefined;
 };
 
 export type TabOneParamList = {
@@ -54,8 +53,8 @@ export type TabAdminHomeParamList = {
   TabAdminHomeOrder: undefined;
   ListOrderNTScreen: undefined;
   DetailBuyHistoryScreen: {
-    madh: string
-  }
+    madh: string;
+  };
   //
   TabAdminHomeStaff: undefined;
   TabAdminHomeAddStaff: undefined;
@@ -122,7 +121,7 @@ export type TabClientHomeParamList = {
   CheckOutMethodScreen: {
     total: number;
     dataCart: [];
-  }
+  };
 
   CheckOutScreen: {
     total: number;
@@ -141,7 +140,7 @@ export type TabClientHomeParamList = {
 
 export type TabClientCategoriesParamList = {
   ClientCommentsScreen: undefined;
-  DetailCommentClientScreenN:any;
+  DetailCommentClientScreenN: any;
 };
 
 export type TabClientProfileParamList = {

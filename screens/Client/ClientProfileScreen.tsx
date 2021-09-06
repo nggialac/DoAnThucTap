@@ -1,5 +1,12 @@
 import * as React from "react";
-import { StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  SafeAreaView,
+  ScrollView,
+  Alert,
+  ToastAndroid,
+} from "react-native";
 import {
   Avatar,
   Caption,
@@ -21,8 +28,31 @@ export default function ClientProfileScreen({ navigation }) {
   const signOut = React.useContext(AuthContext);
 
   const logoutHandle = () => {
-    signOut.authContext.signOut();
+    Alert.alert("Notice", "You wanna logout ?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          navigation.navigate("TabClientHomeScreen");
+          signOut.authContext.signOut();
+          ToastAndroid.showWithGravity(
+            "You are now logged out!",
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+        },
+      },
+      {
+        text: "Ask me later",
+        onPress: () => {},
+      },
+    ]);
+
     // console.log(signOut);
+  };
+
+  const checkHandle = async () => {
+    // await navigation.navigate("TabClientHomeScreen");
+    signOut.authContext.check();
   };
 
   return (
@@ -41,7 +71,7 @@ export default function ClientProfileScreen({ navigation }) {
                 {nhathuoc !== null ? nhathuoc.tennhathuoc : "Guest"}
               </Title>
               <Caption style={styles.caption}>
-                {nhathuoc !== null ? nhathuoc.manhathuoc : ""}
+                {nhathuoc !== null ? nhathuoc.manhathuoc : "Not available"}
               </Caption>
             </View>
           </View>
@@ -51,19 +81,19 @@ export default function ClientProfileScreen({ navigation }) {
           <View style={styles.row}>
             <Icon name="map-marker-radius" size={20} color="#777777" />
             <Text style={styles.infoLocation}>
-              {nhathuoc !== null ? nhathuoc.diachi : ""}
+              {nhathuoc !== null ? nhathuoc.diachi : "Not available"}
             </Text>
           </View>
           <View style={styles.row}>
             <Icon name="phone" size={20} color="#777777" />
             <Text style={styles.infoLocation}>
-              {nhathuoc !== null ? nhathuoc.sdt : ""}
+              {nhathuoc !== null ? nhathuoc.sdt : "Not available"}
             </Text>
           </View>
           <View style={styles.row}>
             <Icon name="email" size={20} color="#777777" />
             <Text style={styles.infoLocation}>
-              {nhathuoc !== null ? nhathuoc.email : ""}
+              {nhathuoc !== null ? nhathuoc.email : "Not available"}
             </Text>
           </View>
         </View>
@@ -119,7 +149,7 @@ export default function ClientProfileScreen({ navigation }) {
               </View>
             </TouchableRipple>
           ) : (
-            <TouchableRipple onPress={()=>navigation.navigate("SplashScreen")}>
+            <TouchableRipple onPress={checkHandle}>
               <View style={styles.menuItem}>
                 <Icon name="file-settings-outline" color="#FF6347" size={25} />
                 <Text style={styles.menuItemText}>Sign In</Text>

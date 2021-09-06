@@ -11,7 +11,7 @@ import {
   LogBox,
 } from "react-native";
 
-import uuid from 'react-native-uuid';
+import uuid from "react-native-uuid";
 
 import { useTheme } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
@@ -179,7 +179,10 @@ const EditMedicineScreen = ({ route }) => {
             !values.mota_chitiet ||
             !values.mota_ngan ||
             !values.soluong ||
-            !values.tensp
+            !values.tensp ||
+            (parseFloat(values.dongia) >= 1000 &&
+              parseFloat(values.dongia) < 10000000000) ||
+            (parseInt(values.soluong) >= 0 && parseInt(values.soluong) <= 9999)
           ) {
             errors.dongia = "Required";
             // errors.khuyenmai = "Required";
@@ -187,12 +190,12 @@ const EditMedicineScreen = ({ route }) => {
             errors.mota_chitiet = "Required";
             errors.soluong = "Required";
             errors.tensp = "Required";
-            Alert.alert("Submit Failed", "Please insert required data!", [
+            Alert.alert("Submit Failed", "Please insert valid data!", [
               { text: "ok" },
             ]);
           } else {
             //Upload image
-            await uploadImage(image,  uuid.v4(), "/ProductImages/")
+            await uploadImage(image, uuid.v4(), "/ProductImages/")
               .then((res) => {
                 // Alert.alert("Submit Success!", res, [
                 //   { text: "ok" },
@@ -215,7 +218,7 @@ const EditMedicineScreen = ({ route }) => {
               },
               dongia: parseFloat(values.dongia),
               // khuyenmai: parseFloat(values.khuyenmai),
-              khuyenmai: 0,
+              // khuyenmai: 0,
               masp: itemData.masp,
               mota_chitiet: values.mota_chitiet,
               mota_ngan: values.mota_ngan,

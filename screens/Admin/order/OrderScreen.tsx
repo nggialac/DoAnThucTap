@@ -203,32 +203,36 @@ function OrderScreen({ navigation }) {
           text: "Ok!",
         },
       ]);
-    } 
-    else if(params.trangthai === 3) {
+    } else if (params.trangthai === 3) {
       Alert.alert("Notice", "Đơn hàng đã giao thành công!", [
         {
           text: "Ok!",
         },
       ]);
-    } 
-    else {
-      Alert.alert("Notice!", "Are you want update status for this order?", [
-        {
-          text: "Approve",
-          onPress: () =>
-            params["trangthai"] < 3
-              ? getUpdate(madh, params)
-              : // : cancelOrderByMadh(
-                //     madh,
-                //     params.hinhthucthanhtoan,
-                //     params.paymentcreated
-                //   ),
-                Alert.alert("Notice", "Đơn hàng đã giao thành công!"),
-        },
-        {
-          text: "Cancel",
-        },
-      ]);
+    } else {
+      Alert.alert(
+        "Notice!",
+        `Bạn muốn thay đổi trạng thái từ "${
+          listTrangthai[params.trangthai]
+        }" sang "${listTrangthai[params.trangthai + 1]}"?`,
+        [
+          {
+            text: "Approve",
+            onPress: () =>
+              params["trangthai"] < 3
+                ? getUpdate(madh, params)
+                : // : cancelOrderByMadh(
+                  //     madh,
+                  //     params.hinhthucthanhtoan,
+                  //     params.paymentcreated
+                  //   ),
+                  Alert.alert("Notice", "Đơn hàng đã giao thành công!"),
+          },
+          {
+            text: "Cancel",
+          },
+        ]
+      );
     }
   };
 
@@ -421,7 +425,10 @@ function OrderScreen({ navigation }) {
           // closeRow(rowMap, data.item.key)
           data.item.trangthai !== 3 && data.item.trangthai !== 4
             ? editRow(rowMap, data.item.key, data.item)
-            : Alert.alert("Notice", "Không thể hủy đơn đã ở trạng thái đã giao hoặc đã hủy!")
+            : Alert.alert(
+                "Notice",
+                "Không thể hủy đơn đã ở trạng thái đã giao hoặc đã hủy!"
+              )
         }
         onDelete={() =>
           // deleteRow(rowMap, data.item.key)

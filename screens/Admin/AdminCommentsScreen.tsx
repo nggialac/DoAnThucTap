@@ -264,7 +264,7 @@ const MedicineListScreen = ({ navigation }) => {
                 onPress={() => setModalVisible(!modalVisible)}
                 style={[styles.button, styles.buttonClose]}
               >
-                <Text style={styles.textStyle}>Hide Modal</Text>
+                <Text style={styles.textStyle}>Cancel</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -125,9 +125,10 @@ const DetailCommentClientScreen = ({ navigation, route }) => {
         {/* {console.log(comments)} */}
         <TouchableOpacity style={[style.card, style.commentCard]}>
           <Text>
-            {comments.nhathuoc.manhathuoc}: {comments.noidung}
+            {comments.nhathuoc.tennhathuoc}: 
           </Text>
-          <Text>Ngày: {comments.time}</Text>
+          <Text>{comments.noidung}</Text>
+          <Text style={{fontSize: 10}}>Ngày: {comments.time}</Text>
         </TouchableOpacity>
       </View>
       {/* COMMENT OF NV */}

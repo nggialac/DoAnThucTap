@@ -82,7 +82,7 @@ export default function ForgotPassScreen({ navigation }) {
 
     const bodyReq = {
       message: "hello",
-      subject: "forget password",
+      subject: "Medical Ecommerce - Forget password!",
       to: email,
     };
 

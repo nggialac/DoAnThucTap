@@ -10,6 +10,8 @@ import {
   Button,
   ScrollView,
   RefreshControl,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "@expo/vector-icons/MaterialIcons";
@@ -37,6 +39,8 @@ const CartScreen = ({ navigation }) => {
   const context = React.useContext(AuthContext);
   const nhathuoc = context.loginState.mnv_mnt;
   const [refreshing, setRefreshing] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [count, setCount] = React.useState(1);
 
   const wait = (timeout) => {
     return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -82,10 +86,13 @@ const CartScreen = ({ navigation }) => {
     soluong: number
   ) => {
     let check: boolean = false;
+
     await putNumberOfProduct(manhathuoc, masp, soluong)
       .then((res) => {
         console.log(res.data);
         check = true;
+        setIsLoading(false);
+        // onRefresh();
       })
       .catch((e) => {
         console.log(e);
@@ -94,7 +101,10 @@ const CartScreen = ({ navigation }) => {
         ]);
         // setLimit(true);
         check = false;
+        setIsLoading(false);
+        // onRefresh();
       });
+    // onRefresh();
     return check;
   };
 
@@ -137,7 +147,7 @@ const CartScreen = ({ navigation }) => {
     const dataCar = dataCart;
     let cantd = dataCar[i].soluong;
     let check: boolean = false;
-
+    setIsLoading(true);
     if (type) {
       cantd = cantd + 1;
       dataCar[i].soluong = cantd;
@@ -179,6 +189,38 @@ const CartScreen = ({ navigation }) => {
         setTotal(totalPrice(dataCart));
       }
     }
+    onRefresh();
+  };
+
+  const changeCount = async (i, count) => {
+    console.log(typeof(count), count);
+    // count = parseInt(count);
+    if (count <= 0 || count > 10000) {
+      Alert.alert("Notice", "Invalid input!");
+      return;
+    }
+
+    const dataCar = dataCart;
+    let cantd = dataCar[i].soluong;
+    let check: boolean = false;
+    setIsLoading(true);
+
+    cantd = count;
+    dataCar[i].soluong = cantd;
+    check = await changeNumberOfProduct(
+      nhathuoc.manhathuoc,
+      dataCar[i].id.masp,
+      cantd
+    );
+
+    if (check === true) {
+      setDataCart([...dataCar]);
+      setTotal(totalPrice(dataCart));
+      setLimit(false);
+    } else {
+      setLimit(true);
+      onRefresh();
+    }
   };
 
   function totalPrice(arr) {
@@ -195,7 +237,6 @@ const CartScreen = ({ navigation }) => {
     return (
       <View style={style.cartCard}>
         <Image source={{ uri: item.sanpham.photo }} style={style.image} />
-
         <View
           style={{
             height: 100,
@@ -215,24 +256,48 @@ const CartScreen = ({ navigation }) => {
           </Text>
         </View>
         <View style={{ marginRight: 20, alignItems: "center" }}>
-          <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+          {/* <Text style={{ fontWeight: "bold", fontSize: 18 }}>
             {item.soluong}
-          </Text>
+          </Text> */}
+          {/* {console.log(count)} */}
+          <TextInput
+            style={{
+              fontSize: 18,
+              // marginHorizontal: 10,
+              fontWeight: "bold",
+            }}
+            keyboardType="number-pad"
+            defaultValue={item.soluong.toString()}
+            // value={count}
+            // onChange={(val) => setCount(val)}
+            onEndEditing={(val) => 
+              changeCount(index, parseInt(val.nativeEvent.text))
+              // console.log(val.nativeEvent.text)
+            }
+          />
 
-          <View style={style.actionBtn}>
-            <TouchableOpacity onPress={() => onChangeQual(index, false)}>
+          {isLoading === true ? (
+            // <ActivityIndicator size="small" color="#0000ff" />
+            <View style={style.disableBtn}>
               <Icon name="remove" size={25} color={COLORS.white} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                limit === false
-                  ? onChangeQual(index, true)
-                  : Alert.alert("Notice", "Not enough quantity!")
-              }
-            >
               <Icon name="add" size={25} color={COLORS.white} />
-            </TouchableOpacity>
-          </View>
+            </View>
+          ) : (
+            <View style={style.actionBtn}>
+              <TouchableOpacity onPress={() => onChangeQual(index, false)}>
+                <Icon name="remove" size={25} color={COLORS.white} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() =>
+                  limit === false
+                    ? onChangeQual(index, true)
+                    : Alert.alert("Notice", "Not enough quantity!")
+                }
+              >
+                <Icon name="add" size={25} color={COLORS.white} />
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
         <View style={{ marginRight: 0, marginBottom: 70 }}>
           <TouchableOpacity
@@ -369,6 +434,16 @@ const style = StyleSheet.create({
     paddingHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
+  },
+  disableBtn: {
+    width: 80,
+    height: 30,
+    backgroundColor: COLORS.secondary,
+    borderRadius: 30,
+    paddingHorizontal: 5,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignContent: "center",
   },
   actionBtn: {
     width: 80,

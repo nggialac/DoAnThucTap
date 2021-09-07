@@ -231,6 +231,7 @@ export default function ClientSignUpScreen({ navigation }) {
           <View style={styles.action}>
             <FontAwesome name="stack-overflow" color="#05375a" size={20} />
             <TextInput
+            keyboardType="email-address"
               placeholder="Your email"
               style={styles.textInput}
               autoCapitalize="none"

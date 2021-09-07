@@ -49,7 +49,7 @@ const MedicineScreen = ({ navigation, route }) => {
   const deleteDM = (madm: string) => {
     deleteCategoryMedicine(madm)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         Alert.alert("Success", "Deleted!");
         onRefresh();
       })
@@ -62,7 +62,7 @@ const MedicineScreen = ({ navigation, route }) => {
   const getData = () => {
     getListCategoryMedicine()
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setListData(res.data);
       })
       .catch((e) => {
@@ -73,7 +73,7 @@ const MedicineScreen = ({ navigation, route }) => {
   const putDM = (params) => {
     putCategoryMedicine(params)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         Alert.alert("Success", "Edited!");
         onRefresh();
       })

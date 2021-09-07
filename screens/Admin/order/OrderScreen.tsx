@@ -98,11 +98,13 @@ function OrderScreen({ navigation }) {
   };
 
   const editRow = async (rowMap, rowKey, order) => {
-    cancelOrderByMadh(
-      order.madh,
-      order.hinhthucthanhtoan,
-      order.paymentcreated
-    );
+    // cancelOrderByMadh(
+    //   order.madh,
+    //   order.hinhthucthanhtoan,
+    //   order.paymentcreated
+    // );
+
+    cancelOrderByNv(order.hinhthucthanhtoan, order.paymentcreated, order);
   };
 
   const detailOrder = (madh) => {
@@ -169,6 +171,37 @@ function OrderScreen({ navigation }) {
     }
   };
 
+  const cancelOrderByNv = async (
+    hinhthucthanhtoan: number,
+    pi: string,
+    params: any
+  ) => {
+    Alert.alert("Notice!", "Are you want cancel this order?", [
+      {
+        text: "Approve",
+        onPress: async () => {
+          params["trangthai"] = 4;
+          // console.log(params["trangthai"]);
+          params["nhanvien"] = nhanvien;
+          await putOrder(params)
+            .then(async (res) => {
+              console.log(res.data);
+              hinhthucthanhtoan === 2 ? await doRefund(pi) : null;
+              Alert.alert("Success!", "Order was canceled!");
+              onRefresh();
+            })
+            .catch((e) => {
+              console.log(e);
+              Alert.alert("Failed!", "Cannot cancel");
+            });
+        },
+      },
+      {
+        text: "Cancel",
+      },
+    ]);
+  };
+
   const cancelOrderByMadh = (
     madh: string,
     hinhthucthanhtoan: number,
@@ -182,7 +215,7 @@ function OrderScreen({ navigation }) {
             .then(async (res) => {
               console.log(res.data);
               hinhthucthanhtoan === 2 ? await doRefund(pi) : null;
-              Alert.alert("Success!", "Order was canceled");
+              Alert.alert("Success!", "Order was canceled!");
             })
             .catch((e) => {
               console.log(e);
@@ -198,13 +231,13 @@ function OrderScreen({ navigation }) {
   const updateOrder = (madh: string, params: any) => {
     // console.log("check params update", params);
     if (params.trangthai === 4) {
-      Alert.alert("Notice", "Đơn hàng đã hủy!", [
+      Alert.alert("Notice", "Order was canceled!", [
         {
           text: "Ok!",
         },
       ]);
     } else if (params.trangthai === 3) {
-      Alert.alert("Notice", "Đơn hàng đã giao thành công!", [
+      Alert.alert("Notice", "Order was delivered successfully!", [
         {
           text: "Ok!",
         },
@@ -212,9 +245,9 @@ function OrderScreen({ navigation }) {
     } else {
       Alert.alert(
         "Notice!",
-        `Bạn muốn thay đổi trạng thái từ "${
-          listTrangthai[params.trangthai]
-        }" sang "${listTrangthai[params.trangthai + 1]}"?`,
+        `Changing status from "${listTrangthai[params.trangthai]}" to "${
+          listTrangthai[params.trangthai + 1]
+        }"?`,
         [
           {
             text: "Approve",
@@ -226,7 +259,7 @@ function OrderScreen({ navigation }) {
                   //     params.hinhthucthanhtoan,
                   //     params.paymentcreated
                   //   ),
-                  Alert.alert("Notice", "Đơn hàng đã giao thành công!"),
+                  Alert.alert("Notice", "Order was delivered successfully!"),
           },
           {
             text: "Cancel",
@@ -244,12 +277,13 @@ function OrderScreen({ navigation }) {
     //   : (changed = params["trangthai"] + 1);
     // console.log(changed);
     if (params["trangthai"] >= 3) {
-      Alert.alert("Failed", "Đã giao hàng thành công!");
+      Alert.alert("Failed", "This order was delivered successfully!");
     } else {
       // params["nhanvien"] = nhanvien;
       changed = params["trangthai"] + 1;
       params["trangthai"] = changed;
       // console.log(params["trangthai"]);
+      params["nhanvien"] = nhanvien;
       await putOrder(params)
         .then((res) => {
           console.log(res.data);
@@ -427,7 +461,7 @@ function OrderScreen({ navigation }) {
             ? editRow(rowMap, data.item.key, data.item)
             : Alert.alert(
                 "Notice",
-                "Không thể hủy đơn đã ở trạng thái đã giao hoặc đã hủy!"
+                "Can't cancel order with status 'Đã giao' or 'Đã hủy'!"
               )
         }
         onDelete={() =>

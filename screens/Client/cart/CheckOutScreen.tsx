@@ -213,6 +213,10 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
     }
   };
 
+  function currencyFormat(num) {
+    return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
+  }
+
   const onPressBuy = async () => {
     setLoading(true);
     const data = requestData(dataCart);
@@ -281,7 +285,7 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
         <View style={styles.text}>
           <Text style={styles.content}>Medical E-Commerce Payment</Text>
           <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-            Total must pay: {totalPrice}VND
+            Total must pay: {currencyFormat(totalPrice)}
           </Text>
           <Text style={{ fontSize: 20 }}>Select your payment information</Text>
         </View>

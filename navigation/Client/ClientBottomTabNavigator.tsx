@@ -48,7 +48,7 @@ export default function AdminBottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="Home"
-      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
+      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint, keyboardHidesTabBar: true, }}
     >
       <BottomTab.Screen
         name="Home"

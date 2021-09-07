@@ -180,7 +180,7 @@ const HomeScreen = ({ navigation }) => {
               style={{ height: 120, width: 120 }}
             />
           </View>
-          <View style={{ marginHorizontal: 16 }}>
+          <View style={{ marginHorizontal: 16, flex: 0.8}}>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {medicine.tensp}
             </Text>
@@ -197,11 +197,11 @@ const HomeScreen = ({ navigation }) => {
             }}
           >
             <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-              {currencyFormat(medicine.dongia)}
+              Giá: {currencyFormat(medicine.dongia)}
             </Text>
-            {/* <View style={style.addToCartBtn}>
-              <Icon name="add" size={20} color={COLORS.white} />
-            </View> */}
+            {medicine.soluong === 0 ? <View style={style.addToCartBtn}>
+              <Icon name="notification-important" size={14} color={COLORS.white} />
+            </View> : null}
           </View>
         </View>
       </TouchableHighlight>
@@ -258,7 +258,7 @@ const HomeScreen = ({ navigation }) => {
           </View>
           <View style={style.sortBtn}>
             <TouchableOpacity
-              onPress={() => getMedicinesSearch(textInputValue)}
+              onPress={() => getMedicinesSearch(textInputValue.trim())}
             >
               <Icon name="tune" size={28} color={COLORS.white} />
             </TouchableOpacity>
@@ -339,10 +339,10 @@ const style = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   addToCartBtn: {
-    height: 30,
-    width: 30,
-    borderRadius: 20,
-    backgroundColor: COLORS.primary,
+    height: 18,
+    width: 18,
+    borderRadius: 10,
+    backgroundColor: COLORS.red,
     justifyContent: "center",
     alignItems: "center",
   },

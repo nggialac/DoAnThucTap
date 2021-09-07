@@ -116,9 +116,7 @@ const DetailProductScreen = ({ navigation, route }) => {
               navigation.navigate("DetailCommentClientScreen", item);
             }}
           >
-            <Text>
-              {item.nhathuoc.tennhathuoc}: 
-            </Text>
+            <Text>{item.nhathuoc.tennhathuoc}:</Text>
             <Text>{item.noidung}</Text>
             <Text style={{ fontSize: 10 }}>Ngày: {item.time}</Text>
           </TouchableOpacity>
@@ -197,6 +195,7 @@ const DetailProductScreen = ({ navigation, route }) => {
         console.log(e);
         Alert.alert("Fail", "Cannot create comment " + e, [{ text: "ok" }]);
       });
+    onRefresh();
   };
 
   const getRatingOfProduct = (masp: string) => {
@@ -353,12 +352,13 @@ const DetailProductScreen = ({ navigation, route }) => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  // const nhathuoc = JSON.parse(context.loginState.mnv_mnt);
 
   const toggleModalVisibility = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const deleteMyComment = async(id: number) => {
+  const deleteMyComment = async (id: number) => {
     await deleteComment(id)
       .then((res) => {
         console.log(res.data);
@@ -366,11 +366,9 @@ const DetailProductScreen = ({ navigation, route }) => {
       })
       .catch((e) => {
         console.log(e);
-        Alert.alert("Fail!", "Cannot delete!... ", [
-          { text: "ok" },
-        ]);
+        Alert.alert("Fail!", "Cannot delete!... ", [{ text: "ok" }]);
       });
-      onRefresh();
+    onRefresh();
   };
 
   function currencyFormat(num) {
@@ -380,9 +378,10 @@ const DetailProductScreen = ({ navigation, route }) => {
   const [quantity, setQuantity] = useState();
 
   const changeQuantity = (val: number) => {
+    // console.log(val);
     if (val > medicine.soluong) Alert.alert("Failed, Out of product quantity!");
-    else if (val < 1)
-      Alert.alert("Failed, Quantity of product must be more than zero!");
+    else if (val < 0)
+      Alert.alert("Failed, Quantity of product must be positive numbers!");
     else {
       setCount(val);
       // setQuantity(val);
@@ -543,6 +542,7 @@ const DetailProductScreen = ({ navigation, route }) => {
                     value={count.toString()}
                     // onChange={(val) => changeQuantity(val)}
                     onChangeText={(val) => changeQuantity(val)}
+                    onEndEditing={() => count ? setCount(count) : setCount(0)}
                   />
 
                   {/* CHECK SO LUONG TON */}
@@ -566,14 +566,17 @@ const DetailProductScreen = ({ navigation, route }) => {
                 <TouchableOpacity
                   onPress={() => {
                     if (nhathuoc !== null) {
-                      count <= medicine.soluong && count !== 0
+                      count <= medicine.soluong && count > 0
                         ? addCart(ma, medicine.masp, count)
-                        : Alert.alert(
-                            "Notice",
-                            "Out of quantity this product!"
-                          );
+                        : Alert.alert("Notice", "Invalid Quantity!");
                     } else
-                      Alert.alert("Notice", "Please, login to Add To Cart!");
+                      Alert.alert("Notice", "Please, login to Add To Cart!", [
+                        {
+                          text: "Login",
+                          onPress: () => context.authContext.check(),
+                        },
+                        { text: "Cancel" },
+                      ]);
                   }}
                 >
                   <View style={style.buyBtn}>
@@ -617,7 +620,9 @@ const DetailProductScreen = ({ navigation, route }) => {
           {/* COMMENTS */}
           <View style={{ paddingHorizontal: 10 }}>
             <View style={{ alignItems: "center" }}>
-              <Text style={[style.headerText, { marginTop: 30 }]}>Comments</Text>
+              <Text style={[style.headerText, { marginTop: 30 }]}>
+                Comments
+              </Text>
             </View>
             <FlatList
               data={comments}

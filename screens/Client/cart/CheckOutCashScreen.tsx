@@ -42,7 +42,7 @@ const CheckOutCashScreen = ({ navigation , route }) => {
     await postOrder(manhathuoc, hinhthucthanhtoan, params, "")
       .then((res) => {
         console.log(res.data);
-        Alert.alert(`Congratulations!`, "Giao dịch thành công" , [{
+        Alert.alert(`Congratulations`, "Order completed!" , [{
           text: "Ok!",
           onPress: () => navigation.navigate("TabClientHomeScreen"),
         }]);

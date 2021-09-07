@@ -18,6 +18,7 @@ import { Formik } from "formik";
 // import  firebase  from "../../../assets/firebase/FirebaseConfig";
 import firebase from "firebase";
 import {
+  getLastMedicine,
   getListCategoryMedicine,
   postMedicine,
 } from "../../../api/MedicineApis";
@@ -48,17 +49,28 @@ const AddMedicineScreen = ({ route }) => {
   const danhmuc = route.params.danhmuc;
   console.log(danhmuc);
   const { colors } = useTheme();
+  const [msp, setMsp] = useState("");
 
-  // React.useEffect(() => {
-  //   getListCategoryMedicine()
-  //     .then((res) => {
-  //       // console.log(res.data);
-  //       setDm(res.data);
-  //     })
-  //     .catch((e) => {
-  //       Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
-  //     });
-  // }, []);
+  React.useEffect(() => {
+    getLastMedicine()
+      .then((res) => {
+      let temp = res.data.masp.slice(2,10);
+      console.log(temp);
+      let temp1 = parseInt(temp);
+      temp1++;
+      console.log(temp1);
+      var str = "" + temp1;
+      while (str.length < 8) {
+        str = "0" + str;
+      }
+      console.log("DM"+str);
+      setMsp("DM"+str);
+        // setMsp(res.data.masp);
+      })
+      .catch((e) => {
+        Alert.alert("Fail", "Not found Data!", [{ text: "ok" }]);
+      });
+  }, []);
 
   const pickImage = async () => {
     (async () => {
@@ -155,7 +167,7 @@ const AddMedicineScreen = ({ route }) => {
         initialValues={{
           // masp: "",
           dongia: "",
-          khuyenmai: "",
+          // khuyenmai: "",
           mota_chitiet: "",
           mota_ngan: "",
           soluong: "",
@@ -172,9 +184,10 @@ const AddMedicineScreen = ({ route }) => {
             !values.soluong ||
             !values.tensp ||
             !image ||
-            (parseFloat(values.dongia) >= 1000 &&
-              parseFloat(values.dongia) < 1000000000) ||
-            (parseInt(values.soluong) >= 0 && parseInt(values.soluong) <= 1000000)
+            !msp ||
+            (parseInt(values.dongia) < 1000 ||
+            parseInt(values.dongia) > 1000000000) ||
+            (parseInt(values.soluong) < 0 || parseInt(values.soluong) > 1000000)
             // danhmuc
           ) {
             // errors.masp = "Required";
@@ -204,10 +217,10 @@ const AddMedicineScreen = ({ route }) => {
                 madm: danhmuc.madm,
                 tendm: danhmuc.tendm,
               },
-              dongia: parseFloat(values.dongia),
+              dongia: parseInt(values.dongia),
               // khuyenmai: parseFloat(values.khuyenmai),
               // khuyenmai: 0,
-              // masp: values.masp,
+              masp: msp,
               mota_chitiet: values.mota_chitiet,
               mota_ngan: values.mota_ngan,
               photo: values.photo,
@@ -236,21 +249,21 @@ const AddMedicineScreen = ({ route }) => {
                 editable={false}
               />
             </View>
-            {/* <View style={styles.action}>
+            <View style={styles.action}>
               <TextInput
                 placeholder="Mã SP"
                 placeholderTextColor="#666666"
-                autoCorrect={false}
                 style={[
                   styles.textInput,
                   {
-                    color: colors.text,
+                    color: colors.disabled,
                   },
                 ]}
-                onChangeText={handleChange("masp")}
-                value={values.masp}
+                // onChangeText={handleChange("masp")}
+                editable={false}
+                value={msp}
               />
-            </View> */}
+            </View>
             <View style={styles.action}>
               {/* <FontAwesome name="user-o" color={colors.text} size={20} /> */}
               <TextInput

@@ -42,7 +42,7 @@ export default function StatisticByMonthScreen() {
   const getRevenueOfMonth = (year) => {
     getRevenue(year)
       .then((res) => {
-        // console.log(res.data);
+        console.log(res.data);
         // setRevenue(res.data);
         const temp = res.data.map(obj=> ({ ...obj, label: currencyFormat(obj.tien) }))
         // test(res.data);
@@ -148,12 +148,14 @@ export default function StatisticByMonthScreen() {
               <VictoryAxis
                 dependentAxis
                 // tickFormat specifies how ticks should be displayed
-                tickFormat={(x) => `$${x / 1000000}tr`}
+                tickFormat={(x) => `${x / 1000000}tr`}
               />
               <VictoryBar
                 data={revenue.sort(compare)}
                 x="thang"
                 y="tien"
+                width={50}
+                height={100}
                 
                 labelComponent={
                   <VictoryLabel

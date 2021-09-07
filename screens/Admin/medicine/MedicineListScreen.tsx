@@ -21,7 +21,7 @@ const MedicineListScreen = ({ navigation, route }) => {
   React.useEffect(() => {
     getMedicineByCategory(madm)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setListData(res.data);
         setDataTemp(res.data);
       })

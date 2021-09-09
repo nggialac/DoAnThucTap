@@ -39,6 +39,7 @@ const CheckOutCashScreen = ({ navigation , route }) => {
   const createOrders = async (manhathuoc: string, hinhthucthanhtoan: number, params) => {
     // const temp = [{params}]
     let check;
+    setLoading(true);
     await postOrder(manhathuoc, hinhthucthanhtoan, params, "")
       .then((res) => {
         console.log(res.data);
@@ -47,11 +48,13 @@ const CheckOutCashScreen = ({ navigation , route }) => {
           onPress: () => navigation.navigate("TabClientHomeScreen"),
         }]);
         check = true;
+        setLoading(false);
       })
       .catch((e) => {
         console.log(e);
         Alert.alert(`Error`, "Cannot create order! Could be not enough quantity for these item" + "");
         check = false;
+        setLoading(false);
       });
     return check;
   };

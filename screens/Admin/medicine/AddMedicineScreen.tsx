@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   LogBox,
+  ScrollView,
 } from "react-native";
 
 import { useTheme } from "react-native-paper";
@@ -25,6 +26,7 @@ import {
 import { color } from "react-native-reanimated";
 // import { color } from "react-native-reanimated";
 import uuid from "react-native-uuid";
+// import firebaseConfig from "../../../assets/firebase/FirebaseConfig"
 
 LogBox.ignoreAllLogs();
 
@@ -115,20 +117,19 @@ const AddMedicineScreen = ({ route }) => {
     postMedicine(params)
       .then((res) => {
         console.log(res);
-
-        Alert.alert("", "Success!", [{ text: "ok" }]);
+        Alert.alert("Success", "Submit complete!", [{ text: "ok" }]);
       })
       .catch((e) => {
         // Alert.alert("Submit Failed", e+"", [
         //   { text: "ok" },
         // ]);
-        Alert.alert("Submit Failed", JSON.stringify(params), [{ text: "ok" }]);
+        Alert.alert("Failed", "Submit Failed", [{ text: "ok" }]);
         console.log(JSON.stringify(params));
       });
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={{ alignItems: "center", marginBottom: 20 }}>
         <View
           style={{
@@ -371,7 +372,7 @@ const AddMedicineScreen = ({ route }) => {
           </View>
         )}
       </Formik>
-    </View>
+    </ScrollView>
   );
 };
 

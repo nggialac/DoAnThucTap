@@ -42,7 +42,7 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-const EditMedicineScreen = ({ route }) => {
+const EditMedicineScreen = ({ route, navigation }) => {
   const itemData = route.params.itemData;
   const [dm, setDm] = useState([]);
   const [image, setImage] = useState(itemData.photo);
@@ -99,8 +99,9 @@ const EditMedicineScreen = ({ route }) => {
     putMedicine(params)
       .then((res) => {
         console.log(res);
-
         Alert.alert("", "Success!", [{ text: "ok" }]);
+        navigation.goBack();
+        navigation.goBack();
       })
       .catch((e) => {
         Alert.alert("Submit Failed", e + "", [{ text: "ok" }]);
@@ -109,14 +110,27 @@ const EditMedicineScreen = ({ route }) => {
   };
 
   const handleDelete = (masp: string) => {
-    deleteMedicine(masp)
-      .then((res) => {
-        console.log(res);
-        Alert.alert("", "Success!", [{ text: "ok" }]);
-      })
-      .catch((e) => {
-        Alert.alert("Submit Failed", e + "", [{ text: "ok" }]);
-      });
+    Alert.alert("Notice", "Delete this medicine?", [
+      {
+        text: "Yes",
+        onPress: () => {
+          deleteMedicine(masp)
+            .then((res) => {
+              console.log(res);
+              Alert.alert("", "Success!", [{ text: "ok" }]);
+              navigation.goBack();
+              navigation.goBack();
+            })
+            .catch((e) => {
+              Alert.alert("Submit Failed", e + "", [{ text: "ok" }]);
+            });
+        },
+      },
+      {
+        text: "Cancel",
+        onPress: () => {},
+      },
+    ]);
   };
 
   // const pickerRef = React.useRef();
@@ -180,9 +194,9 @@ const EditMedicineScreen = ({ route }) => {
             !values.mota_ngan ||
             !values.soluong ||
             !values.tensp ||
-            (parseFloat(values.dongia) >= 1000 &&
-              parseFloat(values.dongia) < 10000000000) ||
-            (parseInt(values.soluong) >= 0 && parseInt(values.soluong) <= 9999)
+            (parseInt(values.dongia) < 1000 &&
+              parseInt(values.dongia) > 10000000000) ||
+            (parseInt(values.soluong) < 0 && parseInt(values.soluong) > 9999)
           ) {
             errors.dongia = "Required";
             // errors.khuyenmai = "Required";
@@ -216,7 +230,7 @@ const EditMedicineScreen = ({ route }) => {
                 madm: danhmucthuoc.madm,
                 tendm: danhmucthuoc.tendm,
               },
-              dongia: parseFloat(values.dongia),
+              dongia: parseInt(values.dongia),
               // khuyenmai: parseFloat(values.khuyenmai),
               // khuyenmai: 0,
               masp: itemData.masp,

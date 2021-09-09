@@ -191,27 +191,27 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
     }
   };
 
-  const onPressBuyTest = async () => {
-    setLoading(true);
-    const {
-      clientSecret,
-      error: paymentIntentError,
-      requiresAction,
-    } = await callNoWebhookPayEndpoint({
-      paymentIntentId: payment_intent_fetched,
-    });
+  // const onPressBuyTest = async () => {
+  //   setLoading(true);
+  //   const {
+  //     clientSecret,
+  //     error: paymentIntentError,
+  //     requiresAction,
+  //   } = await callNoWebhookPayEndpoint({
+  //     paymentIntentId: payment_intent_fetched,
+  //   });
 
-    if (paymentIntentError) {
-      // Error during creating or confirming Intent
-      Alert.alert("Error", paymentIntentError);
-      return;
-    }
+  //   if (paymentIntentError) {
+  //     // Error during creating or confirming Intent
+  //     Alert.alert("Error", paymentIntentError);
+  //     return;
+  //   }
 
-    if (clientSecret && !requiresAction) {
-      // Payment succedeed
-      Alert.alert("Success", "The payment was confirmed successfully!");
-    }
-  };
+  //   if (clientSecret && !requiresAction) {
+  //     // Payment succedeed
+  //     Alert.alert("Success", "The payment was confirmed successfully!");
+  //   }
+  // };
 
   function currencyFormat(num) {
     return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";

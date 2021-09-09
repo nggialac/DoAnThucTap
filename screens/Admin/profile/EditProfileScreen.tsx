@@ -55,6 +55,14 @@ export default function EditStaffScreen() {
       Alert.alert("Submit Info", "Invalid data!", [{ text: "ok" }]);
       return;
     }
+
+    if (
+      data.sdt.length < 10
+    ) {
+      Alert.alert("Submit Info", "Invalid phone number (10 characters)!", [{ text: "ok" }]);
+      return;
+    }
+
     const params = {
       diachi: data.diachi,
       email: data.email,
@@ -66,6 +74,8 @@ export default function EditStaffScreen() {
       username: data.username,
     };
     // console.log(itemData);
+
+    
     putStaff(params)
       .then((res) => {
         // console.log(res);
@@ -277,6 +287,8 @@ export default function EditStaffScreen() {
               onChangeText={(val) => {
                 handleSDTChange(val);
               }}
+              maxLength={10}
+              // onEndEditing={e=>e.nativeEvent.text}
             />
           </View>
           <Text style={styles.text_footer}>Address</Text>

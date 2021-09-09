@@ -7,6 +7,8 @@ import {
   Dimensions,
   StatusBar,
   Platform,
+  RefreshControl,
+  ScrollView,
 } from "react-native";
 import {
   ImageHeaderScrollView,
@@ -19,6 +21,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 const MIN_HEIGHT = Platform.OS === "ios" ? 90 : 55;
 const MAX_HEIGHT = 350;
 
+
 const DetailMedicineScreen = ({ route }) => {
   const itemData = route.params.itemData;
   const navTitleView = useRef(null);
@@ -27,8 +30,22 @@ const DetailMedicineScreen = ({ route }) => {
     return num.toFixed(0).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,") + "đ";
   }
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(4000).then(() => setRefreshing(false));
+  }, []);
+
   return (
     <View style={styles.container}>
+      <ScrollView refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       {/* {console.log(navTitleView)} */}
       <StatusBar barStyle="light-content" />
       <ImageHeaderScrollView
@@ -91,6 +108,7 @@ const DetailMedicineScreen = ({ route }) => {
 
         {/* <View style={[styles.section, { height: 250 }]}></View> */}
       </ImageHeaderScrollView>
+      </ScrollView>
     </View>
   );
 };

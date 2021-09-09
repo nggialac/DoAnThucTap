@@ -119,11 +119,11 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
               listData.hinhthucthanhtoan !== 1
                 ? doRefund(listData.paymentcreated)
                 : null;
-              Alert.alert("Success!", "Order was canceled");
+              Alert.alert("Success", "Order was canceled!");
             })
             .catch((e) => {
               console.log(e);
-              Alert.alert("Failed!", "Cannot cancel");
+              Alert.alert("Failed", "Cannot cancel!");
             }),
       },
       {
@@ -163,7 +163,26 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
         ListFooterComponentStyle={{ paddingHorizontal: 20, marginTop: 20 }}
         ListFooterComponent={() => (
           <View>
-            {listData.trangthai === 0 || listData.trangthai === 1 || (listData.trangthai === 2 && nhathuoc.taikhoan.quyen.maquyen !== 2) ? (
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "space-evenly",
+                marginVertical: 15,
+              }}
+            >
+              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
+                Tổng giá trị: {listData.tongtien ? currencyFormat(parseFloat(listData.tongtien)) : null}
+                {/* console.log(listData.tongtien); */}
+              </Text>
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                Hình Thức Thanh Toán:{" "}
+                {listData.hinhthucthanhtoan === 2 ? "Online" : "Tiền mặt"}
+              </Text>
+            </View>
+            {listData.trangthai === 0 ||
+            listData.trangthai === 1 ||
+            (listData.trangthai === 2 &&
+              nhathuoc.taikhoan.quyen.maquyen !== 2) ? (
               <View style={{ marginHorizontal: 20 }}>
                 <Button
                   variant="primary"
@@ -175,23 +194,6 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
                 />
               </View>
             ) : null}
-
-            <View
-              style={{
-                flexDirection: "column",
-                justifyContent: "space-evenly",
-                marginVertical: 15,
-              }}
-            >
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-                Tổng giá trị: {currencyFormat(parseFloat(listData.tongtien))}
-                {/* console.log(listData.tongtien); */}
-              </Text>
-              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                Hình Thức Thanh Toán:{" "}
-                {listData.hinhthucthanhtoan === 2 ? "Online" : "Tiền mặt"}
-              </Text>
-            </View>
           </View>
         )}
       />

@@ -60,6 +60,13 @@ export default function SignUpScreen({ navigation }) {
       return;
     }
 
+    if (
+      data.sdt.length < 10
+    ) {
+      Alert.alert("Submit Info", "Invalid phone number (10 characters)!", [{ text: "ok" }]);
+      return;
+    }
+
     const params = {
       diachi: data.diachi,
       email: data.email,
@@ -73,7 +80,7 @@ export default function SignUpScreen({ navigation }) {
       .then((res) => {
         // console.log(res);
         Alert.alert("Submit Info", "Success! Please Login again to update.", [{ text: "ok" }]);
-        logoutHandle();
+        // logoutHandle();
       })
       .catch((e) => {
         // Alert.alert("Submit Info", e+"", [{ text: "ok" }]);
@@ -265,6 +272,7 @@ export default function SignUpScreen({ navigation }) {
                 handleSDTChange(val);
               }}
               value={data.sdt}
+              maxLength={10}
             />
           </View>
           <Text style={styles.text_footer}>Address</Text>

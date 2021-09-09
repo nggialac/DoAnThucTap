@@ -34,6 +34,7 @@ import { AuthContext } from "../../components/ContextLogin";
 const MedicineListScreen = ({ navigation }) => {
   LogBox.ignoreAllLogs();
   const [listData, setListData] = React.useState([]);
+  const [listTemp, setListTemp] = React.useState([]);
   const [listComment, setListComment] = React.useState();
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -55,6 +56,7 @@ const MedicineListScreen = ({ navigation }) => {
       .then((res) => {
         // console.log(res.data);
         setListData(res.data);
+        setListTemp(res.data);
       })
       .catch((e) => {
         Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
@@ -99,7 +101,7 @@ const MedicineListScreen = ({ navigation }) => {
       "12",
     ];
     const dateObj = new Date();
-    const month = monthNames[dateObj.getMonth() + 1];
+    const month = monthNames[dateObj.getMonth()];
     const day = String(dateObj.getDate()).padStart(2, "0");
     const year = dateObj.getFullYear();
     const output = year + "-" + month + "-" + day;
@@ -149,9 +151,9 @@ const MedicineListScreen = ({ navigation }) => {
             <View style={styles.cardInfo}>
               <Text style={styles.cardTitle}>
                 Mã NT: {item.nhathuoc.manhathuoc} - ID:{item.id} -
-                {listData.some((rep) => rep.binhluan.id === item.id) === true
+                {listTemp.length > 0 && listTemp !== undefined ? (listTemp.some((rep) => rep.binhluan.id === item.id) === true
                   ? "Replied"
-                  : "Waiting"}
+                  : "Waiting") : null}
               </Text>
               <Text style={styles.cardTitle}>
                 Sản phẩm: {item.sanpham.masp} - {item.sanpham.tensp}
@@ -174,12 +176,15 @@ const MedicineListScreen = ({ navigation }) => {
     setText(text);
     // console.log(dataTemp[0]);
     // text.trim()
+    
     const newData = dataTemp.filter((item) => {
-      const itemData = `${item.id.toUpperCase()} ${item.sanpham.masp.toUpperCase()} ${item.sanpham.tensp.toUpperCase()} ${item.noidung.toUpperCase()}`;
+      console.log(item);
+      const itemData = ` ${item.sanpham.masp.toUpperCase()} ${item.sanpham.tensp.toUpperCase()} ${item.noidung.toUpperCase()}`;
       const textData = text.toUpperCase();
       return itemData.indexOf(textData) > -1;
     });
-    setListData(newData);
+    // setListData(newData);
+    setListComment(newData);
   };
 
   return (

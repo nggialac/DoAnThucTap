@@ -52,6 +52,14 @@ export default function EditStaffScreen({ route }) {
       Alert.alert("Submit Info", "Invalid data!", [{ text: "ok" }]);
       return;
     }
+
+    if (
+      data.sdt.length < 10
+    ) {
+      Alert.alert("Submit Info", "Invalid phone number!", [{ text: "ok" }]);
+      return;
+    }
+
     const params = {
       diachi: data.diachi,
       email: data.email,
@@ -274,6 +282,7 @@ export default function EditStaffScreen({ route }) {
               onChangeText={(val) => {
                 handleSDTChange(val);
               }}
+              maxLength={10}
             />
           </View>
           <Text style={styles.text_footer}>Address</Text>

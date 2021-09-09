@@ -80,7 +80,7 @@ const DetailCommentsScreen = ({ navigation, route }) => {
       "12",
     ];
     const dateObj = new Date();
-    const month = monthNames[dateObj.getMonth() + 1];
+    const month = monthNames[dateObj.getMonth()];
     const day = String(dateObj.getDate()).padStart(2, "0");
     const year = dateObj.getFullYear();
     const output = year + "-" + month + "-" + day;
@@ -112,21 +112,23 @@ const DetailCommentsScreen = ({ navigation, route }) => {
         console.log(e);
         Alert.alert("Fail", "Cannot create reply " + e, [{ text: "ok" }]);
       });
+    await onRefresh();
   };
 
-  const doDeleteReply = (id: number) => {
-    deleteReply(id)
-    .then((res) => {
-      Alert.alert("Success", "Success!", [{ text: "ok" }]);
-      // toggleModalVisibility();
-      // setInputValue("");
-    })
-    .catch((e) => {
-      console.log(id);
-      console.log(e);
-      Alert.alert("Fail", "Cannot delete this reply " + e, [{ text: "ok" }]);
-    });
-  }
+  const doDeleteReply = async (id: number) => {
+    await deleteReply(id)
+      .then((res) => {
+        Alert.alert("Success", "Success!", [{ text: "ok" }]);
+        // toggleModalVisibility();
+        // setInputValue("");
+      })
+      .catch((e) => {
+        console.log(id);
+        console.log(e);
+        Alert.alert("Fail", "Cannot delete this reply " + e, [{ text: "ok" }]);
+      });
+    onRefresh();
+  };
 
   useEffect(() => {
     getData(comments.item.id);
@@ -139,7 +141,20 @@ const DetailCommentsScreen = ({ navigation, route }) => {
         {/* {console.log(item)} */}
 
         {item.nhanvien.manv === nhanvien.manv ? (
-          <TouchableOpacity onPress={() => {doDeleteReply(item.id)}}>
+          <TouchableOpacity
+            onPress={() => {
+              // doDeleteReply(item.id);
+              Alert.alert("Notice", "Delete this reply?", [
+                {
+                  text: "Yes",
+                  onPress: () => doDeleteReply(item.id),
+                },
+                {
+                  text: "Cancel",
+                },
+              ]);
+            }}
+          >
             <Icon
               name="delete"
               style={{ fontSize: 20, justifyContent: "flex-end" }}
@@ -158,9 +173,12 @@ const DetailCommentsScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView style={{ paddingHorizontal: 10 }} refreshControl={
-      <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-    }>
+    <ScrollView
+      style={{ paddingHorizontal: 10 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={{ alignItems: "center" }}>
         <Text style={[style.headerText, { marginTop: 50 }]}>
           Client's Comment
@@ -170,11 +188,9 @@ const DetailCommentsScreen = ({ navigation, route }) => {
       <View style={{ marginBottom: 50 }}>
         {/* {console.log(comments)} */}
         <TouchableOpacity style={[style.card, style.commentCard]}>
-          <Text>
-            {comments.item.nhathuoc.manhathuoc}: 
-          </Text>
+          <Text>{comments.item.nhathuoc.manhathuoc}:</Text>
           <Text>{comments.item.noidung}</Text>
-          <Text style={{fontSize: 10}}>Ngày: {comments.item.time}</Text>
+          <Text style={{ fontSize: 10 }}>Ngày: {comments.item.time}</Text>
         </TouchableOpacity>
       </View>
       {/* COMMENT OF NV */}

@@ -193,7 +193,7 @@ const CartScreen = ({ navigation }) => {
   };
 
   const changeCount = async (i, count) => {
-    console.log(typeof(count), count);
+    console.log(typeof count, count);
     // count = parseInt(count);
     if (count <= 0 || count > 10000) {
       Alert.alert("Notice", "Invalid input!");
@@ -270,8 +270,8 @@ const CartScreen = ({ navigation }) => {
             defaultValue={item.soluong.toString()}
             // value={count}
             // onChange={(val) => setCount(val)}
-            onEndEditing={(val) => 
-              changeCount(index, parseInt(val.nativeEvent.text))
+            onEndEditing={
+              (val) => changeCount(index, parseInt(val.nativeEvent.text))
               // console.log(val.nativeEvent.text)
             }
           />
@@ -324,67 +324,70 @@ const CartScreen = ({ navigation }) => {
         <Text style={{ fontSize: 20, fontWeight: "bold" }}>Cart</Text>
       </View>
       {typeof listData !== "undefined" && listData.length > 0 ? (
-        <FlatList
-          keyExtractor={(item) => "key" + item.id.masp}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}
-          data={listData}
-          renderItem={({ item, index }) => (
-            <CartCard item={item} index={index} />
-          )}
-          ListFooterComponentStyle={{ paddingHorizontal: 20, marginTop: 20 }}
-          ListFooterComponent={() => (
-            <View>
-              <Text
-                style={{ fontSize: 18, fontWeight: "bold", marginBottom: 15 }}
-              >
-                Billing Information
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  // marginVertical: 15,
-                }}
-              >
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                  Order value:
-                </Text>
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                  {currencyFormat(total)}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  // marginVertical: 15,
-                  marginBottom: 15,
-                }}
-              >
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>Total:</Text>
-                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
-                  {currencyFormat(total)}
-                </Text>
-              </View>
+        <View>
+          <FlatList
+            keyExtractor={(item) => "key" + item.id.masp}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 40 }}
+            data={listData}
+            renderItem={({ item, index }) => (
+              <CartCard item={item} index={index} />
+            )}
+            ListFooterComponentStyle={{ paddingHorizontal: 20, marginTop: 20 }}
+            // ListFooterComponent={() => (
 
-              <View style={{ marginHorizontal: 30 }}>
-                <PrimaryButton
-                  title="CHECKOUT"
-                  onPress={() => {
-                    // total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
-                    total && dataCart
-                      ? navigation.navigate("CheckOutMethodScreen", {
-                          total,
-                          dataCart,
-                        })
-                      : Alert.alert("Fail!", "Cannot checkout without item!");
-                  }}
-                />
-              </View>
+            // )}
+          />
+          <View style={{marginHorizontal: 16, marginBottom: 20}}>
+            <Text
+              style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}
+            >
+              Billing Information
+            </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                // marginVertical: 15,
+              }}
+            >
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                Order value:
+              </Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                {currencyFormat(total)}
+              </Text>
             </View>
-          )}
-        />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                // marginVertical: 15,
+                marginBottom: 15,
+              }}
+            >
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>Total:</Text>
+              <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                {currencyFormat(total)}
+              </Text>
+            </View>
+
+            <View style={{ marginHorizontal: 30 }}>
+              <PrimaryButton
+                title="CHECKOUT"
+                onPress={() => {
+                  // total && dataCart ? navigation.navigate("CheckOutScreen", { total, dataCart }) : Alert.alert("Fail!", "Cannot checkout without item!");
+                  total && dataCart
+                    ? navigation.navigate("CheckOutMethodScreen", {
+                        total,
+                        dataCart,
+                      })
+                    : Alert.alert("Fail!", "Cannot checkout without item!");
+                }}
+              />
+            </View>
+          </View>
+        </View>
       ) : (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           <Image

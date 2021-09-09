@@ -78,24 +78,24 @@ function OrderScreen({ navigation }) {
       });
   };
 
-  const deleteOrderID = (id) => {
-    deleteOrderById(id)
-      .then((res) => {
-        // Alert.alert("Success!", "Success!", [{ text: "ok" }]);
-        console.log(res);
-      })
-      .catch((e) => {
-        // Alert.alert("Fail!", '', [{ text: "ok" }]);
-        console.log(e);
-      });
-  };
+  // const deleteOrderID = (id) => {
+  //   deleteOrderById(id)
+  //     .then((res) => {
+  //       // Alert.alert("Success!", "Success!", [{ text: "ok" }]);
+  //       console.log(res);
+  //     })
+  //     .catch((e) => {
+  //       // Alert.alert("Fail!", '', [{ text: "ok" }]);
+  //       console.log(e);
+  //     });
+  // };
 
   //
-  const closeRow = (rowMap, rowKey) => {
-    if (rowMap[rowKey]) {
-      rowMap[rowKey].closeRow();
-    }
-  };
+  // const closeRow = (rowMap, rowKey) => {
+  //   if (rowMap[rowKey]) {
+  //     rowMap[rowKey].closeRow();
+  //   }
+  // };
 
   const editRow = async (rowMap, rowKey, order) => {
     // cancelOrderByMadh(
@@ -111,28 +111,28 @@ function OrderScreen({ navigation }) {
     navigation.navigate("DetailBuyHistoryScreen", { madh });
   };
 
-  const deleteRow = async (rowMap, rowKey, madh, trangthai) => {
-    if (trangthai === 4) {
-      Alert.alert("Notice!", "Are you want delete this order?", [
-        {
-          text: "Approve",
-          onPress: async () => {
-            closeRow(rowMap, rowKey);
-            await deleteOrderID(madh);
-            const newData = [...orders];
-            const prevIndex = orders.findIndex((item) => item.key === rowKey);
-            newData.splice(prevIndex, 1);
-            setOrders(newData);
-          },
-        },
-        {
-          text: "Cancel",
-        },
-      ]);
-    } else {
-      Alert.alert("Notice!", "Delete only with order be canceled!");
-    }
-  };
+  // const deleteRow = async (rowMap, rowKey, madh, trangthai) => {
+  //   if (trangthai === 4) {
+  //     Alert.alert("Notice!", "Are you want delete this order?", [
+  //       {
+  //         text: "Approve",
+  //         onPress: async () => {
+  //           closeRow(rowMap, rowKey);
+  //           await deleteOrderID(madh);
+  //           const newData = [...orders];
+  //           const prevIndex = orders.findIndex((item) => item.key === rowKey);
+  //           newData.splice(prevIndex, 1);
+  //           setOrders(newData);
+  //         },
+  //       },
+  //       {
+  //         text: "Cancel",
+  //       },
+  //     ]);
+  //   } else {
+  //     Alert.alert("Notice!", "Delete only with order be canceled!");
+  //   }
+  // };
 
   const onRowDidOpen = (rowKey) => {
     console.log("This row opened", rowKey);
@@ -165,9 +165,9 @@ function OrderScreen({ navigation }) {
           pi,
         }),
       });
-      Alert.alert("Success", "Refund Complete !");
+      Alert.alert("Success", "Refund Complete!");
     } catch (e) {
-      Alert.alert("Fail", "" + e);
+      Alert.alert("Failed", "Refund has problem! "+ e);
     }
   };
 
@@ -188,18 +188,20 @@ function OrderScreen({ navigation }) {
               console.log(res.data);
               hinhthucthanhtoan === 2 ? await doRefund(pi) : null;
               Alert.alert("Success!", "Order was canceled!");
-              onRefresh();
+              
             })
             .catch((e) => {
               console.log(e);
               Alert.alert("Failed!", "Cannot cancel");
             });
+            onRefresh();
         },
       },
       {
         text: "Cancel",
       },
     ]);
+
   };
 
   const cancelOrderByMadh = (
@@ -288,12 +290,13 @@ function OrderScreen({ navigation }) {
         .then((res) => {
           console.log(res.data);
           Alert.alert("Success!", "Order was updated!");
-          onRefresh();
+          
         })
         .catch((e) => {
           console.log(e);
           Alert.alert("Failed!", "Cannot update!");
         });
+        onRefresh();
     }
   };
 

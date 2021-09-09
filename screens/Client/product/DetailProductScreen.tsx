@@ -244,13 +244,18 @@ const DetailProductScreen = ({ navigation, route }) => {
     getListOrderByClient(mant)
       .then((res) => {
         res.data.map((item) => {
+          const temp = item.listCTDH.filter((e) => {
+            // console.log(e.sanpham.masp, masp);
+            return e.sanpham.masp == masp;
+          })
+          console.log("length", temp.length);
           if (
-            item.listCTDH.filter((e) => {
-              e.sanpham.masp === masp;
-            })
+            temp.length !== 0 && item.trangthai === 3
           ) {
-            // console.log(masp);
-            setCanReview(true);
+            // if(item.trangthai === 3){
+              setCanReview(true);
+            // }
+            // console.log(item);
           }
         });
       })
@@ -596,6 +601,7 @@ const DetailProductScreen = ({ navigation, route }) => {
           </View>
 
           {/* RATINGS */}
+          {console.log(canReview)}
           {canReview === true ? (
             <View style={{ paddingHorizontal: 10, alignItems: "center" }}>
               <Text style={[style.headerText, { marginTop: 30 }]}>

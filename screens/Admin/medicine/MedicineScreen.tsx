@@ -60,26 +60,32 @@ const MedicineScreen = ({ navigation, route }) => {
   };
 
   const getData = () => {
+    // setRefreshing(true);
     getListCategoryMedicine()
       .then((res) => {
         // console.log(res.data);
         setListData(res.data);
+        // setRefreshing(false);
       })
       .catch((e) => {
         Alert.alert("Fail", "Not found Data!", [{ text: "ok" }]);
+        // setRefreshing(false);
       });
   };
 
-  const putDM = (params) => {
-    putCategoryMedicine(params)
+  const putDM = async (params) => {
+    setRefreshing(true);
+    await putCategoryMedicine(params)
       .then((res) => {
         // console.log(res);
         Alert.alert("Success", "Edited!");
         onRefresh();
+        setModalVisible(!isModalVisible);
       })
       .catch((e) => {
         console.log(e);
         Alert.alert("Fail", "Cannot Edited!");
+        setModalVisible(!isModalVisible);
       });
   };
 
@@ -143,8 +149,18 @@ const MedicineScreen = ({ navigation, route }) => {
       </View>
       <View>
         <Modal isVisible={isModalVisible}>
-          <View style={{ flex: 1, justifyContent:"center"}}>
-            <Text style={{color: COLORS.white, fontSize: 20, textAlign:"center", marginBottom: 30, fontWeight: "bold"}}>Edit Category</Text>
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <Text
+              style={{
+                color: COLORS.white,
+                fontSize: 20,
+                textAlign: "center",
+                marginBottom: 30,
+                fontWeight: "bold",
+              }}
+            >
+              Edit Category
+            </Text>
             <TextInput
               style={{ color: COLORS.white }}
               value={madm}
@@ -155,8 +171,16 @@ const MedicineScreen = ({ navigation, route }) => {
               value={textChange}
               onChangeText={(e) => setTextChange(e)}
             />
-            <Button title="Change" color={"#3e2465"} onPress={() => putDM({madm: madm, tendm: textChange})} />
-            <Button title="Cancel" color={"#694fad"} onPress={() => setModalVisible(!isModalVisible)} />
+            <Button
+              title="Change"
+              color={"#3e2465"}
+              onPress={() => putDM({ madm: madm, tendm: textChange })}
+            />
+            <Button
+              title="Cancel"
+              color={"#694fad"}
+              onPress={() => setModalVisible(!isModalVisible)}
+            />
           </View>
         </Modal>
       </View>

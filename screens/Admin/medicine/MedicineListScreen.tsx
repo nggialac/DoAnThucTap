@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 // import {data} from '../../../navigation/Models/MedicineData';
 import Card from "./Card";
@@ -17,6 +18,16 @@ import { SearchBar } from "react-native-elements";
 const MedicineListScreen = ({ navigation, route }) => {
   const madm = route.params.danhmuc.madm;
   const [listData, setListData] = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(4000).then(() => setRefreshing(false));
+  }, []);
 
   React.useEffect(() => {
     getMedicineByCategory(madm)
@@ -28,7 +39,7 @@ const MedicineListScreen = ({ navigation, route }) => {
       .catch((e) => {
         Alert.alert("Fail!", "Not found Data", [{ text: "ok" }]);
       });
-  }, []);
+  }, [refreshing]);
 
   const renderItem = ({ item }) => {
     return (
@@ -57,7 +68,11 @@ const MedicineListScreen = ({ navigation, route }) => {
   };
 
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <SearchBar
         placeholder="Type Here..."
         lightTheme

@@ -171,7 +171,7 @@ const HomeScreen = ({ navigation }) => {
       <TouchableHighlight
         underlayColor={COLORS.white}
         activeOpacity={0.9}
-        onPress={() => navigation.navigate("DetailProductScreen", medicine)}
+        onPress={() => navigation.navigate("DetailProductScreen", medicine, {onRefresh: onRefresh})}
       >
         <View style={style.card}>
           <View style={{ alignItems: "center", top: -16 }}>
@@ -236,7 +236,7 @@ const HomeScreen = ({ navigation }) => {
               Shopping everything!
             </Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate("CartScreen")}>
+          <TouchableOpacity onPress={() => navigation.navigate("CartScreen", onRefresh)}>
             <Icon name="shopping-cart" size={28} />
           </TouchableOpacity>
         </View>

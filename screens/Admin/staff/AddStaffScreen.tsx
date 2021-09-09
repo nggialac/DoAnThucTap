@@ -284,6 +284,7 @@ export default function AddStaffScreen({ navigation }) {
               onChangeText={(val) => {
                 handleSDTChange(val);
               }}
+              maxLength={10}
             />
           </View>
           <Text style={styles.text_footer}>Address</Text>

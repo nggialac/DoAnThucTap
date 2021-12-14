@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const rest_url = 'http://localhost:8080/';
+const rest_url = 'https://medical-ecom-2021.herokuapp.com/';
 
 export default axios.create({
   baseURL: rest_url,

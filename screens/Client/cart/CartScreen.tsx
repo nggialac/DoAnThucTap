@@ -390,6 +390,7 @@ const CartScreen = ({ navigation }) => {
         </View>
       ) : (
         <View style={{ justifyContent: "center", alignItems: "center" }}>
+
           <Image
             source={{
               uri: "https://www.seekpng.com/png/detail/117-1170538_404-your-cart-is-empty.png",

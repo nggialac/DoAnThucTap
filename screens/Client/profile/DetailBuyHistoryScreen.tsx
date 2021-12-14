@@ -18,6 +18,7 @@ import { cancelOrder, getListOrderByMaDH } from "../../../api/OrderApis";
 import Button from "../cart/Button";
 import { Dimensions } from "react-native";
 import { API_URL } from "../cart/Config";
+import axios from "axios";
 
 const DetailBuyHistoryScreen = ({ navigation, route }) => {
   // const [tk, setTk] = React.useState();
@@ -53,20 +54,62 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
 
   const doRefund = async (pi: string) => {
     try {
-      await fetch(`${API_URL}/refund`, {
+      const response = await fetch(`${API_URL}/refund`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          pi,
+          pi: pi,
         }),
       });
       Alert.alert("Success", "Refund Complete !");
     } catch (e) {
-      Alert.alert("Fail", "" + e);
+      console.log(e)
     }
-  };
+
+    // console.log(response);
+
+    // return await response.json();
+  }
+
+  //   const doRefund = async (pi: string) => {
+  //     console.log(pi);
+  //     try{
+  //   //   const response = await fetch(`${API_URL}/refund`, {
+  //   //     method: "POST",
+  //   //     headers: {
+  //   //       Accept: 'application/json',
+  //   //   'Content-Type': 'application/json'
+  //   //     },
+  //   //     body: JSON.stringify({
+  //   //       // created: created,
+  //   //       pi
+  //   //       // request_three_d_secure: 'any',
+  //   //     }),
+  //   //   });
+  //   //   // const { status } = await response.json();
+  //   // }
+  //   axios({
+  //   method: 'post',
+  //   url: `${API_URL}/refund`,
+  //   headers: {}, 
+  //   data: {
+  //     pi: pi, // This is the body part
+  //   }
+  // });}
+  //   catch(e){
+  //     Alert.alert("Fail", ""+ e);
+  //   }
+  
+  //   Alert.alert("Success", "Refund Complete !");
+      
+  
+  //     // return {
+  //     //   status,
+  //     // };
+  //   };
+  // };
 
   React.useEffect(() => {
     // console.log(JSON.parse(nhathuoc).manhathuoc);
@@ -108,18 +151,21 @@ const DetailBuyHistoryScreen = ({ navigation, route }) => {
     );
   };
 
-  const cancelOrderByMadh = (madh: string) => {
-    Alert.alert("Notice!", "Are you want cancel this order?", [
+  const cancelOrderByMadh = async (madh: string) => {
+    // console.log(listData);
+    await Alert.alert("Notice!", "Are you want cancel this order?", [
       {
         text: "Approve",
-        onPress: () =>
-          cancelOrder(madh)
-            .then((res) => {
-              console.log(res.data);
+        onPress: async () =>
+          await cancelOrder(madh, "")
+            .then(async(res) => {
+              // console.log(res.data);
+              // console.log(listData.paymentcreated);
               listData.hinhthucthanhtoan !== 1
-                ? doRefund(listData.paymentcreated)
+                ? await doRefund(listData.paymentcreated)
                 : null;
-              Alert.alert("Success", "Order was canceled!");
+
+              Alert.alert("Success", "Canceled!");
             })
             .catch((e) => {
               console.log(e);

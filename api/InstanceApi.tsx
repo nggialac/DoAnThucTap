@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const InstanceApi = axios.create({
-  baseURL: "http://192.168.1.4:8080/",
+  baseURL: "https://medical-ecom-2021.herokuapp.com/",
   withCredentials: false,
   headers: {
     "Content-Type": "application/json",

@@ -106,7 +106,7 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
   };
 
   const cancelPayment = (madh) => {
-    cancelOrder(madh)
+    cancelOrder(madh, "")
     .then(async (res) => {
       console.log(res.data);
       await deleteOrderById(madh);
@@ -249,7 +249,6 @@ export default function PaymentsUICustomScreen({ navigation, route }) {
       body: JSON.stringify({
         // created: created,
         pi
-        
         // request_three_d_secure: 'any',
       }),
     });

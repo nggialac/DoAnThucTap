@@ -25,6 +25,7 @@ import {
   deleteMedicine,
 } from "../../../api/MedicineApis";
 import { color } from "react-native-reanimated";
+// import firebaseConfig from "../../../assets/firebase/FirebaseConfig"
 
 LogBox.ignoreAllLogs();
 
@@ -314,9 +315,9 @@ const EditMedicineScreen = ({ route, navigation }) => {
                 value={values.mota_chitiet}
               />
             </View>
-            <View style={styles.action}>
+            {/* <View style={styles.action}> */}
               {/* <Feather name="phone" color={colors.text} size={20} /> */}
-              <TextInput
+              {/* <TextInput
                 placeholder="Số lượng"
                 placeholderTextColor="#666666"
                 keyboardType="number-pad"
@@ -330,7 +331,7 @@ const EditMedicineScreen = ({ route, navigation }) => {
                 onChangeText={handleChange("soluong")}
                 value={values.soluong}
               />
-            </View>
+            </View> */}
             <View style={styles.action}>
               {/* <Feather name="phone" color={colors.text} size={20} /> */}
               <TextInput

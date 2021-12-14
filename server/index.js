@@ -3,12 +3,19 @@ env.config({ path: "./.env" });
 const bodyParser = require("body-parser");
 const express = require("express");
 const Stripe = require("stripe");
-
-const stripePublishableKey = "pk_test_51JMwUxHt334vnxQRVExqstbHrMkJHwH6M38wGLXyXXZGV5baUMwX0esXFLVacJ8A3LkYzQVRJ006xw20VtTZl34h00MHxJtJQG" || "";
-const stripeSecretKey = "sk_test_51JMwUxHt334vnxQRgXfwrt8sS70zv2S6L7SBzrrftcz2YEuuHPWO1J1tCY9aiFgN9P51Ti5H4kyBWfVDXKPWcAYk00svmGp2NQ" || "";
+const cors = require("cors");
+const stripePublishableKey =
+  "pk_test_51JMwUxHt334vnxQRVExqstbHrMkJHwH6M38wGLXyXXZGV5baUMwX0esXFLVacJ8A3LkYzQVRJ006xw20VtTZl34h00MHxJtJQG" ||
+  "";
+const stripeSecretKey =
+  "sk_test_51JMwUxHt334vnxQRgXfwrt8sS70zv2S6L7SBzrrftcz2YEuuHPWO1J1tCY9aiFgN9P51Ti5H4kyBWfVDXKPWcAYk00svmGp2NQ" ||
+  "";
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || "";
 
 const app = express();
+
+app.use(cors());
+app.use(express.json());
 
 app.use((req, res, next) => {
   if (req.originalUrl === "/webhook") {
@@ -22,7 +29,7 @@ app.get("/", (req, res) => {
   res.send({ "Welome to": "Expo's Stripe example server!" });
 });
 
-const calculateOrderAmount = _order => {
+const calculateOrderAmount = (_order) => {
   // Calculate the order total on the server to prevent
   // people from directly manipulating the amount on the client.
   return 1400;
@@ -69,12 +76,12 @@ app.post("/create-payment-intent", async (req, res) => {
     // payment_method_types = []
   } = req.body;
 
-  payment_method_types = ['default'];
+  payment_method_types = ["default"];
   const { secret_key } = getKeys(payment_method_types[0]);
-  
+
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
-    typescript: true
+    typescript: true,
   });
 
   const customer = await stripe.customers.create({ email });
@@ -85,24 +92,24 @@ app.post("/create-payment-intent", async (req, res) => {
     customer: customer.id,
     payment_method_options: {
       card: {
-        request_three_d_secure: request_three_d_secure || "automatic"
+        request_three_d_secure: request_three_d_secure || "automatic",
       },
       sofort: {
-        preferred_language: "en"
-      }
+        preferred_language: "en",
+      },
     },
-    payment_method_types: payment_method_types
+    payment_method_types: payment_method_types,
   };
 
   try {
     const paymentIntent = await stripe.paymentIntents.create(params);
     // Send publishable key and PaymentIntent client_secret to client.
     res.send({
-      clientSecret: paymentIntent.client_secret
+      clientSecret: paymentIntent.client_secret,
     });
   } catch (error) {
     res.send({
-      error: error.raw.message
+      error: error.raw.message,
     });
   }
 });
@@ -113,10 +120,10 @@ app.post("/create-payment-intent-with-payment-method", async (req, res) => {
 
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
-    typescript: true
+    typescript: true,
   });
   const customers = await stripe.customers.list({
-    email
+    email,
   });
 
   // The list all Customers endpoint can return multiple customers that share the same email address.
@@ -124,18 +131,18 @@ app.post("/create-payment-intent-with-payment-method", async (req, res) => {
   // you should make sure that you have the right Customer.
   if (!customers.data[0]) {
     res.send({
-      error: "There is no associated customer object to the provided e-mail"
+      error: "There is no associated customer object to the provided e-mail",
     });
   }
   // List the customer's payment methods to find one to charge
   const paymentMethods = await stripe.paymentMethods.list({
     customer: customers.data[0].id,
-    type: "card"
+    type: "card",
   });
 
   if (!paymentMethods.data[0]) {
     res.send({
-      error: `There is no associated payment method to the provided customer's e-mail`
+      error: `There is no associated payment method to the provided customer's e-mail`,
     });
   }
 
@@ -144,11 +151,11 @@ app.post("/create-payment-intent-with-payment-method", async (req, res) => {
     currency,
     payment_method_options: {
       card: {
-        request_three_d_secure: request_three_d_secure || "automatic"
-      }
+        request_three_d_secure: request_three_d_secure || "automatic",
+      },
     },
     payment_method: paymentMethods.data[0].id,
-    customer: customers.data[0].id
+    customer: customers.data[0].id,
   };
 
   const paymentIntent = await stripe.paymentIntents.create(params);
@@ -156,7 +163,7 @@ app.post("/create-payment-intent-with-payment-method", async (req, res) => {
   // Send publishable key and PaymentIntent client_secret to client.
   res.send({
     clientSecret: paymentIntent.client_secret,
-    paymentMethodId: paymentMethods.data[0].id
+    paymentMethodId: paymentMethods.data[0].id,
   });
 });
 
@@ -168,7 +175,7 @@ app.post("/pay-without-webhooks", async (req, res) => {
     currency,
     useStripeSdk,
     cvcToken,
-    email
+    email,
   } = req.body;
 
   // const orderAmount = calculateOrderAmount(items);
@@ -177,13 +184,13 @@ app.post("/pay-without-webhooks", async (req, res) => {
 
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
-    typescript: true
+    typescript: true,
   });
 
   try {
     if (cvcToken && email) {
       const customers = await stripe.customers.list({
-        email
+        email,
       });
 
       // The list all Customers endpoint can return multiple customers that share the same email address.
@@ -191,18 +198,19 @@ app.post("/pay-without-webhooks", async (req, res) => {
       // you should make sure that you have the right Customer.
       if (!customers.data[0]) {
         res.send({
-          error: "There is no associated customer object to the provided e-mail"
+          error:
+            "There is no associated customer object to the provided e-mail",
         });
       }
 
       const paymentMethods = await stripe.paymentMethods.list({
         customer: customers.data[0].id,
-        type: "card"
+        type: "card",
       });
 
       if (!paymentMethods.data[0]) {
         res.send({
-          error: `There is no associated payment method to the provided customer's e-mail`
+          error: `There is no associated payment method to the provided customer's e-mail`,
         });
       }
 
@@ -214,11 +222,11 @@ app.post("/pay-without-webhooks", async (req, res) => {
         payment_method: paymentMethods.data[0].id,
         payment_method_options: {
           card: {
-            cvc_token: cvcToken
-          }
+            cvc_token: cvcToken,
+          },
         },
         use_stripe_sdk: useStripeSdk,
-        customer: customers.data[0].id
+        customer: customers.data[0].id,
       };
       const intent = await stripe.paymentIntents.create(params);
       res.send(generateResponse(intent));
@@ -232,7 +240,7 @@ app.post("/pay-without-webhooks", async (req, res) => {
         payment_method: paymentMethodId,
         // If a mobile client passes `useStripeSdk`, set `use_stripe_sdk=true`
         // to take advantage of new authentication features in mobile SDKs.
-        use_stripe_sdk: useStripeSdk
+        use_stripe_sdk: useStripeSdk,
       };
       const intent = await stripe.paymentIntents.create(params);
       // After create, if the PaymentIntent's status is succeeded, fulfill the order.
@@ -257,18 +265,18 @@ app.post("/create-setup-intent", async (req, res) => {
 
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
-    typescript: true
+    typescript: true,
   });
   const customer = await stripe.customers.create({ email });
   const setupIntent = await stripe.setupIntents.create({
     customer: customer.id,
-    payment_method_types
+    payment_method_types,
   });
 
   // Send publishable key and SetupIntent details to client
   res.send({
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
-    clientSecret: setupIntent.client_secret
+    clientSecret: setupIntent.client_secret,
   });
 });
 
@@ -286,7 +294,7 @@ app.post(
 
     const stripe = new Stripe(secret_key, {
       apiVersion: "2020-08-27",
-      typescript: true
+      typescript: true,
     });
     // console.log('webhook!', req);
     try {
@@ -350,7 +358,7 @@ app.post("/charge-card-off-session", async (req, res) => {
 
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
-    typescript: true
+    typescript: true,
   });
 
   try {
@@ -358,13 +366,13 @@ app.post("/charge-card-off-session", async (req, res) => {
     // Since we are using test cards, create a new Customer here
     // You would do this in your payment flow that saves cards
     customer = await stripe.customers.list({
-      email: req.body.email
+      email: req.body.email,
     });
 
     // List the customer's payment methods to find one to charge
     const paymentMethods = await stripe.paymentMethods.list({
       customer: customer.data[0].id,
-      type: "card"
+      type: "card",
     });
 
     // Create and confirm a PaymentIntent with the order amount, currency,
@@ -375,13 +383,13 @@ app.post("/charge-card-off-session", async (req, res) => {
       payment_method: paymentMethods.data[0].id,
       customer: customer.data[0].id,
       off_session: true,
-      confirm: true
+      confirm: true,
     });
 
     res.send({
       succeeded: true,
       clientSecret: paymentIntent.client_secret,
-      publicKey: stripePublishableKey
+      publicKey: stripePublishableKey,
     });
   } catch (err) {
     if (err.code === "authentication_required") {
@@ -398,8 +406,8 @@ app.post("/charge-card-off-session", async (req, res) => {
         amount: calculateOrderAmount(),
         card: {
           brand: err.raw.payment_method.card.brand,
-          last4: err.raw.payment_method.card.last4
-        }
+          last4: err.raw.payment_method.card.last4,
+        },
       });
     } else if (err.code) {
       // The card was declined for other reasons (e.g. insufficient funds)
@@ -407,7 +415,7 @@ app.post("/charge-card-off-session", async (req, res) => {
       res.send({
         error: err.code,
         clientSecret: err.raw.payment_intent.client_secret,
-        publicKey: stripePublishableKey
+        publicKey: stripePublishableKey,
       });
     } else {
       console.log("Unknown error occurred", err);
@@ -419,19 +427,17 @@ app.post("/charge-card-off-session", async (req, res) => {
 // Watch this video to get started: https://youtu.be/rPR2aJ6XnAc.
 
 app.post("/payment-sheet", async (req, res) => {
-  const {
-    total,
-  } = req.body;
+  const { total } = req.body;
   const { secret_key } = getKeys();
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
-    typescript: true
+    typescript: true,
   });
   const customers = await stripe.customers.list();
   const customer = customers.data[0];
   if (!customer) {
     res.send({
-      error: "You have no customer created"
+      error: "You have no customer created",
     });
   }
   const ephemeralKey = await stripe.ephemeralKeys.create(
@@ -441,7 +447,7 @@ app.post("/payment-sheet", async (req, res) => {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: total,
     currency: "vnd",
-    customer: customer.id
+    customer: customer.id,
   });
   res.json({
     paymentIntent: paymentIntent.client_secret,
@@ -453,63 +459,56 @@ app.post("/payment-sheet", async (req, res) => {
 });
 
 app.post("/pi/cancel", async (req, res) => {
-  const {
-    pi,
-  } = req.body;
+  const { pi } = req.body;
   console.log(pi);
   const { secret_key } = getKeys();
 
   const stripe = new Stripe(secret_key, {
     apiVersion: "2020-08-27",
-    typescript: true
+    typescript: true,
   });
 
-  const paymentIntent = await stripe.paymentIntents.cancel(
-    pi
-  );
-})
+  const paymentIntent = await stripe.paymentIntents.cancel(pi);
+});
 
-app.post("/refund", async(req, res)=> {
-  const {
-    // created,
-    pi
-  } = req.body;
-  console.log(pi);
-  const { secret_key } = getKeys();
+app.post("/refund", async (req, res) => {
+  try {
+    const {
+      // created,
+      pi,
+    } = req.body;
+    console.log(pi);
+    const { secret_key } = getKeys();
 
-  const stripe = new Stripe(secret_key, {
-    apiVersion: "2020-08-27",
-    typescript: true
-  });
+    const stripe = new Stripe(secret_key, {
+      apiVersion: "2020-08-27",
+      typescript: true,
+    });
 
-  // const paymentIntents = await stripe.paymentIntents.list({
-  //   created: created,
-  //   // created: {
-  //   //   gte: 1629711812
-  //   // }
-  // });
+    const paymentIntents = await stripe.paymentIntents.retrieve(pi);
 
-  const paymentIntents = await stripe.paymentIntents.retrieve(
-    pi
-  );
+    const charges = await stripe.charges.list({
+      payment_intent: paymentIntents.id,
+    });
 
-    // console.log(paymentIntents);
-  const charges = await stripe.charges.list({
-    payment_intent: paymentIntents.id,
-  });
-  // console.log(charges);
-
-  const refund = await stripe.refunds.create({
-    charge: charges.data[0].id,
-    // payment_intent: pi,
-  });
-
-  res.status(200);
-})
+    const refund = await stripe.refunds.create({
+      charge: charges.data[0].id,
+    });
+    console.log("refund");
+    return res.status(200).json({
+      message : "Success"
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      message : "Erorr"
+    });
+  }
+});
 
 app.listen(3000, () => console.log(`Node server listening on port 3000!`));
 
-const generateResponse = intent => {
+const generateResponse = (intent) => {
   // Generate a response based on the intent's status
   switch (intent.status) {
     case "requires_action":
@@ -517,12 +516,12 @@ const generateResponse = intent => {
       return {
         clientSecret: intent.client_secret,
         requiresAction: true,
-        status: intent.status
+        status: intent.status,
       };
     case "requires_payment_method":
       // Card was not properly authenticated, suggest a new payment method
       return {
-        error: "Your card was denied, please provide a new payment method"
+        error: "Your card was denied, please provide a new payment method",
       };
     case "succeeded":
       // Payment is complete, authentication not required
@@ -532,6 +531,6 @@ const generateResponse = intent => {
   }
 
   return {
-    error: "Failed"
+    error: "Failed",
   };
 };

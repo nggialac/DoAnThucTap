@@ -313,9 +313,9 @@ const AddMedicineScreen = ({ route }) => {
                 value={values.mota_chitiet}
               />
             </View>
-            <View style={styles.action}>
+            {/* <View style={styles.action}> */}
               {/* <Feather name="phone" color={colors.text} size={20} /> */}
-              <TextInput
+              {/* <TextInput
                 placeholder="Số lượng"
                 placeholderTextColor="#666666"
                 keyboardType="number-pad"
@@ -329,7 +329,7 @@ const AddMedicineScreen = ({ route }) => {
                 onChangeText={handleChange("soluong")}
                 value={values.soluong}
               />
-            </View>
+            </View> */}
             <View style={styles.action}>
               {/* <Feather name="phone" color={colors.text} size={20} /> */}
               <TextInput

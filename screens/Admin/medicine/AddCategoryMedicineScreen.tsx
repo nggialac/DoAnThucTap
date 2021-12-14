@@ -34,7 +34,7 @@ const AddMedicineScreen = ({navigation, route}) => {
       // Alert.alert("Submit Failed", e+"", [
       //   { text: "ok" },
       // ]);
-      Alert.alert("Submit Failed", JSON.stringify(params), [
+      Alert.alert("Failed", "Submit Failed! Check your Category name.", [
         { text: "ok" },
       ]);
       console.log(JSON.stringify(params));

@@ -35,8 +35,11 @@ export function deleteOrderById(madh: string) {
   return InstanceApi.delete(`donhang/${madh}`);
 }
 
-export function cancelOrder(madh: string) {
-  return InstanceApi.put(`donhang/${madh}`);
+export function cancelOrder(madh: string, manv: string) {
+  console.log(madh, manv);
+  return InstanceApi.put(`donhang/${madh}`,{}, { params: {
+    manv: "NV9999999",
+  }});
 }
 
 export function putOrder(params: object) {
